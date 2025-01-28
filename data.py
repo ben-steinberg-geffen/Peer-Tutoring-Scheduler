@@ -1,17 +1,34 @@
 import os
 import pandas as pd
 
+def merge_courses(row):
+    """
+    Merge middle school and upper school course selections into a single set of columns.
+    """
+    courses = []
+    for i in range(1, 8):
+        ms_course = row.get(f'ms_course_{i}')
+        us_course = row.get(f'us_course_{i}')
+        if pd.notna(ms_course):
+            courses.append(ms_course)
+        elif pd.notna(us_course):
+            courses.append(us_course)
+        else:
+            courses.append(None)
+    return courses
+
 def load_student_data():
     """
-    Load student requests data from a CSV file and rename columns for consistency.
+    Load student requests data from a CSV file, rename columns for consistency, and merge course selections.
 
     Returns:
-        pd.DataFrame: A pandas DataFrame containing the tutor requests data.
+        pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
     base_path = os.path.dirname(__file__)
     file_path = os.path.join(base_path, "data", "student_responses.csv")
     df = pd.read_csv(file_path)
 
+    # Rename columns
     df = df.rename(columns={
         "Timestamp": "timestamp",
         "Student's Name (first and last)": "name", 
@@ -37,11 +54,20 @@ def load_student_data():
         "Select Courses for Tutoring (Slot 5) (US)": "us_course_5",
         "Select Courses for Tutoring (Slot 6) (US)": "us_course_6",
         "Select Courses for Tutoring (Slot 7) (US)": "us_course_7",
-        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar,  sentence syntax, etc. (US)": "additional_info",
+        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar,  sentence syntax, etc.": "additional_info",
     })
 
+    # Merge course selections
+    merged_courses = df.apply(merge_courses, axis=1, result_type='expand')
+    merged_courses.columns = [f'course_{i}' for i in range(1, 8)]
+    df = pd.concat([df, merged_courses], axis=1)
+
+    df['courses'] = df.apply(lambda row: [course for course in row[['course_1', 'course_2', 'course_3', 'course_4', 'course_5', 'course_6', 'course_7']] if pd.notna(course)], axis=1)
+    # Drop the original MS and US course columns
+    df = df.drop(columns=[f'ms_course_{i}' for i in range(1, 8)] + [f'us_course_{i}' for i in range(1, 8)])
+
+    # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
-    print(df["us_course_1"])
     
     return df
 
