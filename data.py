@@ -1,0 +1,84 @@
+import os
+import pandas as pd
+
+def load_student_data():
+    """
+    Load student requests data from a CSV file and rename columns for consistency.
+
+    Returns:
+        pd.DataFrame: A pandas DataFrame containing the tutor requests data.
+    """
+    base_path = os.path.dirname(__file__)
+    file_path = os.path.join(base_path, "data", "student_responses.csv")
+    df = pd.read_csv(file_path)
+
+    df = df.rename(columns={
+        "Timestamp": "timestamp",
+        "Student's Name (first and last)": "name", 
+        "Who are you in relation to the student?": "relation", 
+        "Student's School Email": "email", 
+        "Grade Level": "grade",
+        "Availability [Monday]": "monday_availability",
+        "Availability [Tuesday]": "tuesday_availability",
+        "Availability [Wednesday]": "wednesday_availability",
+        "Availability [Thursday]": "thursday_availability",
+        "Availability [Friday]": "friday_availability",
+        "Select Courses for Tutoring (Slot 1) (MS)": "ms_course_1",
+        "Select Courses for Tutoring (Slot 2) (MS)": "ms_course_2",
+        "Select Courses for Tutoring (Slot 3) (MS)": "ms_course_3",
+        "Select Courses for Tutoring (Slot 4) (MS)": "ms_course_4",
+        "Select Courses for Tutoring (Slot 5) (MS)": "ms_course_5",
+        "Select Courses for Tutoring (Slot 6) (MS)": "ms_course_6",
+        "Select Courses for Tutoring (Slot 7) (MS)": "ms_course_7",
+        "Select Courses for Tutoring (Slot 1) (US)": "us_course_1",
+        "Select Courses for Tutoring (Slot 2) (US)": "us_course_2",
+        "Select Courses for Tutoring (Slot 3) (US)": "us_course_3",
+        "Select Courses for Tutoring (Slot 4) (US)": "us_course_4",
+        "Select Courses for Tutoring (Slot 5) (US)": "us_course_5",
+        "Select Courses for Tutoring (Slot 6) (US)": "us_course_6",
+        "Select Courses for Tutoring (Slot 7) (US)": "us_course_7",
+        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar,  sentence syntax, etc. (US)": "additional_info",
+    })
+
+    df = df.dropna(subset=["name"])
+    print(df["us_course_1"])
+    
+    return df
+
+def load_tutor_data():
+    """
+    Load tutor requests data from spring and fall CSV files, combine them, and rename columns for consistency.
+
+    Returns:
+        pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
+    
+    OUTDATED (FOR OLD TUTOR RESPONSE CSV FILES)
+    """
+    base_path = os.path.dirname(__file__)
+    spring_file_path = os.path.join(base_path, "data", "tutor_responses_spring.csv")
+    fall_file_path = os.path.join(base_path, "data", "tutor_responses_fall.csv")
+    
+    # Load both CSV files
+    spring_df = pd.read_csv(spring_file_path)
+    fall_df = pd.read_csv(fall_file_path)
+    
+    # Combine the dataframes
+    df = pd.concat([spring_df, fall_df])
+    
+    # Rename columns
+    df = df.rename(columns={
+        "Timestamp": "timestamp",
+        "Email Address": "email", 
+        "Your name (first and last)": "name", 
+        "Your Grade": "grade", 
+        "Select the days (must be available for BOTH blue and gold week) and times you are available for tutoring [Monday]": "monday_availability", 
+        "Select the days (must be available for BOTH blue and gold week) and times you are available for tutoring [Tuesday]": "tuesday_availability",
+        "Select the days (must be available for BOTH blue and gold week) and times you are available for tutoring [Wednesday]": "wednesday_availability",
+        "Select the days (must be available for BOTH blue and gold week) and times you are available for tutoring [Thursday]": "thursday_availability",
+        "Select the days (must be available for BOTH blue and gold week) and times you are available for tutoring [Friday (before school or during lunch only)]": "friday_availability",
+        "Subject(s) and level(s) you are comfortable or want to tutor in. This will be reviewed by educators. ": "subjects",
+    })
+
+    df = df.dropna(subset=["name"])
+    
+    return df
