@@ -57,12 +57,15 @@ def load_student_data():
         "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar,  sentence syntax, etc.": "additional_info",
     })
 
-    # Merge course selections
+    # Merge course selections for one set of columns
     merged_courses = df.apply(merge_courses, axis=1, result_type='expand')
     merged_courses.columns = [f'course_{i}' for i in range(1, 8)]
     df = pd.concat([df, merged_courses], axis=1)
 
+    # Make a list of all the courses and availability status the student provided
     df['courses'] = df.apply(lambda row: [course for course in row[['course_1', 'course_2', 'course_3', 'course_4', 'course_5', 'course_6', 'course_7']] if pd.notna(course)], axis=1)
+    df['availability'] = df.apply(lambda row: [day for day in row[['monday_availability', 'tuesday_availability', 'wednesday_availability', 'thursday_availability', 'friday_availability']] if pd.notna(day)], axis=1)
+
     # Drop the original MS and US course columns
     df = df.drop(columns=[f'ms_course_{i}' for i in range(1, 8)] + [f'us_course_{i}' for i in range(1, 8)])
 
