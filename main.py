@@ -22,3 +22,12 @@ class tutor:
         self.grade = grade
         self.availability = availability
         self.courses = courses
+
+students = []
+tutors = []
+
+for index, row in student_df.iterrows():
+    students.append(student(row['name'], row['grade'], row['availability'], row['courses']))
+
+for index, row in tutor_df.iterrows():
+    tutors.append(tutor(row['name'], row['grade'], row['availability'], row['courses']))
