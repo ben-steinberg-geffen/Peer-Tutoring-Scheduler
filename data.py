@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+#test
 
 def load_student_data():
     """
@@ -36,6 +37,8 @@ def load_student_data():
 
     # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
+
+    df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     
     return df
 
@@ -74,5 +77,7 @@ def load_tutor_data():
 
     # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
+
+    df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     
     return df
