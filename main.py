@@ -25,7 +25,7 @@ class Tutor:
         self.availability = availability
         self.courses = courses
         self.matches = []
-        self.matched_tutor = None
+        self.matched_student = []
 
 students = []
 tutors = []
@@ -37,4 +37,11 @@ for index, row in tutor_df.iterrows():
     tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
 
 def match_students_tutors(students, tutors):
-    pass
+    for student in students:
+        for tutor in tutors:
+            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
+                if set(student.availability).intersection(set(tutor.availability)):
+                    student.matches.append(tutor)
+                    tutor.matches.append(student)
+                    
+match_students_tutors(students, tutors)
