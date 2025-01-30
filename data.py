@@ -81,3 +81,7 @@ def load_tutor_data():
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     
     return df
+
+
+print(load_student_data().info())
+print(load_tutor_data().info())
