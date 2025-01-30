@@ -9,25 +9,39 @@ pd.set_option('display.max_colwidth', None)
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
-class student:
+class Student:
     def __init__(self, name, grade, availability, courses):
         self.name = name
         self.grade = grade
         self.availability = availability
         self.courses = courses
+        self.matches = []
+        self.matched_tutor = None
 
-class tutor:
+class Tutor:
     def __init__(self, name, grade, availability, courses):
         self.name = name
         self.grade = grade
         self.availability = availability
         self.courses = courses
+        self.matches = []
+        self.matched_student = []
 
 students = []
 tutors = []
 
 for index, row in student_df.iterrows():
-    students.append(student(row['name'], row['grade'], row['availability'], row['courses']))
+    students.append(Student(row['name'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-    tutors.append(tutor(row['name'], row['grade'], row['availability'], row['courses']))
+    tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
+
+def match_students_tutors(students, tutors):
+    for student in students:
+        for tutor in tutors:
+            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
+                if set(student.availability).intersection(set(tutor.availability)):
+                    student.matches.append(tutor)
+                    tutor.matches.append(student)
+                    
+match_students_tutors(students, tutors)
