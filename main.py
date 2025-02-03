@@ -58,6 +58,7 @@ def select_unassigned_var(students):
         if student.matched_tutor == None: 
 
             return student.matched_tutors[0]
+            # MAKE SURE TO RETURN CORRECT INDEX INSTEAD OF [0]
         
     return False
 
