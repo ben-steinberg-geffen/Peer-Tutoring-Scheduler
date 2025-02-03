@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-#test
 
 def load_student_data():
     """
@@ -32,7 +31,7 @@ def load_student_data():
 
     # Merge course and availability selections and separate them into a list
     df['courses'] = df.apply(lambda row: list(sorted(set(course.strip() for course_list in row[['ms_courses', 'us_courses']] if pd.notna(course_list) for course in course_list.split(', ')))), axis=1)
-    df['availability'] = df.apply(lambda row: [day for day in row[['monday_availability', 'tuesday_availability', 'wednesday_availability', 'thursday_availability', 'friday_availability']] if pd.notna(day)], axis=1)
+    df['availability'] = df.apply(lambda row: [[day] for day in row[['monday_availability', 'tuesday_availability', 'wednesday_availability', 'thursday_availability', 'friday_availability']] if pd.notna(day)], axis=1)
     df['status'] = "Pending"
 
     # Drop rows with missing names in case the data is incomplete
@@ -81,7 +80,3 @@ def load_tutor_data():
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     
     return df
-
-
-print(load_student_data().info())
-print(load_tutor_data().info())

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Upload Documents</h2>
+<form method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="peer_tutors_file">Upload Peer Tutors File:</label>
+        <input type="file" name="peer_tutors_file" id="peer_tutors_file">
+    </div>
+    <div>
+        <label for="students_classes_file">Upload Students and Classes File:</label>
+        <input type="file" name="students_classes_file" id="students_classes_file">
+    </div>
+    <button type="submit">Upload</button>
+</form>
+{% endblock %}
