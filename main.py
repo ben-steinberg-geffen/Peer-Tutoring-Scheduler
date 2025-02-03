@@ -81,6 +81,7 @@ def check_completion(students, tutors):
 students, tutors = match_students_tutors(students, tutors)
 
 for student in students:
-    if student.matches == []:
-        print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")
-
+    if len(student.availability) >= 1:
+        print(student.name, student.availability, student.courses)
+    # if student.matches == []:
+    #     print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")
