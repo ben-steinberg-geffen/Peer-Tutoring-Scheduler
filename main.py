@@ -89,11 +89,14 @@ def backtrack(assignment, students, tutors):
     return False
 
 def check_constraints(students, tutors):
-    # Tutors can't teach two tutors at the same time
-    # Tutors and students must have the same classes
-    # It must be at the same time as well
-    # Tutors with no students take priority over students with tutors
-
+    '''
+    Tutors can't teach two tutors at the same time *
+    Tutors and students must have the same classes
+    It must be at the same time as well
+    Tutors with no students take priority over students with tutors * 
+    * are the ones that we need to handle here
+    '''
+    
     for tutor in tutors: 
         for student in students: 
             times = get_time_intersection(student, tutor)
