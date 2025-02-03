@@ -52,7 +52,24 @@ def match_students_tutors(students, tutors):
                     tutor.matched_students.append(student)
     return students, tutors
 
-def backtrack(students, tutors, ):
+
+
+def select_unassigned_var(students):
+    for student in students: 
+        if student.matched_tutor == None: 
+
+            return student.matched_tutors[0]
+        
+    return False
+
+def backtrack(students, tutors):
+    if check_completion(students, tutors):
+        return students, tutors
+    
+    var = select_unassigned_var(students)
+    # Assign tutors in a list, if they don't work then backtrack
+    for student in students: 
+        pass
     pass
 
 def check_constraints(students, tutors):
