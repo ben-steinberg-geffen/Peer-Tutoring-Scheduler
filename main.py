@@ -9,6 +9,8 @@ pd.set_option('display.max_colwidth', None)
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
+assignment = {}
+
 class Student:
     def __init__(self, name, grade, availability, courses):
         self.name = name
@@ -69,15 +71,22 @@ def select_unassigned_var(students):
 
     return False
 
-def backtrack(students, tutors):
+def backtrack(assignment, students, tutors):
     if check_completion(students, tutors):
-        return students, tutors
+        return assignment
     
     var = select_unassigned_var(students)
     # Assign tutors in a list, if they don't work then backtrack
     for student in students: 
-        pass
-    pass
+        if check_constraints(students, tutors):
+            assignment[var] = student
+            result = backtrack(students, tutors)
+            if result != False:
+                return result
+            
+            del assignment[var]
+    
+    return False
 
 def check_constraints(students, tutors):
     # Tutors can't teach two tutors at the same time
@@ -91,7 +100,7 @@ def check_constraints(students, tutors):
             # We want to see even if a tutor teaches multiple people, that they 
             # can still work with everyone at different times.
             
-    pass
+    return True # CHANGE LATER 
 
 def check_completion(students, tutors):
     if check_constraints(students, tutors) and select_unassigned_var(students) == False:
