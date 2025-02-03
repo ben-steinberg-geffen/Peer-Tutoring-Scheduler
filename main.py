@@ -39,12 +39,10 @@ for index, row in tutor_df.iterrows():
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
-            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
-                # for student_day in student.availability:
-                #     for tutor_day in tutor.availability:
-                #         if set(student_day).intersection(set(tutor_day)):
-                student.matches.append(tutor)
-                tutor.matches.append(student)
+            if set(student.courses).intersection(set(tutor.courses)):
+                if set(student.availability).intersection(set(tutor.availability)):
+                    student.matches.append(tutor)
+                    tutor.matches.append(student)
     return students, tutors
 
 def backtrack(students, tutors, ):
