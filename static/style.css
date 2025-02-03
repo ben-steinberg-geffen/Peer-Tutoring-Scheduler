@@ -1,9 +1,10 @@
 /*main design*/
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     margin: 0;
     padding: 0;
+    overflow-y: auto; /*enables vertical scrolling*/
 }
 
 .container {
@@ -115,7 +116,23 @@ button.upload:hover {
     margin-top: 20px;
 }
 
+.request-change-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgb(255, 31, 31);
+    color: white;
+    border: 2px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
 
+.request-change-btn:hover {
+    background-color: #ff6666;
+}
 
 /*
 .container {
