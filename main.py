@@ -15,8 +15,9 @@ class Student:
         self.grade = grade
         self.availability = availability
         self.courses = courses
-        self.matches = []
-        self.matched_tutor = None
+        self.matched_tutors = []
+        self.final_tutor = None
+        self.matched = False
 
 class Tutor:
     def __init__(self, name, grade, availability, courses):
@@ -24,8 +25,8 @@ class Tutor:
         self.grade = grade
         self.availability = availability
         self.courses = courses
-        self.matches = []
-        self.matched_student = []
+        self.matched_students = []
+        self.final_students = []
 
 students = []
 tutors = []
@@ -47,8 +48,8 @@ def match_students_tutors(students, tutors):
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
-                    student.matches.append(tutor)
-                    tutor.matches.append(student)
+                    student.matched_tutors.append(tutor)
+                    tutor.matched_students.append(student)
     return students, tutors
 
 
@@ -95,7 +96,3 @@ def check_completion(students, tutors):
     return check_constraints(students, tutors)
 
 students, tutors = match_students_tutors(students, tutors)
-
-for student in students:
-    if student.matches == []:
-        print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")
