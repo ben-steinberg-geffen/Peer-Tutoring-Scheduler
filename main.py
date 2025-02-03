@@ -45,5 +45,12 @@ def match_students_tutors(students, tutors):
                     student.matches.append(tutor)
                     tutor.matches.append(student)
     return students, tutors
-                    
+
+def backtrack(students, tutors, ):
+    pass
+
+def check_constraints(students, tutors):
+    # 
+    pass
+
 students, tutors = match_students_tutors(students, tutors)
