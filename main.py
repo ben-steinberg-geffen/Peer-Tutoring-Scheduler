@@ -45,11 +45,13 @@ def get_time_intersection(student, tutor):
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
-            if set(student.courses).intersection(set(tutor.courses)):
+            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
                     student.matches.append(tutor)
                     tutor.matches.append(student)
     return students, tutors
+
+
 
 def select_unassigned_var(students):
     for student in students: 
@@ -94,7 +96,5 @@ def check_completion(students, tutors):
 students, tutors = match_students_tutors(students, tutors)
 
 for student in students:
-    if len(student.availability) >= 1:
-        print(student.name, student.availability, student.courses)
-    # if student.matches == []:
-    #     print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")
+    if student.matches == []:
+        print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")

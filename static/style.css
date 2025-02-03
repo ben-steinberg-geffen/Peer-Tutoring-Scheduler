@@ -15,16 +15,26 @@ body {
 
 /*navigation style*/
 nav {
-    background-color: #667c89;
+    background-color: #457b9d;
     padding: 10px;
     text-align: center;
 }
 
 nav a {
-    color: white;
+    color: #f1faee;  /* Default link color */
     margin: 0 15px;
     text-decoration: none;
     font-size: 18px;
+    padding: 10px 15px;
+}
+
+nav a:hover {
+    color: #fff;  /* Color when hovering */
+}
+
+nav a.active {
+    color: #e6c939;  /* Color for active/current page */
+    font-weight: bold;
 }
 
 .upload-box {
