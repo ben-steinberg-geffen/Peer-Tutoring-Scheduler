@@ -36,6 +36,12 @@ for index, row in student_df.iterrows():
 for index, row in tutor_df.iterrows():
         tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
 
+def get_time_intersection(student, tutor):
+    times = []
+    for time in student.availability: 
+        if time in tutor.availability: 
+            times.append(time) 
+
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
@@ -45,6 +51,8 @@ def match_students_tutors(students, tutors):
                     tutor.matches.append(student)
     return students, tutors
 
+
+
 def backtrack(students, tutors, ):
     pass
 
@@ -53,7 +61,22 @@ def check_constraints(students, tutors):
     # Tutors and students must have the same classes
     # It must be at the same time as well
     # Tutors with no students take priority over students with tutors
+
+    for tutor in tutors: 
+        for student in students: 
+            times = get_time_intersection(student, tutor)
+            # We want to see even if a tutor teaches multiple people, that they 
+            # can still work with everyone at different times.
+            
     pass
+
+def check_completion(students, tutors):
+    for student in students: 
+        if student.matched_tutor == None:
+            return False
+        
+    # If all of them are matched up, it then checks the constraint to see if it works
+    return check_constraints(students, tutors)
 
 students, tutors = match_students_tutors(students, tutors)
 
