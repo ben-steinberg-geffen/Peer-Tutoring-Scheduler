@@ -50,7 +50,10 @@ def backtrack(students, tutors, ):
     pass
 
 def check_constraints(students, tutors):
-    # 
+    # Tutors can't teach two tutors at the same time
+    # Tutors and students must have the same classes
+    # It must be at the same time as well
+    # Tutors with no students take priority over students with tutors
     pass
 
 students, tutors = match_students_tutors(students, tutors)
