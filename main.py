@@ -44,9 +44,13 @@ def get_time_intersection(student, tutor):
 
 def match_students_tutors(students, tutors):
     for student in students:
+        student_courses_set = set(student.courses)
+        student_availability_set = set(student.availability)
         for tutor in tutors:
-            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
-                if set(student.availability).intersection(set(tutor.availability)):
+            tutor_courses_set = set(tutor.courses)
+            tutor_availability_set = set(tutor.availability)
+            if student_courses_set.intersection(tutor_courses_set):
+                if student_availability_set.intersection(tutor_availability_set):
                     student.matches.append(tutor)
                     tutor.matches.append(student)
     return students, tutors
@@ -68,3 +72,7 @@ def check_constraints(students, tutors):
     pass
 
 students, tutors = match_students_tutors(students, tutors)
+
+for student in students:
+    if student.matches == []:
+        print(f"No matches for {student.name} with courses {student.courses} and availability {student.availability}")

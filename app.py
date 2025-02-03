@@ -2,8 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import pandas as pd
 import os
 
-app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app = Flask(__name__, static_folder='static')
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
