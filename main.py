@@ -45,7 +45,7 @@ def get_time_intersection(student, tutor):
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
-            if set(student.courses).intersection(set(tutor.courses)):
+            if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
                     student.matches.append(tutor)
                     tutor.matches.append(student)
