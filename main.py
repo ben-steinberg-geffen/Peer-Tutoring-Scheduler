@@ -66,10 +66,19 @@ def check_constraints(students, tutors):
 
     for tutor in tutors: 
         for student in students: 
-            times = []
-
-
+            times = get_time_intersection(student, tutor)
+            # We want to see even if a tutor teaches multiple people, that they 
+            # can still work with everyone at different times.
+            
     pass
+
+def check_completion(students, tutors):
+    for student in students: 
+        if student.matched_tutor == None:
+            return False
+        
+    # If all of them are matched up, it then checks the constraint to see if it works
+    return check_constraints(students, tutors)
 
 students, tutors = match_students_tutors(students, tutors)
 
