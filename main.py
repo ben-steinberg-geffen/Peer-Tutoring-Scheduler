@@ -34,7 +34,7 @@ for index, row in student_df.iterrows():
     students.append(Student(row['name'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-    tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
+        tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
 
 def match_students_tutors(students, tutors):
     for student in students:
