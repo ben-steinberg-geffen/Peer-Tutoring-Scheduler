@@ -16,6 +16,7 @@ class Student:
         self.availability = availability
         self.courses = courses
         self.matched_tutors = []
+        self.index = 0 
         self.final_tutor = None
         self.matched = False
 
@@ -57,10 +58,15 @@ def match_students_tutors(students, tutors):
 def select_unassigned_var(students):
     for student in students: 
         if student.final_tutor == None: 
+            
+            index = student.index
 
-            return student.matched_tutors[0]
-            # MAKE SURE TO RETURN CORRECT INDEX INSTEAD OF [0]
+            student.index += 1
+            student.index = student.index % (len(student.matched_tutors) - 1)
+            return student.matched_tutors[index]
         
+            # This should change the index of the student every time and rotate between them.
+
     return False
 
 def backtrack(students, tutors):
@@ -88,11 +94,8 @@ def check_constraints(students, tutors):
     pass
 
 def check_completion(students, tutors):
-    for student in students: 
-        if student.matched_tutor == None:
-            return False
-        
-    # If all of them are matched up, it then checks the constraint to see if it works
-    return check_constraints(students, tutors)
+    if check_constraints(students, tutors) and select_unassigned_var(students) == False:
+        return True 
+    return False
 
 students, tutors = match_students_tutors(students, tutors)
