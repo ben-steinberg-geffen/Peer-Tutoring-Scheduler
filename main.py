@@ -98,6 +98,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             if result != False:
                 return result
             
+            # Make sure to account for ALL of the times before removing
             del student_assignment[var]
     
     return False
