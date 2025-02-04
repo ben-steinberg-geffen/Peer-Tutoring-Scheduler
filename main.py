@@ -82,7 +82,7 @@ def backtrack(assignment, students, tutors):
     var = select_unassigned_var(students)
     # Assign tutors in a list, if they don't work then backtrack
     for student in students: 
-        if check_constraints(students, tutors):
+        if check_constraints(assignment, students, tutors):
             assignment[var] = student
             result = backtrack(students, tutors)
             if result != False:
@@ -92,7 +92,7 @@ def backtrack(assignment, students, tutors):
     
     return False
 
-def check_constraints(students, tutors):
+def check_constraints(assignment, students, tutors):
     '''
     Tutors can't teach two tutors at the same time *
     Tutors and students must have the same classes
@@ -110,8 +110,8 @@ def check_constraints(students, tutors):
             
     return True # CHANGE LATER 
 
-def check_completion(students, tutors):
-    if check_constraints(students, tutors) and select_unassigned_var(students) == False:
+def check_completion(assignment, students, tutors):
+    if check_constraints(assignment, students, tutors) and select_unassigned_var(students) == False:
         return True 
     return False
 
