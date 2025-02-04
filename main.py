@@ -121,15 +121,10 @@ def check_constraints(student_assignment, time_assignment):
                 if possible_students < len(student_array):
                     student_array.append(student)
 
-        # From here check the times
-        for student in student_array: 
-            availability = get_time_intersection(student, tutor)
-            if len(availability) == 0: 
-                return False
+        # if any of the student times intesect that would be bad
+        for student in student_array:
             for other in student_array:
-                if other == student:
-                    continue
-                if other.availability == student.availability and len(other.availability) == 1:
+                if time_assignment[student] == time_assignment[other]:
                     return False
                 
     # Prioritize tutors with no students over students with tutors
