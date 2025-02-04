@@ -46,11 +46,15 @@ def get_time_intersection(student, tutor):
         if time in tutor.availability: 
             times.append(time) 
 
+    return times
+
 def get_time_x_intersection(student_a, student_b):
     times = []
     for time in student_a.availability:
         if time not in student_b.availability: 
             times.append(time)
+    
+    return times
 
 def match_students_tutors(students, tutors):
     for student in students:
@@ -95,7 +99,7 @@ def backtrack(assignment, students, tutors):
 
 def check_constraints(assignment, students, tutors):
     '''
-    Tutors can't teach two tutors at the same time *
+    Tutors can't teach two tutors at the same time slot*
     Tutors and students must have the same classes
     It must be at the same time as well
     Tutors and students will have the ability to request a change in tutors 
@@ -103,12 +107,22 @@ def check_constraints(assignment, students, tutors):
     * are the ones that we need to handle here
     '''
     
-    for tutor in tutors: 
-        for student in students: 
-            times = get_time_intersection(student, tutor)
-            # We want to see even if a tutor teaches multiple people, that they 
-            # can still work with everyone at different times.
-            
+    for tutor in assignment.values():
+        student_array = []
+        possible_students = len(tutor.availability)
+
+        for student in assignment.keys():
+            if assignment[student] == tutor: 
+                # This would mean they have the same tutor 
+                if possible_students < len(student_array):
+                    student_array.append(student)
+
+        # From here check the times
+        for student in student_array: 
+            availability = get_time_intersection(student, tutor)
+            if len(availability) == 0: 
+                return False
+
     return True # CHANGE LATER 
 
 def check_completion(assignment, students, tutors):
