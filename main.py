@@ -131,7 +131,13 @@ def check_constraints(assignment, students, tutors):
                     continue
                 if other.availability == student.availability and len(other.availability) == 1:
                     return False
-        
+                
+    # Prioritize tutors with no students over students with tutors
+    for tutor in tutors:
+        if tutor not in assignment.values():
+            for student in students:
+                if student not in assignment:
+                    return False
     return True 
 
 def check_completion(assignment, students, tutors):
