@@ -134,9 +134,9 @@ def check_constraints(student_assignment, time_assignment):
                 
     # Prioritize tutors with no students over students with tutors
     for tutor in tutors:
-        if tutor not in assignment.values():
+        if tutor not in student_assignment.values():
             for student in students:
-                if student not in assignment:
+                if student not in student_assignment:
                     return False
     return True 
 
