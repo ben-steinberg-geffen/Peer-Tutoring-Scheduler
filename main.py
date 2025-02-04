@@ -74,6 +74,7 @@ def select_unassigned_var(students):
 def backtrack(assignment, students, tutors):
     if check_completion(students, tutors):
         return assignment
+        # After this, we need to assign the tutors to the students
     
     var = select_unassigned_var(students)
     # Assign tutors in a list, if they don't work then backtrack
@@ -93,6 +94,7 @@ def check_constraints(students, tutors):
     Tutors can't teach two tutors at the same time *
     Tutors and students must have the same classes
     It must be at the same time as well
+    Tutors and students will have the ability to request a change in tutors 
     Tutors with no students take priority over students with tutors * 
     * are the ones that we need to handle here
     '''
