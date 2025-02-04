@@ -20,7 +20,6 @@ class Student:
         self.matched_tutors = []
         self.index = 0 
         self.final_tutor = None
-        self.matched = False
 
 class Tutor:
     def __init__(self, name, grade, availability, courses):
