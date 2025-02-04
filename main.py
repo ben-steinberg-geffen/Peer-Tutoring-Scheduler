@@ -52,6 +52,8 @@ def get_time_x_intersection(student_a, student_b):
     for time in student_a.availability:
         if time not in student_b.availability: 
             times.append(time)
+    
+    return times
 
     return times
 
@@ -110,6 +112,8 @@ def check_constraints(assignment, students, tutors):
         student_array = []
         possible_students = len(tutor.availability)
 
+        # Find students on each of the tutors 
+
         for student in assignment.keys():
             if assignment[student] == tutor: 
                 # This would mean they have the same tutor 
@@ -119,8 +123,10 @@ def check_constraints(assignment, students, tutors):
         # From here check the times
         for student in student_array: 
             availability = get_time_intersection(student, tutor)
+            if len(availability) == 0: 
+                return False
+            
 
-        
     return True # CHANGE LATER 
 
 def check_completion(assignment, students, tutors):
