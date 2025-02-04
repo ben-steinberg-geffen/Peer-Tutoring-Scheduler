@@ -1,9 +1,10 @@
 /*main design*/
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     margin: 0;
     padding: 0;
+    overflow-y: auto; /*enables vertical scrolling*/
 }
 
 .container {
@@ -14,16 +15,26 @@ body {
 
 /*navigation style*/
 nav {
-    background-color: #667c89;
+    background-color: #457b9d;
     padding: 10px;
     text-align: center;
 }
 
 nav a {
-    color: white;
+    color: #f1faee;  /* Default link color */
     margin: 0 15px;
     text-decoration: none;
     font-size: 18px;
+    padding: 10px 15px;
+}
+
+nav a:hover {
+    color: #fff;  /* Color when hovering */
+}
+
+nav a.active {
+    color: #e6c939;  /* Color for active/current page */
+    font-weight: bold;
 }
 
 .upload-box {
@@ -115,7 +126,23 @@ button.upload:hover {
     margin-top: 20px;
 }
 
+.request-change-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgb(255, 31, 31);
+    color: white;
+    border: 2px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
 
+.request-change-btn:hover {
+    background-color: #ff6666;
+}
 
 /*
 .container {
