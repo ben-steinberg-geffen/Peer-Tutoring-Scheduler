@@ -46,6 +46,12 @@ def get_time_intersection(student, tutor):
         if time in tutor.availability: 
             times.append(time) 
 
+def get_time_x_intersection(student_a, student_b):
+    times = []
+    for time in student_a.availability:
+        if time not in student_b.availability: 
+            times.append(time)
+
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
