@@ -52,8 +52,6 @@ def match_students_tutors(students, tutors):
                     tutor.matched_students.append(student)
     return students, tutors
 
-
-
 def select_unassigned_var(students):
     for student in students: 
         if student.matched_tutor == None: 
