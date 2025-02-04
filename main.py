@@ -1,8 +1,6 @@
 from data import load_student_data, load_tutor_data
 import pandas as pd
 
-# commit
-
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', None)
@@ -15,8 +13,9 @@ assignment = {}
 # update
 
 class Student:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, mail, grade, availability, courses):
         self.name = name
+        self.mail = mail
         self.grade = grade
         self.availability = availability
         self.courses = courses
@@ -25,8 +24,9 @@ class Student:
         self.final_tutor = None
 
 class Tutor:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, mail, grade, availability, courses):
         self.name = name
+        self.mail = mail
         self.grade = grade
         self.availability = availability
         self.courses = courses
@@ -37,10 +37,10 @@ students = []
 tutors = []
 
 for index, row in student_df.iterrows():
-    students.append(Student(row['name'], row['grade'], row['availability'], row['courses']))
+    students.append(Student(row['name'], row['mail'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
+        tutors.append(Tutor(row['name'], row['mail'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -56,8 +56,6 @@ def get_time_x_intersection(student_a, student_b):
         if time not in student_b.availability: 
             times.append(time)
     
-    return times
-
     return times
 
 def match_students_tutors(students, tutors):
@@ -115,8 +113,6 @@ def check_constraints(assignment, students, tutors):
         student_array = []
         possible_students = len(tutor.availability)
 
-        # Find students on each of the tutors 
-
         for student in assignment.keys():
             if assignment[student] == tutor: 
                 # This would mean they have the same tutor 
@@ -128,7 +124,6 @@ def check_constraints(assignment, students, tutors):
             availability = get_time_intersection(student, tutor)
             if len(availability) == 0: 
                 return False
-            
 
     return True # CHANGE LATER 
 
