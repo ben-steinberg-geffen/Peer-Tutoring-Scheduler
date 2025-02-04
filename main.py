@@ -103,11 +103,14 @@ def check_constraints(assignment, students, tutors):
     * are the ones that we need to handle here
     '''
     
-    for tutor in tutors: 
-        for student in students: 
-            times = get_time_intersection(student, tutor)
-            # We want to see even if a tutor teaches multiple people, that they 
-            # can still work with everyone at different times.
+    for tutor in assignment.values():
+        student_array = []
+        for student in assignment.keys():
+            if assignment[student] == tutor: 
+                # This would mean they have the same tutor 
+                student_array.append(student)
+
+        # From here check the times
             
     return True # CHANGE LATER 
 
