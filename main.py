@@ -104,13 +104,20 @@ def check_constraints(assignment, students, tutors):
     
     for tutor in assignment.values():
         student_array = []
+        possible_students = len(tutor.availability)
+
         for student in assignment.keys():
             if assignment[student] == tutor: 
                 # This would mean they have the same tutor 
-                student_array.append(student)
+                if possible_students < len(student_array):
+                    student_array.append(student)
 
         # From here check the times
-            
+        for student in student_array: 
+            pass
+        
+
+
     return True # CHANGE LATER 
 
 def check_completion(assignment, students, tutors):
