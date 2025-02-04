@@ -126,6 +126,11 @@ def check_constraints(assignment, students, tutors):
             availability = get_time_intersection(student, tutor)
             if len(availability) == 0: 
                 return False
+            for other in student_array:
+                if other == student:
+                    continue
+                if other.availability == student.availability and len(other.availability) == 1:
+                    return False
             
 
     return True # CHANGE LATER 
