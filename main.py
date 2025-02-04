@@ -118,7 +118,9 @@ def check_constraints(assignment, students, tutors):
 
         # From here check the times
         for student in student_array: 
-            availability = 
+            availability = get_time_intersection(student, tutor)
+            if len(availability) == 0: 
+                return False
 
     return True # CHANGE LATER 
 
