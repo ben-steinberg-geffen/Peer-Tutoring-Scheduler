@@ -13,8 +13,9 @@ assignment = {}
 # update
 
 class Student:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses):
         self.name = name
+        self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
@@ -23,8 +24,9 @@ class Student:
         self.final_tutor = None
 
 class Tutor:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses):
         self.name = name
+        self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
@@ -35,10 +37,10 @@ students = []
 tutors = []
 
 for index, row in student_df.iterrows():
-    students.append(Student(row['name'], row['grade'], row['availability'], row['courses']))
+    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
+        tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -54,8 +56,6 @@ def get_time_x_intersection(student_a, student_b):
         if time not in student_b.availability: 
             times.append(time)
     
-    return times
-
     return times
 
 def match_students_tutors(students, tutors):
@@ -112,8 +112,6 @@ def check_constraints(assignment, students, tutors):
     for tutor in assignment.values():
         student_array = []
         possible_students = len(tutor.availability)
-
-        # Find students on each of the tutors 
 
         for student in assignment.keys():
             if assignment[student] == tutor: 
