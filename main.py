@@ -94,7 +94,7 @@ def backtrack(assignment, students, tutors):
 
 def check_constraints(assignment, students, tutors):
     '''
-    Tutors can't teach two tutors at the same time *
+    Tutors can't teach two tutors at the same time slot*
     Tutors and students must have the same classes
     It must be at the same time as well
     Tutors and students will have the ability to request a change in tutors 
