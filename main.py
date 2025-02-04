@@ -22,6 +22,7 @@ class Student:
         self.matched_tutors = []
         self.index = 0 
         self.final_tutor = None
+        self.final_time = None
 
 class Tutor:
     def __init__(self, name, email, grade, availability, courses):
@@ -31,7 +32,8 @@ class Tutor:
         self.availability = availability
         self.courses = courses
         self.matched_students = []
-        self.final_students = []
+        self.final_students = {} # This aligns the students with the time slot
+        
 
 students = []
 tutors = []
@@ -129,9 +131,8 @@ def check_constraints(assignment, students, tutors):
                     continue
                 if other.availability == student.availability and len(other.availability) == 1:
                     return False
-            
-
-    return True # CHANGE LATER 
+        
+    return True 
 
 def check_completion(assignment, students, tutors):
     if check_constraints(assignment, students, tutors) and select_unassigned_var(students) == False:
