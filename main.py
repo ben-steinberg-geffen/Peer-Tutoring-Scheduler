@@ -9,8 +9,8 @@ pd.set_option('display.max_colwidth', None)
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
-assignment = {}
-# update
+student_assignment = {}
+time_assignment = {} # Lines up student with their time
 
 class Student:
     def __init__(self, name, email, grade, availability, courses):
@@ -83,25 +83,25 @@ def select_unassigned_var(students):
 
     return False
 
-def backtrack(assignment, students, tutors):
+def backtrack(student_assignment, time_assignment, students, tutors):
     if check_completion(students, tutors):
-        return assignment
+        return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
     
     var = select_unassigned_var(students)
     # Assign tutors in a list, if they don't work then backtrack
     for student in students: 
-        if check_constraints(assignment, students, tutors):
-            assignment[var] = student
+        if check_constraints(student_assignment, time_assignment):
+            student_assignment[var] = student
             result = backtrack(students, tutors)
             if result != False:
                 return result
             
-            del assignment[var]
+            del student_assignment[var]
     
     return False
 
-def check_constraints(assignment, students, tutors):
+def check_constraints(student_assignment, time_assignment):
     '''
     Tutors can't teach two tutors at the same time slot*
     Tutors and students must have the same classes
@@ -111,12 +111,12 @@ def check_constraints(assignment, students, tutors):
     * are the ones that we need to handle here
     '''
     
-    for tutor in assignment.values():
+    for tutor in student_assignment.values():
         student_array = []
         possible_students = len(tutor.availability)
 
-        for student in assignment.keys():
-            if assignment[student] == tutor: 
+        for student in student_assignment.keys():
+            if student_assignment[student] == tutor: 
                 # This would mean they have the same tutor 
                 if possible_students < len(student_array):
                     student_array.append(student)
@@ -134,8 +134,8 @@ def check_constraints(assignment, students, tutors):
         
     return True 
 
-def check_completion(assignment, students, tutors):
-    if check_constraints(assignment, students, tutors) and select_unassigned_var(students) == False:
+def check_completion(student_assignment, time_assignment, students, tutors):
+    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_var(students) == False:
         return True 
     return False
 
