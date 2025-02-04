@@ -10,34 +10,39 @@ student_df = load_student_data()
 tutor_df = load_tutor_data()
 
 assignment = {}
+# update
 
 class Student:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses):
         self.name = name
+        self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
         self.matched_tutors = []
         self.index = 0 
         self.final_tutor = None
+        self.final_time = None
 
 class Tutor:
-    def __init__(self, name, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses):
         self.name = name
+        self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
         self.matched_students = []
-        self.final_students = []
+        self.final_students = {} # This aligns the students with the time slot
+        
 
 students = []
 tutors = []
 
 for index, row in student_df.iterrows():
-    students.append(Student(row['name'], row['grade'], row['availability'], row['courses']))
+    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['grade'], row['availability'], row['courses']))
+        tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -121,10 +126,13 @@ def check_constraints(assignment, students, tutors):
             availability = get_time_intersection(student, tutor)
             if len(availability) == 0: 
                 return False
-            
+            for other in student_array:
+                if other == student:
+                    continue
+                if other.availability == student.availability and len(other.availability) == 1:
+                    return False
         
-            
-    return True # CHANGE LATER 
+    return True 
 
 def check_completion(assignment, students, tutors):
     if check_constraints(assignment, students, tutors) and select_unassigned_var(students) == False:
