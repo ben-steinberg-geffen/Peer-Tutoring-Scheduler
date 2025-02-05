@@ -76,8 +76,8 @@ def select_unassigned_tutor(students):
 
             # print("availability: ", student.availability)
             # print("tutor index: ", student.tutor_index )
-            print("availability: ", student.availability)
-            print("tutor index: ", student.tutor_index )
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
@@ -111,11 +111,15 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     for student in students:       
         
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[tutor_var] = student
+            student_assignment[student] = tutor_var
             time_assignment[student] = time_var
 
-            print("student_assignment: ", student_assignment)
-            print("time_assignment: ", time_assignment)
+            for student, tutor in student_assignment.items():
+                print(f"Student: {student.name} Tutor: {tutor.name}")
+
+            for student, time in time_assignment.items():
+                print(f"Student: {student.name} Time: {time}")    
+
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
@@ -173,5 +177,8 @@ def check_completion(student_assignment, time_assignment, students, tutors):
 students, tutors = match_students_tutors(students, tutors)
 student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-print("student_assignment: ", student_assignment)
-print("time_assignment: ", time_assignment)
+for student, tutor in student_assignment.items():
+    print(f"Student: {student.name}  Tutor: {tutor.name}")
+
+for student, time in time_assignment.items():
+    print(f"Student: {student.name} - Time: {time}") 
