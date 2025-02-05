@@ -1,5 +1,8 @@
 from data import load_student_data, load_tutor_data
 import pandas as pd
+import sys
+
+sys.setrecursionlimit(1000)
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -71,14 +74,15 @@ def select_unassigned_tutor(students):
                 # return False
                 continue
 
-            print("availability: ", student.availability)
-            print("tutor index: ", student.tutor_index )
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
             return student.matched_tutors[index]
     return False
-
 
 def select_unassigned_time(students):
     for student in students: 
@@ -103,11 +107,19 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_var = select_unassigned_time(students)
 
     # Assign tutors in a list, if they don't work then backtrack
-    for student in students:       
-        
+    for student in students:
+        if student.matched_tutors == []:
+            continue
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[tutor_var] = student
+            student_assignment[student] = tutor_var
             time_assignment[student] = time_var
+
+            for student, tutor in student_assignment.items():
+                print(f"Student: {student.name} Tutor: {tutor.name}")
+
+            for student, time in time_assignment.items():
+                print(f"Student: {student.name} Time: {time}")    
+
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
@@ -144,7 +156,7 @@ def check_constraints(student_assignment, time_assignment):
         # if any of the student times intesect that would be bad
         for student in student_array:
             for other in student_array:
-                if time_assignment[student] == time_assignment[other]:
+                if student != other and time_assignment[student] == time_assignment[other]:
                     return False
                 
     # Prioritize tutors with no students over students with tutors
@@ -158,12 +170,15 @@ def check_constraints(student_assignment, time_assignment):
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) == False:
+    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) is False:
         return True 
     return False
 
 students, tutors = match_students_tutors(students, tutors)
 student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-print("student_assignment: ", student_assignment)
-print("time_assignment: ", time_assignment)
+for student, tutor in student_assignment.items():
+    print(f"Student: {student.name}  Tutor: {tutor.name}")
+
+for student, time in time_assignment.items():
+    print(f"Student: {student.name} - Time: {time}") 
