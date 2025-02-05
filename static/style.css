@@ -1,7 +1,7 @@
 /*main design*/
 body {
     font-family: Arial, sans-serif;
-    background-color: #e5e5e5;
+    background-color: #fff;
     margin: 0;
     padding: 0;
     overflow-y: auto; /*enables vertical scrolling*/
@@ -15,7 +15,7 @@ body {
 
 /*navigation style*/
 nav {
-    background-color: #457b9d;
+    background-color: #003566;
     padding: 10px;
     text-align: center;
 }
@@ -33,7 +33,7 @@ nav a:hover {
 }
 
 nav a.active {
-    color: #eacd39;  
+    color: #ffd60a;  
     font-weight: bold;
 }
 
@@ -130,8 +130,8 @@ button.upload:hover {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #E63946;
-    color: white;
+    background-color: #ffc300;
+    color: black;
     border: 2px;
     padding: 10px 20px;
     font-size: 15px;
@@ -141,7 +141,7 @@ button.upload:hover {
 }
 
 .request-change-btn:hover {
-    background-color: #ff8f8f;
+    background-color: #ffd95d;
 }
 
 .modal {

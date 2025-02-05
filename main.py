@@ -52,14 +52,6 @@ def get_time_intersection(student, tutor):
 
     return times
 
-def get_time_x_intersection(student_a, student_b):
-    times = []
-    for time in student_a.availability:
-        if time not in student_b.availability: 
-            times.append(time)
-    
-    return times
-
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
@@ -81,13 +73,12 @@ def select_unassigned_tutor(students):
 
             # print("availability: ", student.availability)
             # print("tutor index: ", student.tutor_index )
+            print("availability: ", student.availability)
+            print("tutor index: ", student.tutor_index )
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
             return student.matched_tutors[index]
-        
-            # This should change the index of the student every time and rotate between them.
-
     return False
 
 
@@ -167,7 +158,6 @@ def check_constraints(student_assignment, time_assignment):
         if tutor not in student_assignment.values():
             for student in students:
                 if student not in student_assignment:
-                    print("here3")
                     return False
     '''
     return True 
