@@ -1,5 +1,8 @@
 from data import load_student_data, load_tutor_data
 import pandas as pd
+import sys
+
+sys.setrecursionlimit(1000)
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
