@@ -20,7 +20,8 @@ class Student:
         self.availability = availability
         self.courses = courses
         self.matched_tutors = []
-        self.index = 0 
+        self.tutor_index = 0 
+        self.time_index = 0
         self.final_tutor = None
         self.final_time = None
 
@@ -34,7 +35,6 @@ class Tutor:
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
         
-
 students = []
 tutors = []
 
@@ -69,11 +69,11 @@ def match_students_tutors(students, tutors):
                     tutor.matched_students.append(student)
     return students, tutors
 
-def select_unassigned_var(students):
+def select_unassigned_tutor(students):
     for student in students: 
         if student.final_tutor == None: 
             
-            index = student.index
+            index = student.tutor_index
 
             student.index += 1
             student.index = student.index % (len(student.matched_tutors) - 1)
@@ -83,23 +83,35 @@ def select_unassigned_var(students):
 
     return False
 
+def select_unassigned_time(students):
+    for student in students: 
+        if student.final_time == None: 
+            
+            index = student.time_index
+
+            student.index += 1
+            student.index = student.index % (len(student.availability) - 1)
+            return student.availability[index]
+        
+    return False
+
 def backtrack(student_assignment, time_assignment, students, tutors):
     # We also need to now account for assigning times too
     if check_completion(students, tutors):
         return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
     
-    var = select_unassigned_var(students)
+    tutor_var = select_unassigned_tutor(students)
     # Assign tutors in a list, if they don't work then backtrack
     for student in students: 
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[var] = student
+            student_assignment[tutor_var] = student
             result = backtrack(students, tutors)
             if result != False:
                 return result
             
             # Make sure to account for ALL of the times before removing
-            del student_assignment[var]
+            del student_assignment[tutor_var]
     
     return False
 
@@ -138,7 +150,7 @@ def check_constraints(student_assignment, time_assignment):
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_var(students) == False:
+    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_tutor(students) == False:
         return True 
     return False
 
