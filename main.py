@@ -109,13 +109,15 @@ def backtrack(student_assignment, time_assignment, students, tutors):
 
     # Assign tutors in a list, if they don't work then backtrack
     for student in students:       
-        
+        if student.matched_tutors == []:
+            continue
+            # add email to say your course rather isn't available for tutoring or the time is diff
         if check_constraints(student_assignment, time_assignment):
             student_assignment[student] = tutor_var
             time_assignment[student] = time_var
 
             for student, tutor in student_assignment.items():
-                print(f"Student: {student.name} Tutor: {tutor.name}")
+                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
             for student, time in time_assignment.items():
                 print(f"Student: {student.name} Time: {time}")    
