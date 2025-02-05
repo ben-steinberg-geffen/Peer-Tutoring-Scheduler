@@ -156,7 +156,7 @@ def check_constraints(student_assignment, time_assignment):
         # if any of the student times intesect that would be bad
         for student in student_array:
             for other in student_array:
-                if time_assignment[student] == time_assignment[other]:
+                if student != other and time_assignment[student] == time_assignment[other]:
                     return False
                 
     # Prioritize tutors with no students over students with tutors
@@ -170,7 +170,7 @@ def check_constraints(student_assignment, time_assignment):
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) == False:
+    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) is False:
         return True 
     return False
 
