@@ -79,9 +79,8 @@ def select_unassigned_tutor(students):
                 # return False
                 continue
 
-            print("availability: ", student.availability)
-            print("tutor index: ", student.tutor_index )
-            print(len(student.matched_tutors) - 1)
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
@@ -118,10 +117,11 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     for student in students:       
         
         if check_constraints(student_assignment, time_assignment):
-            print("AT RECURSIVE")
             student_assignment[tutor_var] = student
             time_assignment[student] = time_var
 
+            print("student_assignment: ", student_assignment)
+            print("time_assignment: ", time_assignment)
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
@@ -159,7 +159,6 @@ def check_constraints(student_assignment, time_assignment):
         for student in student_array:
             for other in student_array:
                 if time_assignment[student] == time_assignment[other]:
-                    print("here2")
                     return False
                 
     # Prioritize tutors with no students over students with tutors
@@ -171,11 +170,9 @@ def check_constraints(student_assignment, time_assignment):
                     print("here3")
                     return False
     '''
-    print("passes constraints")
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    print(select_unassigned_tutor(students))
     if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) == False:
         return True 
     return False
