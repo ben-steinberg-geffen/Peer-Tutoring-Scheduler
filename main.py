@@ -75,8 +75,8 @@ def select_unassigned_tutor(students):
             
             index = student.tutor_index
 
-            student.index += 1
-            student.index = student.index % (len(student.matched_tutors) - 1)
+            student.tutor_index += 1
+            student.tutor_index = student.tutor_index % (len(student.matched_tutors) - 1)
             return student.matched_tutors[index]
         
             # This should change the index of the student every time and rotate between them.
@@ -97,7 +97,7 @@ def select_unassigned_time(students):
 
 def backtrack(student_assignment, time_assignment, students, tutors):
     # We also need to now account for assigning times too
-    if check_completion(students, tutors):
+    if check_completion(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
     
@@ -105,7 +105,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_var = select_unassigned_time(students)
 
     # Assign tutors in a list, if they don't work then backtrack
-    for student in students: 
+    for student in students:         
         if check_constraints(student_assignment, time_assignment):
             student_assignment[tutor_var] = student
             time_assignment[student] = time_var
@@ -154,8 +154,11 @@ def check_constraints(student_assignment, time_assignment):
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_tutor(students) == False:
+    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) == False:
         return True 
     return False
 
 students, tutors = match_students_tutors(students, tutors)
+student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
+print("student_assignment: ", student_assignment)
+print("time_assignment: ", time_assignment)
