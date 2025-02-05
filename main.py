@@ -92,6 +92,8 @@ def select_unassigned_time(students):
             student.index += 1
             student.index = student.index % (len(student.availability) - 1)
             return student.availability[index]
+        
+    return False
 
 def backtrack(student_assignment, time_assignment, students, tutors):
     # We also need to now account for assigning times too
@@ -148,7 +150,7 @@ def check_constraints(student_assignment, time_assignment):
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_var(students) == False:
+    if check_constraints(student_assignment, time_assignment, students, tutors) and select_unassigned_tutor(students) == False:
         return True 
     return False
 
