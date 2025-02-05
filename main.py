@@ -75,6 +75,12 @@ def select_unassigned_tutor(students):
             
             index = student.tutor_index
 
+            if not student.matched_tutors:
+                return False
+
+            print("availability: ", student.availability)
+            print("tutor index: ", student.tutor_index )
+            print(len(student.matched_tutors) - 1)
             student.tutor_index += 1
             student.tutor_index = student.tutor_index % (len(student.matched_tutors) - 1)
             return student.matched_tutors[index]
@@ -89,8 +95,8 @@ def select_unassigned_time(students):
             
             index = student.time_index
 
-            student.index += 1
-            student.index = student.index % (len(student.availability) - 1)
+            student.time_index += 1
+            student.time_index = student.time_index % (len(student.availability) - 1)
             return student.availability[index]
         
     return False
