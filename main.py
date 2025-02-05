@@ -20,7 +20,7 @@ class Student:
         self.availability = availability
         self.courses = courses
         self.matched_tutors = []
-        self.index = 0 
+        self.index = 0
         self.final_tutor = None
         self.final_time = None
 
@@ -34,7 +34,6 @@ class Tutor:
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
         
-
 students = []
 tutors = []
 
