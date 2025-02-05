@@ -103,16 +103,20 @@ def backtrack(student_assignment, time_assignment, students, tutors):
         # After this, we need to assign the tutors to the students
     
     tutor_var = select_unassigned_tutor(students)
+    time_var = select_unassigned_time(students)
+
     # Assign tutors in a list, if they don't work then backtrack
     for student in students: 
         if check_constraints(student_assignment, time_assignment):
             student_assignment[tutor_var] = student
-            result = backtrack(students, tutors)
+            time_assignment[student] = time_var
+            result = backtrack(student_assignment, time_assignment, students, tutors)
             if result != False:
                 return result
             
             # Make sure to account for ALL of the times before removing
             del student_assignment[tutor_var]
+            del time_assignment[student]
     
     return False
 
