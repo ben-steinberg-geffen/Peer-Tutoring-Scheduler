@@ -16,7 +16,7 @@ body {
 /*navigation style*/
 nav {
     background-color: #003566;
-    padding: 10px;
+    padding: 20px;
     text-align: center;
 }
 
@@ -24,7 +24,7 @@ nav a {
     color: #f1faee;  
     margin: 0 15px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
     padding: 10px 15px;
 }
 

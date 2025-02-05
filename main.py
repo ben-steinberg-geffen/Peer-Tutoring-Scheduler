@@ -71,6 +71,8 @@ def select_unassigned_tutor(students):
                 # return False
                 continue
 
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
             print("availability: ", student.availability)
             print("tutor index: ", student.tutor_index )
             student.tutor_index += 1
@@ -108,6 +110,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
         if check_constraints(student_assignment, time_assignment):
             student_assignment[tutor_var] = student
             time_assignment[student] = time_var
+
+            print("student_assignment: ", student_assignment)
+            print("time_assignment: ", time_assignment)
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
