@@ -35,7 +35,6 @@ class Tutor:
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
         
-
 students = []
 tutors = []
 
