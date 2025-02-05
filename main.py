@@ -84,7 +84,6 @@ def select_unassigned_tutor(students):
             return student.matched_tutors[index]
     return False
 
-
 def select_unassigned_time(students):
     for student in students: 
         if student.final_time == None: 
@@ -108,8 +107,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_var = select_unassigned_time(students)
 
     # Assign tutors in a list, if they don't work then backtrack
-    for student in students:       
-        
+    for student in students:
+        if student.matched_tutors == []:
+            continue
         if check_constraints(student_assignment, time_assignment):
             student_assignment[student] = tutor_var
             time_assignment[student] = time_var
