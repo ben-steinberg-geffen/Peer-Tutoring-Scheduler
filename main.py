@@ -84,6 +84,7 @@ def select_unassigned_var(students):
     return False
 
 def backtrack(student_assignment, time_assignment, students, tutors):
+    # We also need to now account for assigning times too
     if check_completion(students, tutors):
         return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
@@ -97,6 +98,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             if result != False:
                 return result
             
+            # Make sure to account for ALL of the times before removing
             del student_assignment[var]
     
     return False
