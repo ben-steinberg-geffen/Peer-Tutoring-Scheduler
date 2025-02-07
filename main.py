@@ -45,7 +45,7 @@ for index, row in student_df.iterrows():
     students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
+    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -71,7 +71,6 @@ def select_unassigned_tutor(students):
             index = student.tutor_index
 
             if not student.matched_tutors:
-                # return False
                 continue
 
             # print("availability: ", student.availability)
@@ -117,16 +116,16 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             time_assignment[student] = time_var
             student.final_time = time_var
 
-            for student, tutor in student_assignment.items():
-                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
+            # for student, tutor in student_assignment.items():
+            #     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
-            for student, time in time_assignment.items():
-                print(f"Student: {student.name} Time: {time}")    
-
+            # for student, time in time_assignment.items():
+            #     print(f"Student: {student.name} Time: {time}")    
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
-            if result != False:
+            if result:
+                print('HERERERE')
                 return result
             
             # Make sure to account for ALL of the times before removing
@@ -134,7 +133,6 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             student.final_time = None
             del student_assignment[student]
             del time_assignment[student]
-        
 
     return False
 
