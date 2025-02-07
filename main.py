@@ -94,13 +94,18 @@ def select_unassigned_time(tutor_var, student_var):
         student_var.time_index = 0
 
     return selected_time
-        
+
 def backtrack(student_assignment, time_assignment, students, tutors):
     if check_completion(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
     
-    tutor_var, student_var = select_unassigned_tutor(students) ## iter1 is Raina Mahtabi, Ben Steinberg
-    time_var = select_unassigned_time(tutor_var, student_var) ## iter1 Wednesday: H Block
+    result = select_unassigned_tutor(students)
+    
+    if not result:
+        return False
+    
+    tutor_var, student_var = result
+    time_var = select_unassigned_time(tutor_var, student_var)
 
     student_assignment[student_var] = tutor_var
     student_var.final_tutor = tutor_var
@@ -118,7 +123,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     student_var.final_time = None
     del student_assignment[student_var]
     del time_assignment[student_var]
+    del tutor_var.final_students[student_var]
     return False
+
 
 def check_constraints(student_assignment, time_assignment):
     '''
@@ -155,6 +162,7 @@ def check_constraints(student_assignment, time_assignment):
             for other in student_array:
                 if student != other and student.final_time == other.final_time:
                     return False
+                
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
@@ -163,8 +171,11 @@ def check_completion(student_assignment, time_assignment, students, tutors):
     return False
 
 students, tutors = match_students_tutors(students, tutors)
-student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
+result = backtrack(student_assignment, time_assignment, students, tutors)
 
-for student, tutor in student_assignment.items():
-    print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
-    
+if result:
+    student_assignment, time_assignment = result
+    for student, tutor in student_assignment.items():
+        print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
+else:
+    print("No solution found.")
