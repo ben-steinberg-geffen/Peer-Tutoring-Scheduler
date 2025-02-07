@@ -81,7 +81,7 @@ def select_unassigned_tutor(students):
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
-            return student.matched_tutors[index]
+            return student.matched_tutors[index], student
     return False
 
 def select_unassigned_time(students):
