@@ -73,9 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 form.submit();
             }, 1000);
-        } else {
-            // If files are missing, submit the form immediately without confetti
-            form.submit();
         }
     });
 });
