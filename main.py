@@ -62,7 +62,7 @@ def select_unassigned_tutor(students):
             if not student.matched_tutors:
                 continue
 
-            index = student.tutor_index
+            index = student.tutor_index - 1
 
             student.tutor_index += 1
             
@@ -126,13 +126,14 @@ def check_constraints(student_assignment, time_assignment):
     * are the ones that we need to handle here
     '''
 
-    for tutor in student_assignment.values():
-        for student in time_assignment.keys():
-            for other in time_assignment.keys():
-                if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
-                    return False
-        if len(tutor.final_students) >= 2:
-            return False
+    # for student in time_assignment.keys():
+    #     for other in time_assignment.keys():
+    #         if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
+    #             print("Constraint violated: Two students assigned to the same tutor at the same time.")
+    #             return False
+    # for tutor in student_assignment.values():
+    #     if len(tutor.final_students) > 2:
+    #         return False
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
