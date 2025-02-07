@@ -1,14 +1,4 @@
 from data import load_student_data, load_tutor_data
-import pandas as pd
-import sys
-
-sys.setrecursionlimit(1000)
-
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
-
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
@@ -55,6 +45,7 @@ def get_time_intersection(student, tutor):
             times.append(time) 
 
     return times
+
 
 def match_students_tutors(students, tutors):
     for student in students:
@@ -138,31 +129,11 @@ def check_constraints(student_assignment, time_assignment):
     '''
 
     for tutor in student_assignment.values():
-        student_array = tutor.final_students
         for student in time_assignment.keys():
             for other in time_assignment.keys():
                 if student != other and student.final_time == other.final_time:
                     print('times intersecting')
                     return False
-    
-    for tutor in student_assignment.values():
-        student_array = []
-        possible_students = len(tutor.availability)
-
-        for student in student_assignment.keys():
-            if student_assignment[student] == tutor: 
-                # This would mean they have the same tutor 
-                if possible_students < len(student_array):
-                    print('gets here')
-                    student_array.append(student)
-
-        # if any of the student times intesect that would be bad
-        print('student array: ', student_array)
-        for student in student_array:
-            for other in student_array:
-                if student != other and student.final_time == other.final_time:
-                    return False
-                
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
