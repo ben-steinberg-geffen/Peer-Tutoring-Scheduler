@@ -68,16 +68,18 @@ def match_students_tutors(students, tutors):
 def select_unassigned_tutor(students):
     for student in students: 
         if student.final_tutor == None: 
-            
-            index = student.tutor_index
-
-            if not student.matched_tutors: # same as == []
+            if not student.matched_tutors:
                 continue
 
-            student.tutor_index += 1
-            if student.tutor_index > len(student.matched_tutors) - 1:
+            index = student.tutor_index
+
+            temp_index = student.tutor_index + 1 # This is affecting index somehow and returning the wrong tutor
+            
+            if temp_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
+
             return student.matched_tutors[index], student
+        
     return False
 
 def select_unassigned_time(tutor_var, student_var):
@@ -94,53 +96,28 @@ def select_unassigned_time(tutor_var, student_var):
     return selected_time
         
 def backtrack(student_assignment, time_assignment, students, tutors):
-    # We also need to now account for assigning times too
     if check_completion(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
-        # After this, we need to assign the tutors to the students
     
     tutor_var, student_var = select_unassigned_tutor(students) ## iter1 is Raina Mahtabi, Ben Steinberg
     time_var = select_unassigned_time(tutor_var, student_var) ## iter1 Wednesday: H Block
 
-    # Assign tutors in a list, if they don't work then backtrack
-    for student in students:       
-        if not student.matched_tutors: 
-            continue
+    student_assignment[student_var] = tutor_var
+    student_var.final_tutor = tutor_var
+    time_assignment[student_var] = time_var
+    student_var.final_time = time_var
+
+    if check_constraints(student_assignment, time_assignment):
+        result = backtrack(student_assignment, time_assignment, students, tutors)
+
+        if result:
+            return result
         
-        student_assignment[student] = tutor_var
-        student.final_tutor = tutor_var
-        time_assignment[student] = time_var
-        student.final_time = time_var
-
-        if check_constraints(student_assignment, time_assignment):
-            
-
-            for student, tutor in student_assignment.items():
-                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
-
-            for student, time in time_assignment.items():
-                print(f"Student: {student.name} Time: {time}")    
-
-            result = backtrack(student_assignment, time_assignment, students, tutors)
-            
-            if result:
-                print('HERERERE')
-                return result
-            
-            # Make sure to account for ALL of the times before removing
-            student.final_tutor = None
-            student.final_time = None
-            del student_assignment[student]
-            del time_assignment[student]
-
-        else: 
-            student.final_tutor = None
-            student.final_time = None
-            del student_assignment[student]
-            del time_assignment[student]
-
+    student_var.final_tutor = None
+    student_var.final_time = None
+    del student_assignment[student_var]
+    del time_assignment[student_var]
     return False
-
 
 def check_constraints(student_assignment, time_assignment):
     '''
@@ -186,6 +163,9 @@ def check_completion(student_assignment, time_assignment, students, tutors):
 students, tutors = match_students_tutors(students, tutors)
 student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-print(students[0].name, [tutor.name for tutor in students[0].matched_tutors], [tutor.availability for tutor in students[0].matched_tutors], students[0].availability)
-print(students[1].name, [tutor.name for tutor in students[1].matched_tutors], [tutor.availability for tutor in students[1].matched_tutors], students[1].availability)
-print(students[2].name, [tutor.name for tutor in students[2].matched_tutors], [tutor.availability for tutor in students[2].matched_tutors], students[2].availability)
+for student, tutor in student_assignment.items():
+    print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
+
+# print(students[0].name, [tutor.name for tutor in students[0].matched_tutors], [tutor.availability for tutor in students[0].matched_tutors], students[0].availability)
+# print(students[1].name, [tutor.name for tutor in students[1].matched_tutors], [tutor.availability for tutor in students[1].matched_tutors], students[1].availability)
+# print(students[2].name, [tutor.name for tutor in students[2].matched_tutors], [tutor.availability for tutor in students[2].matched_tutors], students[2].availability)
