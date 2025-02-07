@@ -138,6 +138,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
 
     return False
 
+
 def check_constraints(student_assignment, time_assignment):
     '''
     Tutors can't teach two tutors at the same time slot*
