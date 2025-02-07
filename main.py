@@ -9,6 +9,7 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
+
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
