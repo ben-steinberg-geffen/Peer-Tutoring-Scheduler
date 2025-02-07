@@ -106,6 +106,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     student_var.final_tutor = tutor_var
     time_assignment[student_var] = time_var
     student_var.final_time = time_var
+    tutor_var.final_students[student_var] = time_var
 
     if check_constraints(student_assignment, time_assignment):
         result = backtrack(student_assignment, time_assignment, students, tutors)
@@ -154,15 +155,6 @@ def check_constraints(student_assignment, time_assignment):
             for other in student_array:
                 if student != other and student.final_time == other.final_time:
                     return False
-                
-    # Prioritize tutors with no students over students with tutors
-    '''
-    for tutor in tutors:
-        if tutor not in student_assignment.values():
-            for student in students:
-                if student not in student_assignment:
-                    return False
-    '''
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
@@ -175,7 +167,3 @@ student_assignment, time_assignment = backtrack(student_assignment, time_assignm
 
 for student, tutor in student_assignment.items():
     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
-
-# print(students[0].name, [tutor.name for tutor in students[0].matched_tutors], [tutor.availability for tutor in students[0].matched_tutors], students[0].availability)
-# print(students[1].name, [tutor.name for tutor in students[1].matched_tutors], [tutor.availability for tutor in students[1].matched_tutors], students[1].availability)
-# print(students[2].name, [tutor.name for tutor in students[2].matched_tutors], [tutor.availability for tutor in students[2].matched_tutors], students[2].availability)
