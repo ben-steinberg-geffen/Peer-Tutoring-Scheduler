@@ -96,7 +96,6 @@ def select_unassigned_time(tutor_var, student_var):
         
 def backtrack(student_assignment, time_assignment, students, tutors):
     if check_completion(student_assignment, time_assignment, students, tutors):
-        print('Completed')
         return student_assignment, time_assignment
     
     tutor_var, student_var = select_unassigned_tutor(students) ## iter1 is Raina Mahtabi, Ben Steinberg
@@ -118,45 +117,6 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     del student_assignment[student_var]
     del time_assignment[student_var]
     return False
-
-    '''
-    # Assign tutors in a list, if they don't work then backtrack
-    for student in students:       
-        # if not student.matched_tutors: 
-        #     continue
-        
-        student_assignment[student] = tutor_var
-        student.final_tutor = tutor_var
-        time_assignment[student] = time_var
-        student.final_time = time_var
-
-        if check_constraints(student_assignment, time_assignment):
-            for student, tutor in student_assignment.items():
-                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
-
-            for student, time in time_assignment.items():
-                print(f"Student: {student.name} Time: {time}")    
-
-            result = backtrack(student_assignment, time_assignment, students, tutors)
-            
-            if result:
-                print('HERERERE')
-                return result
-            
-            # Make sure to account for ALL of the times before removing
-            student.final_tutor = None
-            student.final_time = None
-            del student_assignment[student]
-            del time_assignment[student]
-
-        else: 
-            student.final_tutor = None
-            student.final_time = None
-            del student_assignment[student]
-            del time_assignment[student]
-    '''
-    return False
-
 
 def check_constraints(student_assignment, time_assignment):
     '''
