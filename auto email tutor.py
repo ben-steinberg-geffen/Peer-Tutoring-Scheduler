@@ -15,3 +15,20 @@ def email_tutor(student, matched_tutor):
 # def email_tutor(matched_student, tutor):
 #     message = MIMEMultipart()
 #asdufadsfs
+
+email = "GeffenPeerTutors@gmail.com"
+reciever_email = "driover73@geffenacademy.ucla.edu"
+
+subject = input("SUBJECT: ")
+message = input("MESSAGE: ")
+
+text =  f"Subject: {subject}\n\n{message}"
+
+server = smtplib.SMTP("smtp.gmail.com", 587)
+server.starttls()
+
+server.login(email, "pyke ojyj ixud podl")
+
+server.sendmail(email, reciever_email, text)
+
+print("Email has been sent to " + reciever_email)
