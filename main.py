@@ -129,6 +129,14 @@ def check_constraints(student_assignment, time_assignment):
     # Tutors with no students take priority over students with tutors * 
     * are the ones that we need to handle here
     '''
+
+    for tutor in student_assignment.values():
+        student_array = tutor.final_students
+        for student in time_assignment.keys():
+            for other in time_assignment.keys():
+                if student != other and student.final_time == other.final_time:
+                    print('times intersecting')
+                    return False
     
     for tutor in student_assignment.values():
         student_array = []
@@ -138,12 +146,14 @@ def check_constraints(student_assignment, time_assignment):
             if student_assignment[student] == tutor: 
                 # This would mean they have the same tutor 
                 if possible_students < len(student_array):
+                    print('gets here')
                     student_array.append(student)
 
         # if any of the student times intesect that would be bad
+        print('student array: ', student_array)
         for student in student_array:
             for other in student_array:
-                if student != other and time_assignment[student] == time_assignment[other]:
+                if student != other and student.final_time == other.final_time:
                     return False
                 
     return True 
