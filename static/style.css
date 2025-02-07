@@ -9,6 +9,7 @@ body {
 
 li {
     font-size: 18px;
+    color: #000814;
 }
 
 .container {
@@ -198,11 +199,13 @@ button.upload:hover {
 h4 {
     font-size: 24px;
     margin: 0px;
+    color: #000814;
 }
 
 h2 {
     text-align: center;
     font-size: 28px;
+    color: #000814;
 }
 
 /*home page bullet points*/
@@ -234,4 +237,31 @@ h2 {
 .alert-info {
     background-color: #d1ecf1;
     color: #0c5460;
+}
+
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    margin-top: 3px;
+}
+
+.text-content {
+    flex: 1;
+    max-width: 600px;
+    padding-left: 20px;
+}
+
+.image-container {
+    flex: 0 0 auto;
+    padding-right: 20px;
+}
+
+.image-container img {
+    width: 480px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
