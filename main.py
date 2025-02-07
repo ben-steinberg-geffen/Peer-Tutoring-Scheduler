@@ -4,7 +4,7 @@ student_df = load_student_data()
 tutor_df = load_tutor_data()
 
 student_assignment = {}
-time_assignment = {} # Lines up student with their time
+time_assignment = {}
 
 class Student:
     def __init__(self, name, email, grade, availability, courses):
@@ -91,7 +91,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
     
     result = select_unassigned_tutor(students)
-    
+
     if not result:
         return False
     
