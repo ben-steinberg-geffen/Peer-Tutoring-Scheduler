@@ -63,9 +63,9 @@ def select_unassigned_tutor(students):
 
             index = student.tutor_index
 
-            temp_index = student.tutor_index + 1 # This is affecting index somehow and returning the wrong tutor
+            student.tutor_index += 1
             
-            if temp_index > len(student.matched_tutors) - 1:
+            if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
 
             return student.matched_tutors[index], student
@@ -116,13 +116,11 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     del tutor_var.final_students[student_var]
     return False
 
-
 def check_constraints(student_assignment, time_assignment):
     '''
-    Tutors can't teach two tutors at the same time slot*
+    Tutors can't teach two students at the same time slot*
     # Tutors and students must have the same classes
     # It must be at the same time as well
-    Tutors and students will have the ability to request a change in tutors 
     # Tutors with no students take priority over students with tutors * 
     * are the ones that we need to handle here
     '''
@@ -130,9 +128,10 @@ def check_constraints(student_assignment, time_assignment):
     for tutor in student_assignment.values():
         for student in time_assignment.keys():
             for other in time_assignment.keys():
-                if student != other and student.final_time == other.final_time:
-                    print('times intersecting')
-                    return False          
+                if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
+                    return False
+        if len(tutor.final_students) >= 2:
+            return False
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
