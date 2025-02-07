@@ -73,56 +73,52 @@ def select_unassigned_tutor(students):
             if not student.matched_tutors: # same as == []
                 continue
 
-            # print("availability: ", student.availability)
-            # print("tutor index: ", student.tutor_index )
-            # print("availability: ", student.availability)
-            # print("tutor index: ", student.tutor_index )
-
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
-            return student.matched_tutors[index]
+            return student.matched_tutors[index], student
     return False
 
-def select_unassigned_time(students):
-    for student in students: 
-        if student.final_time == None: 
-            
-            index = student.time_index
+def select_unassigned_time(tutor_var, student_var):
+    index = student_var.time_index
 
-            student.time_index += 1
-            if student.time_index > len(student.availability) - 1:
-                student.time_index = 0
-            return student.availability[index]
+    times = get_time_intersection(student_var, tutor_var)
+
+    selected_time = times[index]
+
+    student_var.time_index += 1
+    if student_var.time_index > len(times) - 1:
+        student_var.time_index = 0
+
+    return selected_time
         
-    return False
-
 def backtrack(student_assignment, time_assignment, students, tutors):
     # We also need to now account for assigning times too
     if check_completion(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
     
-    tutor_var = select_unassigned_tutor(students) ## iter1 is Ben Steinberg
-    time_var = select_unassigned_time(students)
-    # time_var is able to return the availability of the wrong student
+    tutor_var, student_var = select_unassigned_tutor(students) ## iter1 is Raina Mahtabi, Ben Steinberg
+    time_var = select_unassigned_time(tutor_var, student_var) ## iter1 Wednesday: H Block
 
     # Assign tutors in a list, if they don't work then backtrack
     for student in students:       
-        if student.matched_tutors == []:
+        if not student.matched_tutors: 
             continue
-            # add email to say your course rather isn't available for tutoring or the time is diff
+        
+        student_assignment[student] = tutor_var
+        student.final_tutor = tutor_var
+        time_assignment[student] = time_var
+        student.final_time = time_var
+
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[student] = tutor_var
-            student.final_tutor = tutor_var
-            time_assignment[student] = time_var
-            student.final_time = time_var
+            
 
-            # for student, tutor in student_assignment.items():
-            #     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
+            for student, tutor in student_assignment.items():
+                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
-            # for student, time in time_assignment.items():
-            #     print(f"Student: {student.name} Time: {time}")    
+            for student, time in time_assignment.items():
+                print(f"Student: {student.name} Time: {time}")    
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
@@ -131,6 +127,12 @@ def backtrack(student_assignment, time_assignment, students, tutors):
                 return result
             
             # Make sure to account for ALL of the times before removing
+            student.final_tutor = None
+            student.final_time = None
+            del student_assignment[student]
+            del time_assignment[student]
+
+        else: 
             student.final_tutor = None
             student.final_time = None
             del student_assignment[student]
@@ -181,7 +183,7 @@ def check_completion(student_assignment, time_assignment, students, tutors):
     return False
 
 students, tutors = match_students_tutors(students, tutors)
-# student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
+student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
 print(students[0].name, [tutor.name for tutor in students[0].matched_tutors], [tutor.availability for tutor in students[0].matched_tutors], students[0].availability)
 print(students[1].name, [tutor.name for tutor in students[1].matched_tutors], [tutor.availability for tutor in students[1].matched_tutors], students[1].availability)
