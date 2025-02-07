@@ -116,11 +116,11 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             time_assignment[student] = time_var
             student.final_time = time_var
 
-            # for student, tutor in student_assignment.items():
-            #     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
+            for student, tutor in student_assignment.items():
+                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
-            # for student, time in time_assignment.items():
-            #     print(f"Student: {student.name} Time: {time}")    
+            for student, time in time_assignment.items():
+                print(f"Student: {student.name} Time: {time}")    
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
@@ -180,8 +180,14 @@ def check_completion(student_assignment, time_assignment, students, tutors):
 students, tutors = match_students_tutors(students, tutors)
 student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-for student, tutor in student_assignment.items():
-    print(f"Student: {student.name}  Tutor: {tutor.name}")
+# for student, tutor in student_assignment.items():
+#     print(f"Student: {student.name}  Tutor: {tutor.name}")
 
-for student, time in time_assignment.items():
-    print(f"Student: {student.name} - Time: {time}") 
+# for student, time in time_assignment.items():
+#     print(f"Student: {student.name} - Time: {time}") 
+
+# for student in students:
+#     if student.name == 'Emmy De Silva':
+#         print('Emmy', student.courses)
+#         for tutor in student.matched_tutors:
+#             print(tutor.name, tutor.courses)
