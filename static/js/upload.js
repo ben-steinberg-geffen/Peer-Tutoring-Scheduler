@@ -62,13 +62,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission and confetti
     form.addEventListener('submit', function(e) {
-        // Only prevent default if we want to show confetti
         e.preventDefault();
-        showConfetti();
-        // Submit the form after a brief delay
-        setTimeout(() => {
+        
+        const tutorsFile = document.getElementById('peer_tutors_file').files[0];
+        const studentsFile = document.getElementById('students_classes_file').files[0];
+        
+        if (tutorsFile && studentsFile) {
+            showConfetti();
+            // Submit the form after a brief delay
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+        } else {
+            // If files are missing, submit the form immediately without confetti
             form.submit();
-        }, 1000);
+        }
     });
 });
 
