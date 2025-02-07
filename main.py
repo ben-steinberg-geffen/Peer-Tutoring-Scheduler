@@ -45,7 +45,7 @@ for index, row in student_df.iterrows():
     students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
+    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -70,14 +70,14 @@ def select_unassigned_tutor(students):
             
             index = student.tutor_index
 
-            if not student.matched_tutors:
-                # return False
+            if not student.matched_tutors: # same as == []
                 continue
 
             # print("availability: ", student.availability)
             # print("tutor index: ", student.tutor_index )
             # print("availability: ", student.availability)
             # print("tutor index: ", student.tutor_index )
+
             student.tutor_index += 1
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
@@ -103,8 +103,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
         return student_assignment, time_assignment
         # After this, we need to assign the tutors to the students
     
-    tutor_var = select_unassigned_tutor(students)
+    tutor_var = select_unassigned_tutor(students) ## iter1 is Ben Steinberg
     time_var = select_unassigned_time(students)
+    # time_var is able to return the availability of the wrong student
 
     # Assign tutors in a list, if they don't work then backtrack
     for student in students:       
@@ -117,16 +118,16 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             time_assignment[student] = time_var
             student.final_time = time_var
 
-            for student, tutor in student_assignment.items():
-                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
+            # for student, tutor in student_assignment.items():
+            #     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
-            for student, time in time_assignment.items():
-                print(f"Student: {student.name} Time: {time}")    
-
+            # for student, time in time_assignment.items():
+            #     print(f"Student: {student.name} Time: {time}")    
 
             result = backtrack(student_assignment, time_assignment, students, tutors)
             
-            if result != False:
+            if result:
+                print('HERERERE')
                 return result
             
             # Make sure to account for ALL of the times before removing
@@ -134,7 +135,6 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             student.final_time = None
             del student_assignment[student]
             del time_assignment[student]
-        
 
     return False
 
@@ -181,10 +181,8 @@ def check_completion(student_assignment, time_assignment, students, tutors):
     return False
 
 students, tutors = match_students_tutors(students, tutors)
-student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
+# student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-for student, tutor in student_assignment.items():
-    print(f"Student: {student.name}  Tutor: {tutor.name}")
-
-for student, time in time_assignment.items():
-    print(f"Student: {student.name} - Time: {time}") 
+print(students[0].name, [tutor.name for tutor in students[0].matched_tutors], [tutor.availability for tutor in students[0].matched_tutors], students[0].availability)
+print(students[1].name, [tutor.name for tutor in students[1].matched_tutors], [tutor.availability for tutor in students[1].matched_tutors], students[1].availability)
+print(students[2].name, [tutor.name for tutor in students[2].matched_tutors], [tutor.availability for tutor in students[2].matched_tutors], students[2].availability)
