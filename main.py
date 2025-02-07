@@ -145,6 +145,7 @@ def check_constraints(student_assignment, time_assignment):
             for other in student_array:
                 if student != other and time_assignment[student] == time_assignment[other]:
                     return False
+                
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
