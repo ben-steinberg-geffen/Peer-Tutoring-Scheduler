@@ -1,10 +1,14 @@
 /*main design*/
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: #fff;
     margin: 0;
     padding: 0;
     overflow-y: auto; /*enables vertical scrolling*/
+}
+
+li {
+    font-size: 18px;
 }
 
 .container {
@@ -15,25 +19,25 @@ body {
 
 /*navigation style*/
 nav {
-    background-color: #457b9d;
-    padding: 10px;
+    background-color: #003566;
+    padding: 17px;
     text-align: center;
 }
 
 nav a {
-    color: #f1faee;  /* Default link color */
+    color: #f1faee;  
     margin: 0 15px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
     padding: 10px 15px;
 }
 
 nav a:hover {
-    color: #fff;  /* Color when hovering */
+    color: #fff;  
 }
 
 nav a.active {
-    color: #e6c939;  /* Color for active/current page */
+    color: #ffd60a;  
     font-weight: bold;
 }
 
@@ -129,9 +133,9 @@ button.upload:hover {
 .request-change-btn {
     position: fixed;
     bottom: 20px;
-    left: 20px;
-    background-color: rgb(255, 31, 31);
-    color: white;
+    right: 20px;
+    background-color: #ffc300;
+    color: black;
     border: 2px;
     padding: 10px 20px;
     font-size: 15px;
@@ -141,13 +145,75 @@ button.upload:hover {
 }
 
 .request-change-btn:hover {
-    background-color: #ff6666;
+    background-color: #ffd95d;
 }
 
-/*
-.container {
-    padding: 20px;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.modal-btn {
+    background-color: #457b9d;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.modal-btn:hover {
+    background-color: #3a6c85;
+}
+
+h4 {
+    font-size: 24px;
+    margin: 0px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 28px;
+}
+
+/*home page bullet points*/
+.a {
+    padding: 3px;
+    margin: 3px;
+    color: black;
+    list-style-type: circle;
+    list-style-position: outside;
+}
+
 
 .alert {
     padding: 10px;
@@ -169,4 +235,3 @@ button.upload:hover {
     background-color: #d1ecf1;
     color: #0c5460;
 }
-*/

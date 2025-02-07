@@ -6,4 +6,32 @@
     <input type="text" name="name" placeholder="Enter name of student or peer tutor">
     <button type="submit">Search</button>
 </form>
+
+<button class="request-change-btn">Request Change</button>
+
+<div id="requestChangeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <h3>Request Change</h3>
+        <p>What would you like to change?</p>
+        <button class="modal-btn" onclick="handleRequest('peer_tutor')">Change Peer Tutor</button>
+        <button class="modal-btn" onclick="handleRequest('student')">Change Student</button>
+    </div>
+</div>
+
+<script>
+    function openPopup() {
+        document.getElementById("requestChangeModal").style.display = "block";
+    }
+
+    function closePopup() {
+        document.getElementById("requestChangeModal").style.display = "none";
+    }
+
+    function handleRequest(type) {
+        alert("You selected to change " + (type === "peer_tutor" ? "Peer Tutor" : "Student"));
+        closePopup();
+    }
+</script>
+
 {% endblock %}
