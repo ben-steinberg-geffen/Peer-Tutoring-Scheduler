@@ -1,4 +1,7 @@
 from data import load_student_data, load_tutor_data
+# import sys
+
+# sys.setrecursionlimit(10**4)
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
@@ -28,6 +31,7 @@ class Tutor:
         self.courses = courses
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
+        self.final_times = []
         
 students = []
 tutors = []
@@ -46,7 +50,6 @@ def get_time_intersection(student, tutor):
 
     return times
 
-
 def match_students_tutors(students, tutors):
     for student in students:
         for tutor in tutors:
@@ -62,7 +65,7 @@ def select_unassigned_tutor(students):
             if not student.matched_tutors:
                 continue
 
-            index = student.tutor_index - 1
+            index = student.tutor_index - 1 # - 1 because we increment it before returning
 
             student.tutor_index += 1
             
@@ -74,7 +77,7 @@ def select_unassigned_tutor(students):
     return False
 
 def select_unassigned_time(tutor_var, student_var):
-    index = student_var.time_index
+    index = student_var.time_index - 1
 
     times = get_time_intersection(student_var, tutor_var)
 
@@ -103,6 +106,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_assignment[student_var] = time_var
     student_var.final_time = time_var
     tutor_var.final_students[student_var] = time_var
+    tutor_var.final_times.append(time_var)
 
     if check_constraints(student_assignment, time_assignment):
         result = backtrack(student_assignment, time_assignment, students, tutors)
@@ -115,6 +119,8 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     del student_assignment[student_var]
     del time_assignment[student_var]
     del tutor_var.final_students[student_var]
+    tutor_var.final_times.remove(time_var)
+
     return False
 
 def check_constraints(student_assignment, time_assignment):
@@ -125,12 +131,12 @@ def check_constraints(student_assignment, time_assignment):
     # Tutors with no students take priority over students with tutors * 
     * are the ones that we need to handle here
     '''
-
-    # for student in time_assignment.keys():
-    #     for other in time_assignment.keys():
-    #         if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
-    #             print("Constraint violated: Two students assigned to the same tutor at the same time.")
-    #             return False
+    # Check if any tutor is assigned to more than one student at the same time
+    for student in time_assignment.keys():
+        for other in time_assignment.keys():
+            if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
+                print("Constraint violated: Two students assigned to the same tutor at the same time.")
+                return False
     # for tutor in student_assignment.values():
     #     if len(tutor.final_students) > 2:
     #         return False
