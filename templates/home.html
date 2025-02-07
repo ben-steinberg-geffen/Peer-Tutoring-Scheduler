@@ -3,21 +3,24 @@
 {% block content %}
 <h2>Welcome to the Peer Tutoring Scheduler!</h2>
 <br>
-
-<h4>What we can do:</h4>
-
-<ul class="a">
-    <li>Create a tutoring schedule</li>
-    <li>Send automatic emails</li>
-    <li>Request tutor and student changes</li>
-</ul>
-<br>
-<h4>Directions:</h4>
-<ol class="a">
-    <li>Upload two CSV documents, one for students and one for peer tutors</li>
-    <li>Search for individual students and peer tutors</li>
-    <li>Send autommatic emails to students and tutors</li>
-</ol>
-
-
+<div class="content-container">
+    <div class="text-content">
+        <h4>What we can do:</h4>
+        <ul class="a">
+            <li>Create a tutoring schedule</li>
+            <li>Send automatic emails</li>
+            <li>Request tutor and student changes</li>
+        </ul>
+        <br>
+        <h4>Directions:</h4>
+        <ol class="a">
+            <li>Upload two CSV documents, one for students and one for peer tutors</li>
+            <li>Search for individual students and peer tutors</li>
+            <li>Send autommatic emails to students and tutors</li>
+        </ol>
+    </div>
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='geffen_library.jpg') }}" alt="Library">
+    </div>
+</div>
 {% endblock %}
