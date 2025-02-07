@@ -107,15 +107,18 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_var = select_unassigned_time(students)
 
     # Assign tutors in a list, if they don't work then backtrack
-    for student in students:
+    for student in students:       
         if student.matched_tutors == []:
             continue
+            # add email to say your course rather isn't available for tutoring or the time is diff
         if check_constraints(student_assignment, time_assignment):
             student_assignment[student] = tutor_var
+            student.final_tutor = tutor_var
             time_assignment[student] = time_var
+            student.final_time = time_var
 
             for student, tutor in student_assignment.items():
-                print(f"Student: {student.name} Tutor: {tutor.name}")
+                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
 
             for student, time in time_assignment.items():
                 print(f"Student: {student.name} Time: {time}")    
@@ -127,7 +130,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
                 return result
             
             # Make sure to account for ALL of the times before removing
-            del student_assignment[tutor_var]
+            student.final_tutor = None
+            student.final_time = None
+            del student_assignment[student]
             del time_assignment[student]
         
 
