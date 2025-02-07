@@ -1,5 +1,8 @@
 from data import load_student_data, load_tutor_data
 import pandas as pd
+import sys
+
+sys.setrecursionlimit(1000)
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -42,7 +45,7 @@ for index, row in student_df.iterrows():
     students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 for index, row in tutor_df.iterrows():
-        tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
+    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -50,14 +53,6 @@ def get_time_intersection(student, tutor):
         if time in tutor.availability: 
             times.append(time) 
 
-    return times
-
-def get_time_x_intersection(student_a, student_b):
-    times = []
-    for time in student_a.availability:
-        if time not in student_b.availability: 
-            times.append(time)
-    
     return times
 
 def match_students_tutors(students, tutors):
@@ -75,12 +70,17 @@ def select_unassigned_tutor(students):
             
             index = student.tutor_index
 
-            student.tutor_index += 1
-            student.tutor_index = student.tutor_index % (len(student.matched_tutors) - 1)
-            return student.matched_tutors[index]
-        
-            # This should change the index of the student every time and rotate between them.
+            if not student.matched_tutors:
+                continue
 
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
+            # print("availability: ", student.availability)
+            # print("tutor index: ", student.tutor_index )
+            student.tutor_index += 1
+            if student.tutor_index > len(student.matched_tutors) - 1:
+                student.tutor_index = 0
+            return student.matched_tutors[index]
     return False
 
 def select_unassigned_time(students):
@@ -89,8 +89,9 @@ def select_unassigned_time(students):
             
             index = student.time_index
 
-            student.index += 1
-            student.index = student.index % (len(student.availability) - 1)
+            student.time_index += 1
+            if student.time_index > len(student.availability) - 1:
+                student.time_index = 0
             return student.availability[index]
         
     return False
@@ -105,18 +106,34 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     time_var = select_unassigned_time(students)
 
     # Assign tutors in a list, if they don't work then backtrack
-    for student in students:         
+    for student in students:       
+        if student.matched_tutors == []:
+            continue
+            # add email to say your course rather isn't available for tutoring or the time is diff
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[tutor_var] = student
+            student_assignment[student] = tutor_var
+            student.final_tutor = tutor_var
             time_assignment[student] = time_var
+            student.final_time = time_var
+
+            # for student, tutor in student_assignment.items():
+            #     print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
+
+            # for student, time in time_assignment.items():
+            #     print(f"Student: {student.name} Time: {time}")    
+
             result = backtrack(student_assignment, time_assignment, students, tutors)
-            if result != False:
+            
+            if result:
+                print('HERERERE')
                 return result
             
             # Make sure to account for ALL of the times before removing
-            del student_assignment[tutor_var]
+            student.final_tutor = None
+            student.final_time = None
+            del student_assignment[student]
             del time_assignment[student]
-    
+
     return False
 
 def check_constraints(student_assignment, time_assignment):
@@ -142,23 +159,29 @@ def check_constraints(student_assignment, time_assignment):
         # if any of the student times intesect that would be bad
         for student in student_array:
             for other in student_array:
-                if time_assignment[student] == time_assignment[other]:
+                if student != other and time_assignment[student] == time_assignment[other]:
                     return False
                 
     # Prioritize tutors with no students over students with tutors
+    '''
     for tutor in tutors:
         if tutor not in student_assignment.values():
             for student in students:
                 if student not in student_assignment:
                     return False
+    '''
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
-    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) == False:
+    if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) is False:
         return True 
     return False
 
 students, tutors = match_students_tutors(students, tutors)
 student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
-print("student_assignment: ", student_assignment)
-print("time_assignment: ", time_assignment)
+
+for student, tutor in student_assignment.items():
+    print(f"Student: {student.name}  Tutor: {tutor.name}")
+
+for student, time in time_assignment.items():
+    print(f"Student: {student.name} - Time: {time}") 

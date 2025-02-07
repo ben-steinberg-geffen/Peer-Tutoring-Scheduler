@@ -66,5 +66,15 @@ def search():
 
     return render_template('search.html')
 
+#CHECK THIS CODE
+#email page displays email
+@app.route('/email')
+def email():
+
+    #if emails sent, send all the emails and display message that emails were sent
+    #if emails deleted, delete email from box and display message
+
+    return render_template('email.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
