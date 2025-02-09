@@ -15,8 +15,8 @@ li {
 .container {
     width: 80%;
     margin: auto;
-    padding: 1rem;
-    margin-top: 0.5rem;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 /*navigation style*/
@@ -45,7 +45,7 @@ nav a.active {
 
 .upload-container {
     max-width: 600px;
-    margin: 0.5rem auto;
+    margin: 0.25rem auto;
     padding: 20px;
     text-align: center;
 }
@@ -54,7 +54,7 @@ nav a.active {
     border: 2px dashed #ccc;
     border-radius: 10px;
     padding: 2rem;
-    margin: 1rem 0;
+    margin: 0.5rem 0;
     transition: all 0.3s ease;
     background: #f9f9f9;
     cursor: pointer;
