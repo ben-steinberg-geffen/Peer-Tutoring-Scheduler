@@ -46,7 +46,7 @@ def get_time_intersection(student, tutor):
     times = []
     for time in student.availability: 
         if time in tutor.availability: 
-            times.append(time) 
+            times.append(time)
 
     return times
 
@@ -132,14 +132,14 @@ def check_constraints(student_assignment, time_assignment):
     * are the ones that we need to handle here
     '''
     # Check if any tutor is assigned to more than one student at the same time
-    for student in time_assignment.keys():
-        for other in time_assignment.keys():
-            if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
-                print("Constraint violated: Two students assigned to the same tutor at the same time.")
-                return False
-    # for tutor in student_assignment.values():
-    #     if len(tutor.final_students) > 2:
-    #         return False
+    # for student in time_assignment.keys():
+    #     for other in time_assignment.keys():
+    #         if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
+    #             print("Constraint violated: Two students assigned to the same tutor at the same time.")
+    #             return False
+    for tutor in student_assignment.values():
+        if len(tutor.final_students) > 2:
+            return False
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
@@ -152,7 +152,12 @@ result = backtrack(student_assignment, time_assignment, students, tutors)
 
 if result:
     student_assignment, time_assignment = result
-    for student, tutor in student_assignment.items():
-        print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
+
+    for tutor in tutors:
+        print(f"Tutor: {tutor.name}, Students: {[student.name for student in tutor.final_students]}")
+
+    # for student, tutor in student_assignment.items():
+    #     print(f"Tutor: {tutor.name}, Students: {[student.name for student in tutor.final_students]}")
+    #     # print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
 else:
     print("No solution found.")
