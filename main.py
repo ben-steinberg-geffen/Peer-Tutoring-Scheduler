@@ -167,3 +167,4 @@ if result:
         print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}", student.final_time)
 else:
     print("No solution found.")
+
