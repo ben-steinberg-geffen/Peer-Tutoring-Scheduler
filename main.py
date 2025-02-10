@@ -64,7 +64,7 @@ def select_unassigned_tutor(students):
             if not student.matched_tutors:
                 continue
 
-            index = student.tutor_index - 1 # - 1 because we increment it before returning
+            index = student.tutor_index - 1 # because we increment it before returning
 
             student.tutor_index += 1
             
