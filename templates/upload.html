@@ -4,23 +4,30 @@
 <h2>Upload Documents</h2>
 <div class="upload-container">
     <form method="POST" enctype="multipart/form-data" id="uploadForm">
-        <div class="upload-box" id="dragArea">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <div class="upload-item">
-                <label>Peer Tutors File</label>
-                <div class="file-input-container">
-                    <input type="file" name="peer_tutors_file" id="peer_tutors_file" accept=".csv,.xlsx,.xls">
-                    <span class="file-name">No file chosen</span>
+        <div class="upload-boxes">
+            <div class="upload-box" id="dragAreaTutors">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-item">
+                    <label>Peer Tutors File</label>
+                    <div class="file-input-container">
+                        <input type="file" name="peer_tutors_file" id="peer_tutors_file" accept=".csv,.xlsx,.xls">
+                        <span class="file-name">No file chosen</span>
+                    </div>
                 </div>
+                <p class="drag-text">Drag and drop tutor file here or click to select</p>
             </div>
-            <div class="upload-item">
-                <label>Students and Classes File</label>
-                <div class="file-input-container">
-                    <input type="file" name="students_classes_file" id="students_classes_file" accept=".csv,.xlsx,.xls">
-                    <span class="file-name">No file chosen</span>
+            
+            <div class="upload-box" id="dragAreaStudents">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-item">
+                    <label>Students and Classes File</label>
+                    <div class="file-input-container">
+                        <input type="file" name="students_classes_file" id="students_classes_file" accept=".csv,.xlsx,.xls">
+                        <span class="file-name">No file chosen</span>
+                    </div>
                 </div>
+                <p class="drag-text">Drag and drop students file here or click to select</p>
             </div>
-            <p class="drag-text">Drag and drop files here or click to select</p>
         </div>
         <button type="submit" class="upload-btn">Upload Files</button>
     </form>
