@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 
+# ADD ERROR HANDLING WITH EMAILS AND AVAILABILITY IF TYPED WRONG OR SELECTED NOT AVAILABLE WITH OTHER SLOTS ON ONE DAY
+
 def load_student_data():
     """
     Load student requests data from a CSV file, rename columns for consistency, and merge course selections.
