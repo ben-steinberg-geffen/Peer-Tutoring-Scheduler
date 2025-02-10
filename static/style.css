@@ -12,6 +12,11 @@ li {
     color: black;
 }
 
+.content {
+    padding: 10px;
+    color: rgb(0, 0, 0); 
+}
+
 .container {
     width: 80%;
     margin: auto;
