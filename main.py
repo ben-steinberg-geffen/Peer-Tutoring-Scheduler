@@ -139,9 +139,9 @@ def check_constraints(student_assignment, time_assignment):
             if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
                 print("Constraint violated: Two students assigned to the same tutor at the same time.")
                 return False
-    # for tutor in student_assignment.values():
-    #     if len(tutor.final_students) > 2:
-    #         return False
+    for tutor in student_assignment.values():
+        if len(tutor.final_students) > 2:
+            return False
     return True 
 
 def check_completion(student_assignment, time_assignment, students, tutors):
