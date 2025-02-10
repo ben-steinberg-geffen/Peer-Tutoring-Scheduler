@@ -19,8 +19,8 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    """
     global peer_tutors, students_classes
-
     if request.method == 'POST':
         if 'peer_tutors_file' in request.files:
             file = request.files['peer_tutors_file']
@@ -37,6 +37,7 @@ def upload():
                 file.save(file_path)
                 students_classes = pd.read_csv(file_path)
                 flash('Students and classes file uploaded successfully!', 'success')
+    """
 
     return render_template('upload.html')
 
