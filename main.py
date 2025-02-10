@@ -1,7 +1,4 @@
 from data import load_student_data, load_tutor_data
-# import sys
-
-# sys.setrecursionlimit(10**4)
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
