@@ -68,11 +68,11 @@ def match_students_tutors(students, tutors):
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
                     else: 
-                        reason = "The only available tutors are those who you requested not to be tutored by."
+                        reason = "the only available tutors are those who you requested not to be tutored by."
                 else: 
-                    reason = "Nobody teaching your course matched your availability."
+                    reason = "nobody teaching your course matched your availability."
             else: 
-                reason = "There's no one available for your specific course."
+                reason = "there's no one available for your specific course."
         if student.matched_tutors == []:
             not_matched[student] = reason 
     return students, tutors, not_matched
@@ -186,8 +186,10 @@ while not result:
 
 if result:
     student_assignment, time_assignment = result
-    for student, reason in not_matched:
-        print(f"Student {student.name} was not matched with any tutor because {reason}.")
+    
+    for student, reason in not_matched.items():
+        print(f"{student.name} was not matched because {reason}")
+
     # with open('tutoring_schedule.csv', mode='w', newline='') as file:
     #     writer = csv.writer(file)
     #     writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
