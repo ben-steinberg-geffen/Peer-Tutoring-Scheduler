@@ -2,6 +2,11 @@ from data import load_student_data, load_tutor_data
 import random
 import csv
 
+# THIS FILE SHOULD BE RUN WITH THE INITIAL SET OF STUDENTS AND TUTORS
+# NEED FUNCTIONANILITY TO CHANGE THE STUDENTS, TUTORS, AND TIME WHENEVER BASED ON THE CSV FILE
+# ADD FUNCTIONALITY TO ADD CUSTOM CONSTRAINTS (EX: TUTOR CANNOT TEACH STUDENT, HIGHER GRADE LEVEL, ETC.)
+# MAYBE A WAY TO GET STUDENT/TUTOR RESPONSES AUTOMATICALLY FROM THE GOOGLE SPREADSHEET
+
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
@@ -175,4 +180,3 @@ if result:
     print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
-
