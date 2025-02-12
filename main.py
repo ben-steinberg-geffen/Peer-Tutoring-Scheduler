@@ -14,6 +14,8 @@ student_assignment = {}
 time_assignment = {}
 not_matched = []
 
+random.seed(10)
+
 class Student:
     def __init__(self, name, email, grade, availability, courses, not_tutors):
         self.name = name
@@ -190,11 +192,11 @@ if result:
     for student, reason in not_matched.items():
         print(f"{student.name} was not matched because {reason}")
 
-    # with open('tutoring_schedule.csv', mode='w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
-    #     for student, tutor in student_assignment.items():
-    #         writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
-    # print("Results saved to tutoring_schedule.csv")
+    with open('tutoring_schedule.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
+        for student, tutor in student_assignment.items():
+            writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
+    print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
