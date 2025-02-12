@@ -12,6 +12,9 @@ tutor_df = load_tutor_data()
 
 student_assignment = {}
 time_assignment = {}
+not_matched = []
+
+random.seed(10)
 
 class Student:
     def __init__(self, name, email, grade, availability, courses, not_tutors):
@@ -57,14 +60,24 @@ def get_time_intersection(student, tutor):
     return times
 
 def match_students_tutors(students, tutors):
+    not_matched = {}
     for student in students:
+        reason = ""
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-    return students, tutors
+                    else:
+                        reason = f"Tutor {tutor.name} is not allowed to tutor this student. "
+                else:
+                    reason = f"Tutor {tutor.name} does not have matching availability. "
+            else:
+                reason = f"Tutor {tutor.name} does not teach all required courses. "
+        if student.matched_tutors == []:
+            not_matched[student] = reason
+    return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
     for student in students: 
@@ -146,18 +159,18 @@ def check_constraints(student_assignment, time_assignment):
     for student in time_assignment.keys():
         for other in time_assignment.keys():
             if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
-                print("Constraint violated: Two students assigned to the same tutor at the same time.")
+                # print("Constraint violated: Two students assigned to the same tutor at the same time.")
                 return False
     for tutor in student_assignment.values():
         if len(tutor.final_students) > 2:
-            print("Constraint violated: Tutor assigned to more than two students.")
+            # print("Constraint violated: Tutor assigned to more than two students.")
             return False
     # Ensure tutors without a student take priority over those with one already
     for student in student_assignment.keys():
         if student_assignment[student].final_students and len(student_assignment[student].final_students) == 1:
             for other_student in student_assignment.keys():
                 if student_assignment[other_student] == student_assignment[student] and other_student != student:
-                    print("Constraint violated: Tutor with a student assigned another student while there are tutors without students.")
+                    # print("Constraint violated: Tutor with a student assigned another student while there are tutors without students.")
                     return False
     return True 
 
@@ -166,7 +179,7 @@ def check_completion(student_assignment, time_assignment, students):
         return True 
     return False
 
-students, tutors = match_students_tutors(students, tutors)
+students, tutors, not_matched = match_students_tutors(students, tutors)
 
 result = None
 
@@ -175,6 +188,10 @@ while not result:
 
 if result:
     student_assignment, time_assignment = result
+    
+    for student, reason in not_matched.items():
+        print(f"{student.name} was not matched because {reason}")
+
     with open('tutoring_schedule.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
