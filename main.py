@@ -175,11 +175,14 @@ while not result:
 
 if result:
     student_assignment, time_assignment = result
+    '''
+    
     with open('tutoring_schedule.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
         for student, tutor in student_assignment.items():
             writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
+    '''
     print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
