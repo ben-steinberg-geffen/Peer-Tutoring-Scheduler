@@ -74,7 +74,7 @@ def match_students_tutors(students, tutors):
             else: 
                 reason = "There's no one available for your specific course."
         if student.matched_tutors == []:
-            not_matched[student] = reason 
+            not_matched[student] = reason
     return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
