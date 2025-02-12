@@ -58,17 +58,23 @@ def get_time_intersection(student, tutor):
     return times
 
 def match_students_tutors(students, tutors):
-    not_matched = []
+    not_matched = {}
     for student in students:
+        reason = ""
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
+                    else: 
+                        reason = "The only available tutors are those who you requested not to be tutored by."
+                else: 
+                    reason = "Nobody teaching your course matched your availability."
+            else: 
+                reason = "There's no one available for your specific course."
         if student.matched_tutors == []:
-            not_matched.append(student)
-    not_matched = list(set(not_matched))
+            not_matched[student] = reason 
     return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
@@ -180,8 +186,8 @@ while not result:
 
 if result:
     student_assignment, time_assignment = result
-    for student in not_matched:
-        print(f"Student {student.name} was not matched with any tutor.")
+    for student, reason in not_matched:
+        print(f"Student {student.name} was not matched with any tutor because {reason}.")
     # with open('tutoring_schedule.csv', mode='w', newline='') as file:
     #     writer = csv.writer(file)
     #     writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
