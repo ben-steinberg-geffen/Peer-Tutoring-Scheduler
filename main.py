@@ -67,14 +67,14 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-                    else: 
-                        reason = "the only available tutors are those who you requested not to be tutored by."
-                else: 
-                    reason = "nobody teaching your course matched your availability."
-            else: 
-                reason = "there's no one available for your specific course."
+                    else:
+                        reason = f"Tutor {tutor.name} is not allowed to tutor this student. "
+                else:
+                    reason = f"Tutor {tutor.name} does not have matching availability. "
+            else:
+                reason = f"Tutor {tutor.name} does not teach all required courses. "
         if student.matched_tutors == []:
-            not_matched[student] = reason 
+            not_matched[student] = reason
     return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
