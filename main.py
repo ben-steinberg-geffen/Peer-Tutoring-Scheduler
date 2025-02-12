@@ -14,25 +14,27 @@ student_assignment = {}
 time_assignment = {}
 
 class Student:
-    def __init__(self, name, email, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses, not_tutors):
         self.name = name
         self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
         self.matched_tutors = []
+        self.not_tutors = not_tutors
         self.tutor_index = 0 
         self.time_index = 0
         self.final_tutor = None
         self.final_time = None
 
 class Tutor:
-    def __init__(self, name, email, grade, availability, courses):
+    def __init__(self, name, email, grade, availability, courses, not_students):
         self.name = name
         self.email = email
         self.grade = grade
         self.availability = availability
         self.courses = courses
+        self.not_students = not_students
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
         self.final_times = []
@@ -41,10 +43,10 @@ students = []
 tutors = []
 
 for index, row in student_df.iterrows():
-    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
+    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
 
 for index, row in tutor_df.iterrows():
-    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses']))
+    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
 
 def get_time_intersection(student, tutor):
     times = []
@@ -59,8 +61,9 @@ def match_students_tutors(students, tutors):
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
-                    student.matched_tutors.append(tutor)
-                    tutor.matched_students.append(student)
+                    if not student in tutor.not_students and not tutor in student.not_tutors:
+                        student.matched_tutors.append(tutor)
+                        tutor.matched_students.append(student)
     return students, tutors
 
 def select_unassigned_tutor(students):
