@@ -146,14 +146,7 @@ nav a.active {
     color: white;
 }
 
-/*search page*/
-.search-box {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-top: 20px;
-}
+
 
 /*request change page*/
 .request-form {
@@ -333,7 +326,66 @@ h2 {
     z-index: 9999;
 }
 
-/* Make the text unselectable when dragging */
+
 .upload-box * {
     user-select: none;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px
+}
+
+.search-box {
+    width: 60%;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    height: 30px;
+}
+
+.search-btn {
+    width: 5%;
+    height: 43px;
+    background-color: #ffc300;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px; 
+}
+
+.search-categories {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.category-container {
+    display: flex;
+    gap: 15px;
+}
+
+.category-btn {
+    padding: 15px 25px;
+    background-color: #003566;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.category-btn:hover {
+    background-color: #00509d;
+}
+
+.search-box::placeholder {
+    text-align: left, center; 
+    color: #999; 
 }
