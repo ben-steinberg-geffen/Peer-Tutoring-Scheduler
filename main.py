@@ -12,6 +12,7 @@ tutor_df = load_tutor_data()
 
 student_assignment = {}
 time_assignment = {}
+not_matched = []
 
 class Student:
     def __init__(self, name, email, grade, availability, courses, not_tutors):
@@ -57,6 +58,7 @@ def get_time_intersection(student, tutor):
     return times
 
 def match_students_tutors(students, tutors):
+    not_matched = []
     for student in students:
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
@@ -64,7 +66,10 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-    return students, tutors
+        if student.matched_tutors == []:
+            not_matched.append(student)
+    not_matched = list(set(not_matched))
+    return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
     for student in students: 
@@ -166,7 +171,7 @@ def check_completion(student_assignment, time_assignment, students):
         return True 
     return False
 
-students, tutors = match_students_tutors(students, tutors)
+students, tutors, not_matched = match_students_tutors(students, tutors)
 
 result = None
 
@@ -175,11 +180,13 @@ while not result:
 
 if result:
     student_assignment, time_assignment = result
-    with open('tutoring_schedule.csv', mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
-        for student, tutor in student_assignment.items():
-            writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
-    print("Results saved to tutoring_schedule.csv")
+    for student in not_matched:
+        print(f"Student {student.name} was not matched with any tutor.")
+    # with open('tutoring_schedule.csv', mode='w', newline='') as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
+    #     for student, tutor in student_assignment.items():
+    #         writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
+    # print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
