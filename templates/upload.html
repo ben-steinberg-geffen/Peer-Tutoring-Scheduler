@@ -2,15 +2,38 @@
 
 {% block content %}
 <h2>Upload Documents</h2>
-<form method="POST" enctype="multipart/form-data">
-    <div>
-        <label for="peer_tutors_file">Upload Peer Tutors File:</label>
-        <input type="file" name="peer_tutors_file" id="peer_tutors_file">
-    </div>
-    <div>
-        <label for="students_classes_file">Upload Students and Classes File:</label>
-        <input type="file" name="students_classes_file" id="students_classes_file">
-    </div>
-    <button type="submit">Upload</button>
-</form>
+<div class="upload-container">
+    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-boxes">
+            <div class="upload-box" id="dragAreaTutors">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-item">
+                    <label>Peer Tutors File</label>
+                    <div class="file-input-container">
+                        <input type="file" name="peer_tutors_file" id="peer_tutors_file" accept=".csv,.xlsx,.xls">
+                        <span class="file-name">No file chosen</span>
+                    </div>
+                </div>
+                <p class="drag-text">Drag and drop tutor file here or click to select</p>
+            </div>
+            
+            <div class="upload-box" id="dragAreaStudents">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-item">
+                    <label>Students and Classes File</label>
+                    <div class="file-input-container">
+                        <input type="file" name="students_classes_file" id="students_classes_file" accept=".csv,.xlsx,.xls">
+                        <span class="file-name">No file chosen</span>
+                    </div>
+                </div>
+                <p class="drag-text">Drag and drop students file here or click to select</p>
+            </div>
+        </div>
+        <button type="submit" class="upload-btn">Upload Files</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}

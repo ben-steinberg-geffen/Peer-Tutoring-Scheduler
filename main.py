@@ -1,19 +1,17 @@
 from data import load_student_data, load_tutor_data
-import pandas as pd
-import sys
+import random
+import csv
 
-sys.setrecursionlimit(1000)
-
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
+# THIS FILE SHOULD BE RUN WITH THE INITIAL SET OF STUDENTS AND TUTORS
+# NEED FUNCTIONANILITY TO CHANGE THE STUDENTS, TUTORS, AND TIME WHENEVER BASED ON THE CSV FILE
+# ADD FUNCTIONALITY TO ADD CUSTOM CONSTRAINTS (EX: TUTOR CANNOT TEACH STUDENT, HIGHER GRADE LEVEL, ETC.)
+# MAYBE A WAY TO GET STUDENT/TUTOR RESPONSES AUTOMATICALLY FROM THE GOOGLE SPREADSHEET
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
 student_assignment = {}
-time_assignment = {} # Lines up student with their time
+time_assignment = {}
 
 class Student:
     def __init__(self, name, email, grade, availability, courses):
@@ -37,6 +35,7 @@ class Tutor:
         self.courses = courses
         self.matched_students = []
         self.final_students = {} # This aligns the students with the time slot
+        self.final_times = []
         
 students = []
 tutors = []
@@ -51,7 +50,7 @@ def get_time_intersection(student, tutor):
     times = []
     for time in student.availability: 
         if time in tutor.availability: 
-            times.append(time) 
+            times.append(time)
 
     return times
 
@@ -67,127 +66,117 @@ def match_students_tutors(students, tutors):
 def select_unassigned_tutor(students):
     for student in students: 
         if student.final_tutor == None: 
-            
-            index = student.tutor_index
-
             if not student.matched_tutors:
                 continue
 
-            # print("availability: ", student.availability)
-            # print("tutor index: ", student.tutor_index )
-            # print("availability: ", student.availability)
-            # print("tutor index: ", student.tutor_index )
+            index = student.tutor_index - 1 # because we increment it before returning
+
             student.tutor_index += 1
+            
             if student.tutor_index > len(student.matched_tutors) - 1:
                 student.tutor_index = 0
-            return student.matched_tutors[index]
-    return False
 
-def select_unassigned_time(students):
-    for student in students: 
-        if student.final_time == None: 
-            
-            index = student.time_index
+            random.shuffle(student.matched_tutors)
 
-            student.time_index += 1
-            if student.time_index > len(student.availability) - 1:
-                student.time_index = 0
-            return student.availability[index]
+            return student.matched_tutors[index], student
         
     return False
 
+def select_unassigned_time(tutor_var, student_var):
+    index = student_var.time_index - 1
+
+    times = get_time_intersection(student_var, tutor_var)
+
+    selected_time = times[index]
+
+    student_var.time_index += 1
+    if student_var.time_index > len(times) - 1:
+        student_var.time_index = 0
+
+    return selected_time
+
 def backtrack(student_assignment, time_assignment, students, tutors):
-    # We also need to now account for assigning times too
-    if check_completion(student_assignment, time_assignment, students, tutors):
+    if check_completion(student_assignment, time_assignment, students):
         return student_assignment, time_assignment
-        # After this, we need to assign the tutors to the students
     
-    tutor_var = select_unassigned_tutor(students)
-    time_var = select_unassigned_time(students)
+    result = select_unassigned_tutor(students)
 
-    # Assign tutors in a list, if they don't work then backtrack
-    for student in students:       
-        if student.matched_tutors == []:
-            continue
-            # add email to say your course rather isn't available for tutoring or the time is diff
+    if not result:
+        return False
+    
+    tutor_var, student_var = result
+    times = get_time_intersection(student_var, tutor_var)
+    random.shuffle(times)
+
+    for time_var in times:
+        student_assignment[student_var] = tutor_var
+        student_var.final_tutor = tutor_var
+        time_assignment[student_var] = time_var
+        student_var.final_time = time_var
+        tutor_var.final_students[student_var] = time_var
+        tutor_var.final_times.append(time_var)
+
         if check_constraints(student_assignment, time_assignment):
-            student_assignment[student] = tutor_var
-            student.final_tutor = tutor_var
-            time_assignment[student] = time_var
-            student.final_time = time_var
-
-            for student, tutor in student_assignment.items():
-                print(f"Student: {student.name}, Tutor: {tutor.name}, Class: {student.courses}")
-
-            for student, time in time_assignment.items():
-                print(f"Student: {student.name} Time: {time}")    
-
             result = backtrack(student_assignment, time_assignment, students, tutors)
-            
+
             if result:
-                print('HERERERE')
                 return result
-            
-            # Make sure to account for ALL of the times before removing
-            student.final_tutor = None
-            student.final_time = None
-            del student_assignment[student]
-            del time_assignment[student]
+        
+        student_var.final_tutor = None
+        student_var.final_time = None
+        del student_assignment[student_var]
+        del time_assignment[student_var]
+        del tutor_var.final_students[student_var]
+        tutor_var.final_times.remove(time_var)
 
     return False
 
 def check_constraints(student_assignment, time_assignment):
     '''
-    Tutors can't teach two tutors at the same time slot*
+    Tutors can't teach two students at the same time slot*
     # Tutors and students must have the same classes
     # It must be at the same time as well
-    Tutors and students will have the ability to request a change in tutors 
     # Tutors with no students take priority over students with tutors * 
     * are the ones that we need to handle here
     '''
-    
+    # Check if any tutor is assigned to more than one student at the same time
+    for student in time_assignment.keys():
+        for other in time_assignment.keys():
+            if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
+                print("Constraint violated: Two students assigned to the same tutor at the same time.")
+                return False
     for tutor in student_assignment.values():
-        student_array = []
-        possible_students = len(tutor.availability)
-
-        for student in student_assignment.keys():
-            if student_assignment[student] == tutor: 
-                # This would mean they have the same tutor 
-                if possible_students < len(student_array):
-                    student_array.append(student)
-
-        # if any of the student times intesect that would be bad
-        for student in student_array:
-            for other in student_array:
-                if student != other and time_assignment[student] == time_assignment[other]:
+        if len(tutor.final_students) > 2:
+            print("Constraint violated: Tutor assigned to more than two students.")
+            return False
+    # Ensure tutors without a student take priority over those with one already
+    for student in student_assignment.keys():
+        if student_assignment[student].final_students and len(student_assignment[student].final_students) == 1:
+            for other_student in student_assignment.keys():
+                if student_assignment[other_student] == student_assignment[student] and other_student != student:
+                    print("Constraint violated: Tutor with a student assigned another student while there are tutors without students.")
                     return False
-                
-    # Prioritize tutors with no students over students with tutors
-    '''
-    for tutor in tutors:
-        if tutor not in student_assignment.values():
-            for student in students:
-                if student not in student_assignment:
-                    return False
-    '''
     return True 
 
-def check_completion(student_assignment, time_assignment, students, tutors):
+def check_completion(student_assignment, time_assignment, students):
     if check_constraints(student_assignment, time_assignment) and select_unassigned_tutor(students) is False:
         return True 
     return False
 
 students, tutors = match_students_tutors(students, tutors)
-student_assignment, time_assignment = backtrack(student_assignment, time_assignment, students, tutors)
 
-# for student, tutor in student_assignment.items():
-#     print(f"Student: {student.name}  Tutor: {tutor.name}")
+result = None
 
-# for student, time in time_assignment.items():
-#     print(f"Student: {student.name} - Time: {time}") 
+while not result:
+    result = backtrack(student_assignment, time_assignment, students, tutors)
 
-# for student in students:
-#     if student.name == 'Emmy De Silva':
-#         print('Emmy', student.courses)
-#         for tutor in student.matched_tutors:
-#             print(tutor.name, tutor.courses)
+if result:
+    student_assignment, time_assignment = result
+    with open('tutoring_schedule.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
+        for student, tutor in student_assignment.items():
+            writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
+    print("Results saved to tutoring_schedule.csv")
+else:
+    print("No solution found.")
