@@ -5,10 +5,11 @@ import csv
 # THIS FILE SHOULD BE RUN WITH THE INITIAL SET OF STUDENTS AND TUTORS
 # NEED FUNCTIONANILITY TO CHANGE THE STUDENTS, TUTORS, AND TIME WHENEVER BASED ON THE CSV FILE
 # ADD FUNCTIONALITY TO ADD CUSTOM CONSTRAINTS (EX: TUTOR CANNOT TEACH STUDENT, HIGHER GRADE LEVEL, ETC.)
-# MAYBE A WAY TO GET STUDENT/TUTOR RESPONSES AUTOMATICALLY FROM THE GOOGLE SPREADSHEET
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
+
+
 
 student_assignment = {}
 time_assignment = {}
@@ -17,7 +18,7 @@ not_matched = []
 random.seed(10)
 
 class Student:
-    def __init__(self, name, email, grade, availability, courses, not_tutors):
+    def __init__(self, name, email, grade, availability, courses, not_tutors, final_tutor = None):
         self.name = name
         self.email = email
         self.grade = grade
@@ -27,7 +28,7 @@ class Student:
         self.not_tutors = not_tutors
         self.tutor_index = 0 
         self.time_index = 0
-        self.final_tutor = None
+        self.final_tutor = final_tutor
         self.final_time = None
 
 class Tutor:
