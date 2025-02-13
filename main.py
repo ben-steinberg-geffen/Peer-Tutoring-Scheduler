@@ -192,11 +192,11 @@ if result:
 
     with open('tutoring_schedule.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
+        writer.writerow(['Student Object', 'Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Not Tutors', 'Tutor Object', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
         for student, tutor in student_assignment.items():
             writer.writerow([
-                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses),
-                tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
+                student, student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses),
+                student.not_tutors, tutor, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
                 student.final_time
             ])
     print("Results saved to tutoring_schedule.csv")
