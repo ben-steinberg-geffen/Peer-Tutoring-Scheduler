@@ -2,10 +2,8 @@ from data import load_student_data, load_tutor_data
 import random
 import csv
 
-# THIS FILE SHOULD BE RUN WITH THE INITIAL SET OF STUDENTS AND TUTORS
 # NEED FUNCTIONANILITY TO CHANGE THE STUDENTS, TUTORS, AND TIME WHENEVER BASED ON THE CSV FILE
 # ADD FUNCTIONALITY TO ADD CUSTOM CONSTRAINTS (EX: TUTOR CANNOT TEACH STUDENT, HIGHER GRADE LEVEL, ETC.)
-# MAYBE A WAY TO GET STUDENT/TUTOR RESPONSES AUTOMATICALLY FROM THE GOOGLE SPREADSHEET
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
@@ -37,7 +35,7 @@ class Tutor:
         self.courses = courses
         self.not_students = not_students
         self.matched_students = []
-        self.final_students = {} # This aligns the students with the time slot
+        self.final_students = {}
         self.final_times = []
         
 students = []
@@ -190,11 +188,15 @@ if result:
     for student, reason in not_matched.items():
         print(f"{student.name} was not matched because {reason}")
 
-    # with open('tutoring_schedule.csv', mode='w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
-    #     for student, tutor in student_assignment.items():
-    #         writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
-    # print("Results saved to tutoring_schedule.csv")
+    with open('tutoring_schedule.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
+        for student, tutor in student_assignment.items():
+            writer.writerow([
+                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses),
+                tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
+                student.final_time
+            ])
+    print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
