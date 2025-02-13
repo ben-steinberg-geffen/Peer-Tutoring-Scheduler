@@ -47,10 +47,10 @@ def upload():
                     for student, tutor in student_assignment.items():
                         message += (
                             f"<div class='match'>{i}"
-                            f"<p><strong>Student:</strong> {student.name} ({student.email})</p>"
-                            f"<p><strong>Tutor:</strong> {tutor.name} ({tutor.email})</p>"
-                            f"<p><strong>Courses:</strong> {', '.join(student.courses)}</p>"
-                            f"<p><strong>Time:</strong> {student.final_time}</p>"
+                            f"<p><strong>Student - </strong> {student.name} ({student.email})</p>"
+                            f"<p><strong>Tutor - </strong> {tutor.name} ({tutor.email})</p>"
+                            f"<p><strong>Courses - </strong> {', '.join(student.courses)}</p>"
+                            f"<p><strong>Time - </strong> {student.final_time}</p>"
                             f"</div><hr>"
                         )
                         i += 1
