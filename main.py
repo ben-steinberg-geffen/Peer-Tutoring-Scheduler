@@ -8,6 +8,8 @@ import csv
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
+
+
 student_assignment = {}
 time_assignment = {}
 not_matched = []
@@ -15,7 +17,7 @@ not_matched = []
 random.seed(10)
 
 class Student:
-    def __init__(self, name, email, grade, availability, courses, not_tutors):
+    def __init__(self, name, email, grade, availability, courses, not_tutors, final_tutor = None):
         self.name = name
         self.email = email
         self.grade = grade
@@ -25,7 +27,7 @@ class Student:
         self.not_tutors = not_tutors
         self.tutor_index = 0 
         self.time_index = 0
-        self.final_tutor = None
+        self.final_tutor = final_tutor
         self.final_time = None
 
 class Tutor:
