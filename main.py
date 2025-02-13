@@ -8,8 +8,6 @@ import csv
 student_df = load_student_data()
 tutor_df = load_tutor_data()
 
-
-
 student_assignment = {}
 time_assignment = {}
 not_matched = []
