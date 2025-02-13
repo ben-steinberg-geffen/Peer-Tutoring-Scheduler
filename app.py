@@ -1,14 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import pandas as pd
+from get_tutors import get_tutors
 import os
+import random
 
 app = Flask(__name__, static_folder='static')
+app.secret_key = '0599db35270c938d478af4964d9c00aa'
 
-UPLOAD_FOLDER = 'uploads'
+# Define upload folder path
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# Create upload directory if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 peer_tutors = None
 students_classes = None
@@ -19,27 +23,34 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    """
     global peer_tutors, students_classes
+    message = None
     if request.method == 'POST':
-        if 'peer_tutors_file' in request.files:
-            file = request.files['peer_tutors_file']
-            if file.filename != '':
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(file_path)
-                peer_tutors = pd.read_csv(file_path)
-                flash('Peer tutors file uploaded successfully!', 'success')
+        if 'peer_tutors_file' in request.files and 'students_classes_file' in request.files:
+            tutor_file = request.files['peer_tutors_file']
+            student_file = request.files['students_classes_file']
 
-        if 'students_classes_file' in request.files:
-            file = request.files['students_classes_file']
-            if file.filename != '':
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(file_path)
-                students_classes = pd.read_csv(file_path)
-                flash('Students and classes file uploaded successfully!', 'success')
-    """
+            if tutor_file.filename != '' and student_file.filename != '':
+                try:
+                    tutor_path = os.path.join(app.config['UPLOAD_FOLDER'], tutor_file.filename)
+                    tutor_file.save(tutor_path)
+                    
+                    student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
+                    student_file.save(student_path)
 
-    return render_template('upload.html')
+                    peer_tutors = pd.read_csv(tutor_path)
+                    students_classes = pd.read_csv(student_path)
+                    
+                    student_assignment, time_assignment = get_tutors(tutor_path, student_path)
+                    message = "Files uploaded successfully!"
+                except Exception as e:
+                    message = f"Error processing files: {str(e)}"
+            else:
+                message = "Please select both files"
+        else:
+            message = "Please upload both required files"
+
+    return render_template('upload.html', message=message)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():

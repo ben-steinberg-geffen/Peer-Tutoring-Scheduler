@@ -2,15 +2,18 @@
 
 {% block content %}
 <h2>Upload Documents</h2>
+{% if message is not none %}
+    <div class="alert">{{ message }}</div>
+{% endif %}
 <div class="upload-container">
-    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+    <form method="POST" enctype="multipart/form-data" id="uploadForm" onsubmit="return validateForm()">
         <div class="upload-boxes">
             <div class="upload-box" id="dragAreaTutors">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <div class="upload-item">
                     <label>Peer Tutors File</label>
                     <div class="file-input-container">
-                        <input type="file" name="peer_tutors_file" id="peer_tutors_file" accept=".csv,.xlsx,.xls">
+                        <input type="file" name="peer_tutors_file" id="peer_tutors_file" accept=".csv">
                         <span class="file-name">No file chosen</span>
                     </div>
                 </div>
@@ -22,7 +25,7 @@
                 <div class="upload-item">
                     <label>Students and Classes File</label>
                     <div class="file-input-container">
-                        <input type="file" name="students_classes_file" id="students_classes_file" accept=".csv,.xlsx,.xls">
+                        <input type="file" name="students_classes_file" id="students_classes_file" accept=".csv">
                         <span class="file-name">No file chosen</span>
                     </div>
                 </div>
