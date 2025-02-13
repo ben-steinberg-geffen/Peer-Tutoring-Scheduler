@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from main import Student, Tutor
 
 def load_student_data(path="student_responses.csv"):
     """

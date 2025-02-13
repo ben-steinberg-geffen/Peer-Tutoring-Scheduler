@@ -1,4 +1,4 @@
-from data import load_student_data, load_tutor_data
+from data import load_student_data, load_tutor_data, load_assignment
 import random
 import csv
 
@@ -9,9 +9,7 @@ student_df = load_student_data()
 tutor_df = load_tutor_data()
 
 
-
-student_assignment = {}
-time_assignment = {}
+student_assignment, time_assignment = load_assignment()
 not_matched = []
 
 random.seed(10)
