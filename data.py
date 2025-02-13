@@ -111,13 +111,14 @@ def load_assignment():
     base_path = os.path.dirname(__file__)
     file_path = os.path.join(base_path, "tutoring_schedule.csv")
     student_assignment = {}
-    tutor_assignment = {}
+    time_assignment = {}
 
     df = 0
 
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
-        student_assignment = {Student(df['Student Name'], df['Student Email'], df['Student Grade'], 
-                                      df['Student Availability'], df['Student Courses'], df['Student Name'], ), df}
+        student_assignment = {df['Student Object'] : df['Tutor Object']}
+        time_assignment = {df['Student Object'] : df['Time']}
 
-    pass
+
+    return student_assignment, time_assignment
