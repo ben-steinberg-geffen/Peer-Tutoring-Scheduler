@@ -201,8 +201,8 @@ nav a.active {
 
 .modal {
     display: none;
-    position: fixed;
-    
+    top: 100px;
+    left: 500px;
     background-color: transparent;
     border-radius: 2px;
     border-color: black;
