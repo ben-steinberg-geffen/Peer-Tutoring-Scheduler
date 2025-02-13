@@ -1,6 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .assignments-table {
+        margin: 20px 0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+    
+    tr:hover {
+        background-color: #f9f9f9;
+    }
+</style>
+
 <h2>Search Students or Tutors</h2>
 <form method="POST" class="search-form">
     <input type="text" name="name" placeholder="Search Tutor or Student" class="search-box">
@@ -36,6 +63,30 @@
         <button class="modal-btn" onclick="handleRequest('peer_tutor')">Change Peer Tutor</button>
         <button class="modal-btn" onclick="handleRequest('student')">Change Student</button>
     </div>
+</div>
+
+<div class="assignments-table">
+    <h3>Current Assignments</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Peer Tutor</th>
+                <th>Subject</th>
+                <th>Time Slot</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.student }}</td>
+                <td>{{ assignment.tutor }}</td>
+                <td>{{ assignment.subject }}</td>
+                <td>{{ assignment.time_slot }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script>

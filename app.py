@@ -43,19 +43,7 @@ def upload():
                     student_responses = pd.read_csv(student_path)
                     
                     student_assignment, time_assignment = get_tutors(student_path, tutor_path)
-                    message = "<div class='assignment-results'>"
-                    i = 0
-                    for student, tutor in student_assignment.items():
-                        message += (
-                            f"<div class='match'>{i}"
-                            f"<p><strong>Student - </strong> {student.name} ({student.email})</p>"
-                            f"<p><strong>Tutor - </strong> {tutor.name} ({tutor.email})</p>"
-                            f"<p><strong>Courses - </strong> {', '.join(student.courses)}</p>"
-                            f"<p><strong>Time - </strong> {student.final_time}</p>"
-                            f"</div><hr>"
-                        )
-                        i += 1
-                    message += "</div>"
+                    message = "Files uploaded successfully"
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
             else:
@@ -68,6 +56,18 @@ def upload():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     global peer_tutor_responses, student_responses, student_assignment
+    
+    # Convert student_assignment dictionary to a list of dictionaries for the template
+    assignments = []
+    if (student_assignment is not None):
+        for student, tutor in student_assignment.items():
+            assignment = {
+                'student': student.name,
+                'tutor': tutor.name,
+                'subject': ",".join(student.courses),
+                'time_slot': student.final_time.replace(":", " - ")
+            }
+            assignments.append(assignment)
 
     results = []
     if request.method == 'POST':
@@ -88,15 +88,15 @@ def search():
                         student_email = row["Student's School Email"]
                         
                         # Create result message
-                        message += f"Student - {student_name} ({student_email})"
+                        message = f"Student - {student_name} ({student_email})"
                         results.append(message)
 
             if not results:
                 flash('No results found.', 'info')
             else:
-                flash('\n'.join(results), 'success')
+                flash('\n\n'.join(results), 'success')
 
-    return render_template('search.html')
+    return render_template('search.html', results=results, assignments=assignments)
 
 #CHECK THIS CODE
 #email page displays email
