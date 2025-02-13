@@ -14,8 +14,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create upload directory if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-peer_tutors = None
-students_classes = None
+peer_tutor_responses = None
+student_responses = None
+student_assignment = None
 
 @app.route('/')
 def home():
@@ -23,7 +24,7 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    global peer_tutors, students_classes
+    global peer_tutor_responses, student_responses, student_assignment
     message = None
     if request.method == 'POST':
         if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
@@ -38,8 +39,8 @@ def upload():
                     student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
                     student_file.save(student_path)
 
-                    peer_tutors = pd.read_csv(tutor_path)
-                    students_classes = pd.read_csv(student_path)
+                    peer_tutor_responses = pd.read_csv(tutor_path)
+                    student_responses = pd.read_csv(student_path)
                     
                     student_assignment, time_assignment = get_tutors(student_path, tutor_path)
                     message = "<div class='assignment-results'>"
@@ -66,7 +67,7 @@ def upload():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    global peer_tutors, students_classes
+    global peer_tutor_responses, student_responses, student_assignment
 
     results = []
     if request.method == 'POST':
@@ -74,19 +75,26 @@ def search():
         if not name:
             flash('Please enter a name to search.', 'warning')
         else:
-            if peer_tutors is not None and name in peer_tutors.values:
+            if peer_tutor_responses is not None and name in peer_tutor_responses.values:
                 results.append(f"Peer Tutor Found: {name}")
                 
-            if students_classes is not None:
-                student_data = students_classes[students_classes['Student\'s name: '] == name]
+            if student_responses is not None:
+                student_data = student_responses[student_responses['Student\'s Name (first and last)'].str.lower().str.contains(name.lower())]
                 if not student_data.empty:
-                    classes = ", ".join(student_data['Subject (and level if applicable) that the student needs tutoring in: '])
-                    results.append(f"Student Found: {name}\nClasses: {classes}")
+                    message = ""
+                    # Iterate through each student in the filtered data
+                    for idx, row in student_data.iterrows():
+                        student_name = row["Student's Name (first and last)"]
+                        student_email = row["Student's School Email"]
+                        
+                        # Create result message
+                        message += f"Student - {student_name} ({student_email})"
+                        results.append(message)
 
             if not results:
                 flash('No results found.', 'info')
             else:
-                flash('\n\n'.join(results), 'success')
+                flash('\n'.join(results), 'success')
 
     return render_template('search.html')
 
