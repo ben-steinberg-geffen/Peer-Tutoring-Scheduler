@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def load_student_data():
+def load_student_data(path="student_responses.csv"):
     """
     Load student requests data from a CSV file, rename columns for consistency, and merge course selections.
 
@@ -9,7 +9,7 @@ def load_student_data():
         pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
     base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", "student_responses.csv")
+    file_path = os.path.join(base_path, "data", path)
     df = pd.read_csv(file_path)
 
     # Rename columns
@@ -41,7 +41,7 @@ def load_student_data():
     
     return df
 
-def load_tutor_data():
+def load_tutor_data(path="tutor_responses.csv"):
     """
     Load tutor requests data from spring and fall CSV files, combine them, and rename columns for consistency.
 
@@ -49,7 +49,7 @@ def load_tutor_data():
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
     base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", "tutor_responses.csv")
+    file_path = os.path.join(base_path, "data", path)
 
     # Load both CSV files
     df = pd.read_csv(file_path)

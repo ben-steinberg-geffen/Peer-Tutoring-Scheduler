@@ -12,6 +12,8 @@ student_assignment = {}
 time_assignment = {}
 not_matched = []
 
+random.seed(10)
+
 class Student:
     def __init__(self, name, email, grade, availability, courses, not_tutors):
         self.name = name
