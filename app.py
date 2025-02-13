@@ -68,6 +68,8 @@ def search():
                 'time_slot': student.final_time.replace(":", " - ")
             }
             assignments.append(assignment)
+        # Sort the assignments list by tutor name first, then student name
+        assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
 
     results = []
     if request.method == 'POST':
