@@ -43,15 +43,17 @@ def upload():
                     
                     student_assignment, time_assignment = get_tutors(student_path, tutor_path)
                     message = "<div class='assignment-results'>"
+                    i = 0
                     for student, tutor in student_assignment.items():
                         message += (
-                            f"<div class='match'>"
+                            f"<div class='match'>{i}"
                             f"<p><strong>Student:</strong> {student.name} ({student.email})</p>"
                             f"<p><strong>Tutor:</strong> {tutor.name} ({tutor.email})</p>"
                             f"<p><strong>Courses:</strong> {', '.join(student.courses)}</p>"
                             f"<p><strong>Time:</strong> {student.final_time}</p>"
                             f"</div><hr>"
                         )
+                        i += 1
                     message += "</div>"
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
@@ -74,7 +76,7 @@ def search():
         else:
             if peer_tutors is not None and name in peer_tutors.values:
                 results.append(f"Peer Tutor Found: {name}")
-
+                
             if students_classes is not None:
                 student_data = students_classes[students_classes['Student\'s name: '] == name]
                 if not student_data.empty:
