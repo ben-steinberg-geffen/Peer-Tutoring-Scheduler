@@ -2,10 +2,27 @@
 
 {% block content %}
 <h2>Search Students or Tutors</h2>
-<form method="POST">
-    <input type="text" name="name" placeholder="Enter name of student or peer tutor">
-    <button type="submit">Search</button>
+<form method="POST" class="search-form">
+    <input type="text" name="name" placeholder="Search Tutor or Student" class="search-box">
+    <button type="submit" class="search-btn">🔍</button>
 </form>
+
+
+<div class="search-categories">
+    {% if user_role == 'teacher' %}
+    <div class="category-container">
+        <button class="category-btn">Teacher</button>
+        <button class="category-btn">Room</button>
+        <button class="category-btn">Availability</button>
+    </div>
+    {% else %}
+    <div class="category-container">
+        <button class="category-btn">Person</button>
+        <button class="category-btn">Availability</button>
+        <button class="category-btn">Subject</button>
+    </div>
+    {% endif %}
+</div>
 
 <button class="request-change-btn" onclick="openPopup()">Request Change</button>
 
