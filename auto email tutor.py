@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart 
+import csv
 
 class finalmatches:
     def __init__(self, tutorname, tutoremail, courses, finaltimes, studentname, studentemail):
@@ -22,6 +23,11 @@ sample_finalmatch = finalmatches(
     courses="Math",
     finaltimes="3:10pm"
 )
+
+with open('tutoring_schedule.csv', mode ='r') as file:    
+       csvFile = csv.DictReader(file)
+       for lines in csvFile:
+            print(lines)
 
 
 '''
@@ -83,4 +89,4 @@ def email_student(finalmatches):
 #appendix interframe
 
 
-email_tutor(sample_finalmatch)
+#email_tutor(sample_finalmatch)
