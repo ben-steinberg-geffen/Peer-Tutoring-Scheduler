@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from main import Student, Tutor
 
 def load_student_data(path="student_responses.csv"):
     """
@@ -80,3 +81,18 @@ def load_tutor_data(path="tutor_responses.csv"):
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     
     return df
+
+def load_assignment():
+    base_path = os.path.dirname(__file__)
+    file_path = os.path.join(base_path, "tutoring_schedule.csv")
+    student_assignment = {}
+    tutor_assignment = {}
+
+    df = 0
+
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path)
+        student_assignment = {Student(df['Student Name'], df['Student Email'], df['Student Grade'], 
+                                      df['Student Availability'], df['Student Courses'], df['Student Name'], ), df}
+
+    pass
