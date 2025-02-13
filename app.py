@@ -26,9 +26,9 @@ def upload():
     global peer_tutors, students_classes
     message = None
     if request.method == 'POST':
-        if 'peer_tutors_file' in request.files and 'students_classes_file' in request.files:
-            tutor_file = request.files['peer_tutors_file']
-            student_file = request.files['students_classes_file']
+        if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
+            tutor_file = request.files['peer_tutor_responses_file']
+            student_file = request.files['student_responses_file']
 
             if tutor_file.filename != '' and student_file.filename != '':
                 try:
@@ -41,8 +41,18 @@ def upload():
                     peer_tutors = pd.read_csv(tutor_path)
                     students_classes = pd.read_csv(student_path)
                     
-                    student_assignment, time_assignment = get_tutors(tutor_path, student_path)
-                    message = "Files uploaded successfully!"
+                    student_assignment, time_assignment = get_tutors(student_path, tutor_path)
+                    message = "<div class='assignment-results'>"
+                    for student, tutor in student_assignment.items():
+                        message += (
+                            f"<div class='match'>"
+                            f"<p><strong>Student:</strong> {student.name} ({student.email})</p>"
+                            f"<p><strong>Tutor:</strong> {tutor.name} ({tutor.email})</p>"
+                            f"<p><strong>Courses:</strong> {', '.join(student.courses)}</p>"
+                            f"<p><strong>Time:</strong> {student.final_time}</p>"
+                            f"</div><hr>"
+                        )
+                    message += "</div>"
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
             else:

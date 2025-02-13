@@ -2,13 +2,13 @@ from data import load_student_data, load_tutor_data
 import random
 import csv
 
-# THIS FILE SHOULD BE RUN WITH THE INITIAL SET OF STUDENTS AND TUTORS
 # NEED FUNCTIONANILITY TO CHANGE THE STUDENTS, TUTORS, AND TIME WHENEVER BASED ON THE CSV FILE
 # ADD FUNCTIONALITY TO ADD CUSTOM CONSTRAINTS (EX: TUTOR CANNOT TEACH STUDENT, HIGHER GRADE LEVEL, ETC.)
-# MAYBE A WAY TO GET STUDENT/TUTOR RESPONSES AUTOMATICALLY FROM THE GOOGLE SPREADSHEET
 
 student_df = load_student_data()
 tutor_df = load_tutor_data()
+
+
 
 student_assignment = {}
 time_assignment = {}
@@ -17,7 +17,7 @@ not_matched = []
 random.seed(10)
 
 class Student:
-    def __init__(self, name, email, grade, availability, courses, not_tutors):
+    def __init__(self, name, email, grade, availability, courses, not_tutors, final_tutor = None):
         self.name = name
         self.email = email
         self.grade = grade
@@ -27,7 +27,7 @@ class Student:
         self.not_tutors = not_tutors
         self.tutor_index = 0 
         self.time_index = 0
-        self.final_tutor = None
+        self.final_tutor = final_tutor
         self.final_time = None
 
 class Tutor:
@@ -39,7 +39,7 @@ class Tutor:
         self.courses = courses
         self.not_students = not_students
         self.matched_students = []
-        self.final_students = {} # This aligns the students with the time slot
+        self.final_students = {}
         self.final_times = []
         
 students = []
@@ -194,9 +194,13 @@ if result:
 
     with open('tutoring_schedule.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Tutor Name', 'Tutor Email', 'Course', 'Time'])
+        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
         for student, tutor in student_assignment.items():
-            writer.writerow([student.name, student.email, tutor.name, tutor.email, ', '.join(student.courses), student.final_time])
+            writer.writerow([
+                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses),
+                tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
+                student.final_time
+            ])
     print("Results saved to tutoring_schedule.csv")
 else:
     print("No solution found.")
