@@ -71,34 +71,25 @@ def search():
         # Sort the assignments list by tutor name first, then student name
         assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
 
-    results = []
+    actual_assignments = []
     if request.method == 'POST':
         name = request.form['name'].strip()
         if not name:
             flash('Please enter a name to search.', 'warning')
         else:
-            if peer_tutor_responses is not None and name in peer_tutor_responses.values:
-                results.append(f"Peer Tutor Found: {name}")
-                
-            if student_responses is not None:
-                student_data = student_responses[student_responses['Student\'s Name (first and last)'].str.lower().str.contains(name.lower())]
-                if not student_data.empty:
-                    message = ""
-                    # Iterate through each student in the filtered data
-                    for idx, row in student_data.iterrows():
-                        student_name = row["Student's Name (first and last)"]
-                        student_email = row["Student's School Email"]
-                        
-                        # Create result message
-                        message = f"Student - {student_name} ({student_email})"
-                        results.append(message)
+            for assignment in assignments:
+                if (name.lower() in assignment['student'].lower() or 
+                    name.lower() in assignment['tutor'].lower() or 
+                    name.lower() in assignment['subject'].lower() or 
+                    name.lower() in assignment['time_slot'].lower()):
+                    actual_assignments.append(assignment)
 
-            if not results:
+            if len(actual_assignments) == 0:
                 flash('No results found.', 'info')
-            else:
-                flash('\n\n'.join(results), 'success')
+    else:
+        actual_assignments = assignments
 
-    return render_template('search.html', results=results, assignments=assignments)
+    return render_template('search.html', assignments=actual_assignments)
 
 #CHECK THIS CODE
 #email page displays email
