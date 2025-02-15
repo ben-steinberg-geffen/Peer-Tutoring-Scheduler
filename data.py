@@ -1,5 +1,7 @@
 import os
+import csv
 import pandas as pd
+from models import Student, Tutor
 
 class Student:
     def __init__(self, name, email, grade, availability, courses, not_tutors, final_tutor = None):
@@ -122,3 +124,37 @@ def load_assignment():
 
 
     return student_assignment, time_assignment
+
+
+def load_existing_schedule(schedule_file, students, tutors):
+    student_assignment = {}
+    time_assignment = {}
+    with open(schedule_file, mode='r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            student = next((s for s in students if s.name == row['Student Name']), None)
+            tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
+            if student and tutor:
+                student_assignment[student] = tutor
+                time_assignment[student] = row['Time']
+                student.final_tutor = tutor
+                student.final_time = row['Time']
+                tutor.final_students[student] = row['Time']
+                tutor.final_times.append(row['Time'])
+    return student_assignment, time_assignment
+
+def update_students_tutors(student_df, tutor_df, student_assignment):
+    existing_students = {student.name for student in student_assignment.keys()}
+    existing_tutors = {tutor.name for tutor in student_assignment.values()}
+    
+    students = []
+    tutors = []
+    
+    for index, row in student_df.iterrows():
+        if row['name'] not in existing_students:
+            students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
+    
+    for index, row in tutor_df.iterrows():
+        if row['name'] not in existing_tutors:
+            tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
+    return students, tutors
