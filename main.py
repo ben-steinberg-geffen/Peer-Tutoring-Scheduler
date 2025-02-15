@@ -1,4 +1,4 @@
-from data import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors
+from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors
 from models import Student, Tutor
 from constraint_loader import load_constraints, apply_constraints
 from scheduler import match_students_tutors, backtrack

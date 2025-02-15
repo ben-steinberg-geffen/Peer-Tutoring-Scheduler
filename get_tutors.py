@@ -1,4 +1,4 @@
-from data import load_student_data, load_tutor_data
+from data_loader import load_student_data, load_tutor_data
 import random
 import csv
 
