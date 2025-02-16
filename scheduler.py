@@ -1,5 +1,4 @@
 import random
-from models import Student, Tutor
 
 def get_time_intersection(student, tutor):
     times = []
