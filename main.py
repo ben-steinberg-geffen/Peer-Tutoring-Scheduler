@@ -5,10 +5,6 @@ from data_loader import load_student_data, load_tutor_data, load_existing_schedu
 from constraint_loader import load_constraints, apply_constraints
 from scheduler import match_students_tutors, backtrack
 
-# Random seed for reproducibility
-# Finish personal/custom constraints
-# 
-
 # Load data
 student_df = load_student_data()
 tutor_df = load_tutor_data()
@@ -31,13 +27,11 @@ else:
 
 # Update students and tutors with new data
 students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
+students, tutors, not_matched = match_students_tutors(students, tutors)
 
 # Load and apply constraints
 # constraints = load_constraints('constraints.csv')
 # apply_constraints(students, tutors, constraints)
-
-# Match students and tutors
-students, tutors, not_matched = match_students_tutors(students, tutors)
 
 # Perform backtracking to find a valid schedule
 result = None
@@ -48,7 +42,7 @@ while not result:
 # Save the result
 if result:
     student_assignment, time_assignment = result
-    
+
     for student, reason in not_matched.items():
         print(f"{student.name} was not matched because {reason}")
 

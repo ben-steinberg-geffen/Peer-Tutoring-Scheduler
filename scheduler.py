@@ -1,11 +1,13 @@
 import random
 
+random.seed(42)
+
 def get_time_intersection(student, tutor):
-    times = []
-    for time in student.availability: 
-        if time in tutor.availability: 
-            times.append(time)
-    return times
+    time_slots = []
+    for slot in student.availability: 
+        if slot in tutor.availability:
+            time_slots.append(slot)
+    return time_slots
 
 def match_students_tutors(students, tutors):
     not_matched = {}
@@ -17,13 +19,13 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-                    else:
-                        reason = f"Tutor {tutor.name} is not allowed to tutor this student. "
-                else:
-                    reason = f"Tutor {tutor.name} does not have matching availability. "
-            else:
-                reason = f"Tutor {tutor.name} does not teach all required courses. "
-        if student.matched_tutors == []:
+        if not student.matched_tutors:
+            if not any(set(student.courses).intersection(set(tutor.courses)) == set(student.courses) for tutor in tutors):
+                reason = "No tutors available for all required courses."
+            elif not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
+                reason = "No matching availability with any tutor."
+            elif all(student in tutor.not_students or tutor in student.not_tutors for tutor in tutors):
+                reason = "All potential tutors are in the not preferred list."
             not_matched[student] = reason
     return students, tutors, not_matched
 
@@ -33,31 +35,18 @@ def select_unassigned_tutor(students):
             if not student.matched_tutors:
                 continue
 
-            index = student.tutor_index - 1 # because we increment it before returning
-
-            student.tutor_index += 1
-            
-            if student.tutor_index > len(student.matched_tutors) - 1:
-                student.tutor_index = 0
-
             random.shuffle(student.matched_tutors)
 
-            return student.matched_tutors[index], student
+            return student.matched_tutors[0], student
         
     return False
 
-def select_unassigned_time(tutor_var, student_var):
-    index = student_var.time_index - 1
+def select_unassigned_time(tutor, student):
+    times = get_time_intersection(student, tutor)
 
-    times = get_time_intersection(student_var, tutor_var)
+    random.shuffle(times)
 
-    selected_time = times[index]
-
-    student_var.time_index += 1
-    if student_var.time_index > len(times) - 1:
-        student_var.time_index = 0
-
-    return selected_time
+    return times
 
 def backtrack(student_assignment, time_assignment, students, tutors):
     if check_completion(student_assignment, time_assignment, students):
@@ -68,17 +57,18 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     if not result:
         return False
     
-    tutor_var, student_var = result
-    times = get_time_intersection(student_var, tutor_var)
-    random.shuffle(times)
+    tutor, student = result
+    times = get_time_intersection(student, tutor)
 
-    for time_var in times:
-        student_assignment[student_var] = tutor_var
-        student_var.final_tutor = tutor_var
-        time_assignment[student_var] = time_var
-        student_var.final_time = time_var
-        tutor_var.final_students[student_var] = time_var
-        tutor_var.final_times.append(time_var)
+    for time in times:
+        student_assignment[student] = tutor
+        time_assignment[student] = time
+
+        student.final_tutor = tutor
+        student.final_time = time
+
+        tutor.final_students[student] = time
+        tutor.final_times.append(time)
 
         if check_constraints(student_assignment, time_assignment):
             result = backtrack(student_assignment, time_assignment, students, tutors)
@@ -86,12 +76,14 @@ def backtrack(student_assignment, time_assignment, students, tutors):
             if result:
                 return result
         
-        student_var.final_tutor = None
-        student_var.final_time = None
-        del student_assignment[student_var]
-        del time_assignment[student_var]
-        del tutor_var.final_students[student_var]
-        tutor_var.final_times.remove(time_var)
+        del student_assignment[student]
+        del time_assignment[student]
+        
+        student.final_tutor = None
+        student.final_time = None
+        
+        del tutor.final_students[student]
+        tutor.final_times.remove(time)
 
     return False
 
