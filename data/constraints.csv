@@ -1,0 +1,4 @@
+type,student,tutor
+not_tutor,John Doe,Jane Smith
+not_tutor,Emily Davis,Michael Brown
+higher_grade,Chris Johnson,Alex Lee
