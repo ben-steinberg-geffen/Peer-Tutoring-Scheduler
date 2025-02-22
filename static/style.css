@@ -1,6 +1,11 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('/static/Inter_18pt-Regular.ttf') format('truetype');
+}
+
 /*main design*/
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Roboto, sans-serif;
     background-color: #fff;
     margin: 0;
     padding: 0;
