@@ -272,6 +272,11 @@ nav a.active {
     background-color: #3a6c85;
 }
 
+p {
+    font-size: 18px;
+    font-weight: 400;
+}
+
 h4 {
     font-size: 24px;
     margin: 0px;
@@ -320,29 +325,32 @@ h2 {
 
 .content-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 25px;
-    padding: 0px;
-    margin-top: 3px;
+    justify-content: center;
+    gap: 40px;
+    margin: 0 auto;
+    max-width: 1200px;
 }
 
 .text-content {
     flex: 1;
     max-width: 600px;
-    padding-left: 20px;
+    padding: 25px 0px 25px 20px;  /* Top Right Bottom Left */
 }
 
 .image-container {
     flex: 0 0 auto;
-    padding-right: 20px;
+    line-height: 0;
+    display: flex;
+    align-items: center;
 }
 
 .image-container img {
-    width: 480px;
+    width: 450px;
     height: auto;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
 }
 
 /* Confetti animation container */
@@ -440,4 +448,12 @@ h2 {
 
 .send-email-btn:hover {
     background-color: #004e96; 
+}
+
+.directions {
+    margin-bottom: 1em;  /* Matches typical paragraph spacing */
+}
+
+ol.directions {
+    padding-left: 20px;  /* Gives better alignment with the rest of the content */
 }
