@@ -26,8 +26,8 @@ def match_students_tutors(students, tutors):
                 reason = "No matching courses with any tutor."
             elif all(student in tutor.not_students or tutor in student.not_tutors for tutor in tutors):
                 reason = "All potential tutors are in the not preferred list."
-            elif not set(student.availability).intersection(set(tutor.availability) for tutor in tutors):
-                reason = "No matching availability with any tutor."
+            # elif not set(student.availability).intersection(set(tutor.availability) for tutor in tutors):
+            #     reason = "No matching availability with any tutor."
             elif not any(set(student.courses).intersection(set(tutor.courses)) and set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
                 reason = "No matching availability with tutors that teach required courses."
             else:
