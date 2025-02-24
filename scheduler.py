@@ -20,14 +20,24 @@ def match_students_tutors(students, tutors):
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
         if not student.matched_tutors: #BUGGED
-            if not any(set(student.courses).intersection(set(tutor.courses)) == set(student.courses) for tutor in tutors):
+            print(f"Student: {student.name}'s availability: {student.availability}")
+            for tutor in tutors: 
+                if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
+                    print(f"Tutor: {tutor.name} has the courses with availability: {tutor.availability}")
+                else: 
+                    print('no tutors work')
+
+            if not set(student.courses).intersection(set(tutor.courses) == set(student.courses) for tutor in tutors):
                 reason = "No tutors available for all required courses."
             elif all(student in tutor.not_students or tutor in student.not_tutors for tutor in tutors):
                 reason = "All potential tutors are in the not preferred list."
-            elif not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
+            elif not set(student.availability).intersection(set(tutor.availability) for tutor in tutors):
                 reason = "No matching availability with any tutor."
             elif set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
                 reason = "No matching availability with tutors that teach required courses."
+            else:
+                reason = "other reason"
+            
             not_matched[student] = reason
     return students, tutors, not_matched
 
