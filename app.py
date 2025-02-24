@@ -17,6 +17,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 peer_tutor_responses = None
 student_responses = None
 student_assignment = None
+not_matched = None
 
 @app.route('/')
 def home():
@@ -42,8 +43,8 @@ def upload():
                     peer_tutor_responses = pd.read_csv(tutor_path)
                     student_responses = pd.read_csv(student_path)
                     
-                    student_assignment, time_assignment = get_tutors(student_path, tutor_path)
-                    message = "Files uploaded successfully"
+                    (student_assignment, time_assignment), not_matched = get_tutors(student_path, tutor_path)
+                    message = f"{str(not_matched)}"
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
             else:

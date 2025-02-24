@@ -1,15 +1,39 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('/static/Inter_18pt-Regular.ttf') format('truetype');
+    font-weight: 400;  /* normal/regular weight */
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('/static/Inter_18pt-Medium.ttf') format('truetype');
+    font-weight: 500;  /* medium weight */
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('/static/Inter_18pt-SemiBold.ttf') format('truetype');
+    font-weight: 600;  /* semi-bold weight */
+}
+
 /*main design*/
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Roboto, sans-serif;
+    font-weight: 400;
     background-color: #fff;
     margin: 0;
     padding: 0;
     overflow-y: auto; /*enables vertical scrolling*/
 }
 
+h1 {
+    font-weight: 600;
+}
+
 li {
     font-size: 18px;
     color: black;
+    margin-bottom: 12px;  /* Adds space between list items */
 }
 
 .content {
@@ -37,6 +61,11 @@ nav a {
     text-decoration: none;
     font-size: 20px;
     padding: 10px 15px;
+}
+
+.text_link {
+    color: #0d599f;
+    text-decoration: none;
 }
 
 nav a:hover {
@@ -249,10 +278,16 @@ nav a.active {
     background-color: #3a6c85;
 }
 
+p {
+    font-size: 18px;
+    font-weight: 400;
+}
+
 h4 {
     font-size: 24px;
     margin: 0px;
     color: black;
+    font-weight: 600;
 }
 
 h2 {
@@ -260,6 +295,7 @@ h2 {
     font-size: 28px;
     color: black;
     margin: 15px;
+    font-weight: 600;
 }
 
 /*home page bullet points*/
@@ -295,29 +331,32 @@ h2 {
 
 .content-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 25px;
-    padding: 0px;
-    margin-top: 3px;
+    justify-content: center;
+    gap: 40px;
+    margin: 0 auto;
+    max-width: 1200px;
 }
 
 .text-content {
     flex: 1;
     max-width: 600px;
-    padding-left: 20px;
+    padding: 25px 0px 25px 20px;  /* Top Right Bottom Left */
 }
 
 .image-container {
     flex: 0 0 auto;
-    padding-right: 20px;
+    line-height: 0;
+    display: flex;
+    align-items: center;
 }
 
 .image-container img {
-    width: 480px;
+    width: 450px;
     height: auto;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
 }
 
 /* Confetti animation container */
@@ -415,4 +454,12 @@ h2 {
 
 .send-email-btn:hover {
     background-color: #004e96; 
+}
+
+.directions {
+    margin-bottom: 20px;
+}
+
+ol.directions {
+    padding-left: 20px;  /* Gives better alignment with the rest of the content */
 }

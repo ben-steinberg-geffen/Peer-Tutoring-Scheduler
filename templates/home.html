@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Welcome to the Peer Tutoring Scheduler!</h2>
+<h2>Geffen Peer Tutoring Scheduler</h2>
 <br>
 <div class="content-container">
     <div class="text-content">
         <h4>What we can do:</h4>
-        <ul class="a">
+        <ol class="directions">
             <li>Create a tutoring schedule</li>
-            <li>Send automatic emails</li>
             <li>Request tutor and student changes</li>
-        </ul>
-        <br>
-        <h4>Directions:</h4>
-        <ol class="a">
-            <li>Upload two CSV documents, one for students and one for peer tutors</li>
-            <li>Search for individual students and peer tutors</li>
-            <li>Send autommatic emails to students and tutors</li>
+            <li>Automatically send emails to students and tutors</li>
+        </ol>
+        <h4>Directions</h4>
+        <ol class="directions">
+            <li>Go to the Google Sheets with the student responses</li>
+            <li>Go to file -> download -> .csv</li>
+            <li>Repeat this process for the tutor responses sheet</li>
+            <li>Go to the <a class="text_link", href="{{ url_for('upload') }}">Upload</a> tab and upload both files </li>
+            <li>After upload is complete, go to the <a class="text_link", href="{{ url_for('search') }}">Search</a> tab to view student assignments and request changes </li>
         </ol>
     </div>
     <div class="image-container">
