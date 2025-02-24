@@ -98,7 +98,6 @@ def load_assignment():
 
     return student_assignment, time_assignment
 
-
 def load_existing_schedule(schedule_file, students, tutors):
     student_assignment = {}
     time_assignment = {}
@@ -123,11 +122,11 @@ def update_students_tutors(student_df, tutor_df, student_assignment):
     students = []
     tutors = []
     
-    for index, row in student_df.iterrows():
+    for _, row in student_df.iterrows():
         if row['name'] not in existing_students:
             students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
     
-    for index, row in tutor_df.iterrows():
+    for _, row in tutor_df.iterrows():
         if row['name'] not in existing_tutors:
             tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
     return students, tutors
