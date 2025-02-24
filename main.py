@@ -58,7 +58,7 @@ def main():
 
         for student, reason in not_matched.items():
             print(f"{student.name} was not matched because {reason}")
-        # save_schedule(student_assignment)
+        save_schedule(student_assignment)
     else:
         print("No solution found.")
 
