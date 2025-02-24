@@ -55,15 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Setup drag and drop for both areas
-    setupDragAndDrop(dragAreaTutors, 'peer_tutors_file');
-    setupDragAndDrop(dragAreaStudents, 'students_classes_file');
+    setupDragAndDrop(dragAreaTutors, 'peer_tutor_responses_file');
+    setupDragAndDrop(dragAreaStudents, 'student_responses_file');
 
     // Form submission and confetti
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const tutorsFile = document.getElementById('peer_tutors_file').files[0];
-        const studentsFile = document.getElementById('students_classes_file').files[0];
+        const tutorsFile = document.getElementById('peer_tutor_responses_file').files[0];
+        const studentsFile = document.getElementById('student_responses_file').files[0];
         
         if (tutorsFile && studentsFile) {
             showConfetti();
