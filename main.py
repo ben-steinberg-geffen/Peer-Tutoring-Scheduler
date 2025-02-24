@@ -43,8 +43,8 @@ def main():
     students, tutors, not_matched = match_students_tutors(students, tutors)
 
     # Load and apply constraints
-    # constraints = load_constraints('constraints.csv')
-    # apply_constraints(students, tutors, constraints)
+    constraints = load_constraints('constraints.csv')
+    apply_constraints(students, tutors, constraints)
 
     # Perform backtracking to find a valid schedule
     result = None
