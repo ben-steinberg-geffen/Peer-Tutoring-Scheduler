@@ -27,11 +27,6 @@ def match_students_tutors(students, tutors):
             else:
                 reason = "NONE"
 
-
-
-
-            
-
             not_matched[student] = reason
     return students, tutors, not_matched
 
