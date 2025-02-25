@@ -3,7 +3,18 @@
 {% block content %}
 <h2>Email Checker</h2>
 
-<button class="send-email-btn">Send Emails</button>
-<button class="send-email-btn">Delete Emails</button>
+<div class="email-container">
+    <div class="email-display">
+        <p>Dear [student/tutor],</p>
+        <p> You have been matched with [student/tutor] for these classes: [class]. [tutor/student] is available to meet with you at [time] on [day]. </p>
+        <p>Regards,</p>
+        <p>Geffen Peer Tutoring Team</p>
+    </div>
+    <div class="button-container">
+        <button class="send-email-btn">Send Emails</button>
+        <button class="send-email-btn">Delete Emails</button>
+    </div>
+</div>
+
 
 {% endblock %}
