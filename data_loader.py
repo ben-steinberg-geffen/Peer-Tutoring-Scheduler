@@ -98,6 +98,7 @@ def load_assignment():
 
     return student_assignment, time_assignment
 
+
 def load_existing_schedule(schedule_file, students, tutors):
     student_assignment = {}
     time_assignment = {}
