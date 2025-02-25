@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
 from get_tutors import get_schedule
 import os
@@ -99,6 +99,20 @@ def search():
     return render_template('search.html', 
                          assignments=actual_assignments,
                          unassigned={})
+
+@app.route('/download_schedule')
+def download_schedule():
+    saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+    try:
+        return send_file(
+            saved_schedule_path,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='tutor_schedule.csv'
+        )
+    except Exception as e:
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(url_for('search'))
 
 #CHECK THIS CODE
 #email page displays email
