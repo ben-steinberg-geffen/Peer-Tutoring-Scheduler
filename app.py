@@ -129,11 +129,17 @@ def download_schedule():
 #email page displays email
 @app.route('/email')
 def email():
+    # Count the number of emails to be sent (from saved_schedule.csv)
+    email_count = 0
+    try:
+        saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+        if os.path.exists(saved_schedule_path):
+            df = pd.read_csv(saved_schedule_path)
+            email_count = len(df)
+    except Exception as e:
+        print(f"Error counting emails: {str(e)}")
 
-    #if emails sent, send all the emails and display message that emails were sent
-    #if emails deleted, delete email from box and display message
-
-    return render_template('email.html')
+    return render_template('email.html', email_count=email_count)
 
 if __name__ == '__main__':
     app.run(debug=True)
