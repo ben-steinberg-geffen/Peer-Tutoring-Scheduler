@@ -24,20 +24,32 @@ sample_finalmatch = finalmatches(
     finaltimes="3:10pm"
 )
 
-#print(sample_finalmatch.studentname)
+matches_list = []
 
+with open('tutoring_schedule.csv', mode='r', newline='') as file:
+    csvFile = csv.reader(file)
+    skipheader = next(csvFile) 
 
-#with open('tutoring_schedule.csv', mode ='r')as file:
- #   csvFile = csv.reader(file)
-  #  for lines in csvFile:
-   #     print(lines)
+    for line in csvFile:
+        if len(line) < 6: 
+            continue
 
+        tutorname = line[2]
+        tutoremail = line[3].strip()
+        studentname = line[0]
+        studentemail = line[1].strip()
+        courses = line[4]
+        finaltimes = line[5]
+
+        match = finalmatches(tutorname, tutoremail, studentname, studentemail, courses, finaltimes)
+        matches_list.append(match)
+
+#print(f"{match.studentname} is matched with {match.tutorname} for {match.courses} during {match.finaltimes}")
     
-
 
 def email_tutor(emailmatch):
     email = "GeffenPeerTutors@gmail.com"
-#reciever_email = "driover73@geffenacademy.ucla.edu"
+
     reciever_email = emailmatch.tutoremail
 
     subject = (f'Peer Tutoring with {emailmatch.studentname} on possible dates')
@@ -54,10 +66,12 @@ def email_tutor(emailmatch):
     print("Email has been sent to " + reciever_email)
 
 
+
+
+
 def email_student(emailmatch):
     email = "GeffenPeerTutors@gmail.com"
     
-#reciever_email = "driover73@geffenacademy.ucla.edu"
     reciever_email = emailmatch.studentemail
 
     subject = (f'Peer Tutoring with {emailmatch.tutorname} on possible dates')
@@ -70,16 +84,13 @@ def email_student(emailmatch):
     server.starttls()
     server.login(email, "IL0veG3ffen!")
     server.sendmail(email, reciever_email, text)
-
-
-    #IL0veG3ffen!
-    #
     
     print("Email has been sent to " + reciever_email)
 
-#email_tutor(sample_finalmatch)
-#appendix interframe
 
-email_tutor(sample_finalmatch)
+def email_all():
+    for match in matches_list:
+        email_student(match)
+        email_tutor(match)
 
-#email_tutor(sample_finalmatch)
+

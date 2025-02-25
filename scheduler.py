@@ -18,14 +18,23 @@ def match_students_tutors(students, tutors):
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
         if not student.matched_tutors:
+            potential_times = []
             if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 reason = "tutors that teach your course are not available at the same time"
+                # now find possible reason 
+                
+                for tutor in tutors: 
+                    if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
+                        for time in tutor.availability:
+                            potential_times.append(time) 
+                        potential_times = list(set(potential_times))
             elif not any(set(student.courses).intersection(set(tutor.courses)) for tutor in tutors):
                 reason = "no tutors are availabile to teach your selected courses"
             else:
                 reason = "NONE"
 
-            not_matched[student] = reason
+
+            not_matched[student] = [reason, potential_times]
     return students, tutors, not_matched
 
 def select_unassigned_tutor(students):
