@@ -47,6 +47,8 @@ def email_NotMatchedstudent(student, subject, message):
 
 
 #------- FOR TESTING
+
+
 Derek = Student("null","null","null","null","null","null")
 MrRioveros = Tutor("null","null","null","null","null","null")
 
@@ -69,7 +71,9 @@ MrRioveros.courses = "Math"
 MrRioveros.matched_students = [Derek]
 MrRioveros.final_students = {Derek} 
 
-message = (f'Dear {Derek.name}, \n\nYou have been matched with {Derek.final_tutor.name} ({Derek.final_tutor.email}) for peer tutoring in these classes: \n\t{Derek.courses}. \n\nYou will meet with {Derek.final_tutor.name} on: \n\t{Derek.final_time}. \n\nCoordinated directly with {Derek.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
-subject = (f'Peer Tutoring with {Derek.final_tutor.name}')
+message = (f'It works')
+subject = (f'LOL WOKS')
 
 email_Matchedstudent(Derek, subject, message)
+email_MatchedTutor(Derek, subject, message)
+email_NotMatchedstudent(Derek, subject, message)
