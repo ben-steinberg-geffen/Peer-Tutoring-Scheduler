@@ -1,58 +1,85 @@
 import smtplib
-from main import Student, Tutor
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart 
+import csv
 
-def email_student(Student, Tutor):
-    #message['From'] = 'peertutoring@geffenacademy.ucla.edu'
-    #message['To'] = student.email
+class finalmatches:
+    def __init__ (self, tutorname, tutoremail, studentname, studentemail, courses, finaltimes):
+        self.tutorname = tutorname
+        self.tutoremail = tutoremail
 
-    #message['Subject'] = (f'Peer Tutoring with {matched_tutor.name}')
-        
+        self.studentname = studentname
+        self.studentemail = studentemail
+
+        self.courses = courses
+        self.finaltimes = finaltimes
+
+
+sample_finalmatch = finalmatches(
+    tutorname="John",
+    tutoremail="ethankrobinson@gmail.com",
+    studentname="Mike",
+    studentemail="mike@gmail.com",
+    courses="Math",
+    finaltimes="3:10pm"
+)
+
+#print(sample_finalmatch.studentname)
+
+
+#with open('tutoring_schedule.csv', mode ='r')as file:
+ #   csvFile = csv.reader(file)
+  #  for lines in csvFile:
+   #     print(lines)
+
+    
+
+
+def email_tutor(emailmatch):
     email = "GeffenPeerTutors@gmail.com"
-    reciever_email = "driover73@geffenacademy.ucla.edu"
+#reciever_email = "driover73@geffenacademy.ucla.edu"
+    reciever_email = emailmatch.tutoremail
 
-    subject = (f'Peer Tutoring with {Tutor.name}')
-    #message = (f'Dear {student.name}, \n\nYou have been matched with {matched_tutor.name} ({matched_tutor.email}) for peer tutoring in these classes: \n\t{student.classes}. \n\nYou will meet with {matched_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {matched_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
-    message = ("Hello!")
+    subject = (f'Peer Tutoring with {emailmatch.studentname} on possible dates')
+
+    message = (f'Dear {emailmatch.tutorname}, \nCongratulations! You have succesfully been matched with {emailmatch.studentname} for peer tutoring in these classes: {emailmatch.courses}. {emailmatch.studentname} is available to meet with you on: {emailmatch.finaltimes}.')
+
     text =  f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
     server.login(email, "pyke ojyj ixud podl")
-    server.sendmail(email, reciever_email, text)    
+    server.sendmail(email, reciever_email, text)
 
     print("Email has been sent to " + reciever_email)
 
-def checkavailaibility(student, tutor):
-    intersection = []
-    for student.availability in student:
-        for tutor.availability in tutor:
-            if student.availability == tutor.availability:
-                intersection.append(student.availability, tutor.availaibility)
-    return intersection
 
-Ethan = Student()
-John = Tutor()
+def email_student(emailmatch):
+    email = "GeffenPeerTutors@gmail.com"
+    
+#reciever_email = "driover73@geffenacademy.ucla.edu"
+    reciever_email = emailmatch.studentemail
+
+    subject = (f'Peer Tutoring with {emailmatch.tutorname} on possible dates')
+
+    message = (f'Dear {emailmatch.studentname}, \nCongratulations! You have succesfully been matched with {emailmatch.tutorname} for peer tutoring in these classes: {emailmatch.courses}. {emailmatch.tutorname} is available to meet with you on: {emailmatch.finaltimes}.')
+
+    text =  f"Subject: {subject}\n\n{message}"
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(email, "IL0veG3ffen!")
+    server.sendmail(email, reciever_email, text)
 
 
+    #IL0veG3ffen!
+    #
+    
+    print("Email has been sent to " + reciever_email)
 
-Ethan.name = "Ethan"
-Ethan.email = "ethankrobinson@gmail.com"
-Ethan.availability = "1:00pm"
-Ethan.courses = "Math"
-Ethan.matched_tutors = [John]
-Ethan.grade = "11"
-Ethan.tutor_index = 0 
-Ethan.time_index = 0
-Ethan.final_tutor = None
-Ethan.final_time = None
-Student 
+#email_tutor(sample_finalmatch)
+#appendix interframe
 
-John.name = "John"
-John.email = "GeffenPeerTutors@gmail.com"
-John.grade = "11"
-John.availability = "1pm"
-John.courses = "Math"
-John.matched_students = [Ethan]
-John.final_students = {} 
+email_tutor(sample_finalmatch)
 
-email_student(Ethan, John)
+#email_tutor(sample_finalmatch)
