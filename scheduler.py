@@ -19,21 +19,23 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-        if not student.matched_tutors: #BUGGED
-            if any(set(student.courses).intersection(set(tutor.courses)) for tutor in tutors) and not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
-                reason = "No matching availability with any tutor that teaches required courses."
+        if not student.matched_tutors:
+            potential_times = []
+            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
+                reason = "tutors that teach your course are not available at the same time"
+                # now find possible reason 
+                
+                for tutor in tutors: 
+                    if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
+                        potential_times.append(time for time in tutor.availability) 
+                        potential_times = list(set(potential_times))
             elif not any(set(student.courses).intersection(set(tutor.courses)) for tutor in tutors):
-                reason = "No matching courses with any tutor."
-            elif all(student in tutor.not_students or tutor in student.not_tutors for tutor in tutors):
-                reason = "All potential tutors are in the not preferred list."
-            # elif not set(student.availability).intersection(set(tutor.availability) for tutor in tutors):
-            #     reason = "No matching availability with any tutor."
-            elif not any(set(student.courses).intersection(set(tutor.courses)) and set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
-                reason = "No matching availability with tutors that teach required courses."
+                reason = "no tutors are availabile to teach your selected courses"
             else:
-                reason = "other reason"
-            
-            not_matched[student] = reason
+                reason = "NONE"
+
+
+            not_matched[student] = [reason, potential_times]
     return students, tutors, not_matched
 
 def select_unassigned_tutor(students):

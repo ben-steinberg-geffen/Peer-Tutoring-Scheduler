@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
-from get_tutors import get_tutors
+from get_tutors import get_schedule
 import os
 import random
 
@@ -14,10 +14,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create upload directory if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-peer_tutor_responses = None
-student_responses = None
-student_assignment = None
-not_matched = None
+is_uploaded = False
 
 @app.route('/')
 def home():
@@ -25,7 +22,7 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    global peer_tutor_responses, student_responses, student_assignment
+    global is_uploaded
     message = None
     if request.method == 'POST':
         if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
@@ -39,12 +36,10 @@ def upload():
                     
                     student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
                     student_file.save(student_path)
-
-                    peer_tutor_responses = pd.read_csv(tutor_path)
-                    student_responses = pd.read_csv(student_path)
                     
-                    (student_assignment, time_assignment), not_matched = get_tutors(student_path, tutor_path)
+                    get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
                     message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view assignments."
+                    is_uploaded = True
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
             else:
@@ -56,21 +51,32 @@ def upload():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    global peer_tutor_responses, student_responses, student_assignment
+    global is_uploaded
     
-    # Convert student_assignment dictionary to a list of dictionaries for the template
+    saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+    data = pd.read_csv(saved_schedule_path)
+    # Get the column headers from the DataFrame
+    headers = list(data.columns)
+
+    # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
-    if (student_assignment is not None):
-        for student, tutor in student_assignment.items():
-            assignment = {
-                'student': student.name,
-                'tutor': tutor.name,
-                'subject': ",".join(student.courses),
-                'time_slot': student.final_time.replace(":", " - ")
-            }
-            assignments.append(assignment)
-        # Sort the assignments list by tutor name first, then student name
-        assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
+    for index, row in data.iterrows():
+        subjects_tutor =  row['Tutor Courses'].split(", ")
+        subjects_student = row['Student Courses'].split(", ")
+        subjects_both = []
+        for subject in subjects_tutor:
+            if subject in subjects_student:
+                subjects_both.append(subject)
+        assignment = {
+            'student': row['Student Name'] if 'Student Name' in row else row[0],  # Fallback to first column if header not found
+            'tutor': row['Tutor Name'] if 'Tutor Name' in row else row[1],       # Fallback to second column if header not found
+            'subject': ", ".join(subjects_both),
+            'time_slot': row['Time'] if 'Time' in row else ''
+        }
+        assignments.append(assignment)
+    
+    # Sort the assignments list by tutor name first, then student name
+    assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
 
     actual_assignments = []
     if request.method == 'POST':
@@ -90,7 +96,23 @@ def search():
     else:
         actual_assignments = assignments
 
-    return render_template('search.html', assignments=actual_assignments)
+    return render_template('search.html', 
+                         assignments=actual_assignments,
+                         unassigned={})
+
+@app.route('/download_schedule')
+def download_schedule():
+    saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+    try:
+        return send_file(
+            saved_schedule_path,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='tutor_schedule.csv'
+        )
+    except Exception as e:
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(url_for('search'))
 
 #CHECK THIS CODE
 #email page displays email
