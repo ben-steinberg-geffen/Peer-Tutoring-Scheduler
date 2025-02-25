@@ -1,51 +1,79 @@
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart 
+from models import Student, Tutor
 
-'''
-def email_tutor(student, matched_tutor):
-    message = MIMEMultipart()
-    message['From'] = 'peertutoring@geffenacademy.ucla.edu'
-    message['To'] = matched_tutor.email
+def email_Matchedstudent(student, subject, message):
 
-    message['Subject'] = (f'Peer Tutoring with {student.name} on possible dates')
-    message['Body'] = (f'Dear {matched_tutor.name}, \n Congratulations! You have succesfully been matched') 
-    (f'with {student.name} for peer tutoring in these classes: {student.classes}. {student.name} is available to meet')
-    (f'with you on: {student.availability}.')
+    from_email = 'GeffenPeerTutors@gmail.com'
+    reciever_email =  student.email
 
-'''
+    #subject = (f'Peer Tutoring with {student.final_tutor.name}')
+    #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
+    text =  f"Subject: {subject}\n\n{message}"
 
-#TUTOR EMAIL
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(from_email, "pyke ojyj ixud podl")
+    server.sendmail(from_email, reciever_email, text)    
 
-email = "GeffenPeerTutors@gmail.com"
-tutor_email = "cdesai28@geffenacademy.ucla.edu" #replace with tutor's email
+    print("Email has been sent to " + reciever_email)
 
-subject = ('Geffen Academy Peer Tutoring')
-tutor_message = (f'Dear Name,' #replace name with {matched_tutor}
-           f'\nYou have been matched with Student for these classes: Class.' #replace Student with {student} and Classes with {matched_classes}
-           f'\nStudent is available to meet with you on: Time, Day' #replace Time, Day with {matched_availability} and replace Student with {student}
-           '\nRegards,'
-           '\n     Geffen Peer Tutoring Team')
-tutor_text =  f"Subject: {subject}\n\n{tutor_message}"
+def email_MatchedTutor(Tutor, subject, message):
 
-#STUDENT EMAIL
+    from_email = 'GeffenPeerTutors@gmail.com'
+    reciever_email =  Tutor.email
 
-student_email = "camrondesai@gmailcom" #replace with student's email
-student_message = (f'Dear Name,' #replace name with {student}
-           f'\nYou have been matched with Tutor for these classes: Class.' #replace Tutor with {matched_tutor} and Classes with {matched_classes}
-           f'\nTutor is available to meet with you on: Time, Day' #replace Time, Day with {matched_availability} and replace Tutor with {matched_tutor}
-           '\nRegards,'
-           '\n     Geffen Peer Tutoring Team')
-student_text =  f"Subject: {subject}\n\n{student_message}"
+    #subject = (f'Peer Tutoring with {student.final_tutor.name}')
+    #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
+    text =  f"Subject: {subject}\n\n{message}"
 
-server = smtplib.SMTP("smtp.gmail.com", 587)
-server.starttls()
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(from_email, "pyke ojyj ixud podl")
+    server.sendmail(from_email, reciever_email, text)    
 
-server.login(email, "pyke ojyj ixud podl")
+    print("Email has been sent to " + reciever_email)
 
-server.sendmail(email, tutor_email, tutor_text)
+def email_NotMatchedstudent(student, subject, message):
 
-server.sendmail(email, student_email, student_text)
+    from_email = 'GeffenPeerTutors@gmail.com'
+    reciever_email =  student.email
 
-print("Email has been sent to " + tutor_email)
-print("Email has been sent to " + student_email)
+    #subject = (f'Peer Tutoring with {student.final_tutor.name}')
+    #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
+    text =  f"Subject: {subject}\n\n{message}"
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(from_email, "pyke ojyj ixud podl")
+    server.sendmail(from_email, reciever_email, text)    
+
+    print("Email has been sent to " + reciever_email)
+
+
+#------- FOR TESTING
+Derek = Student("null","null","null","null","null","null")
+MrRioveros = Tutor("null","null","null","null","null","null")
+
+
+
+Derek.name = "Derek"
+Derek.email = "driover73@geffenacademy.ucla.edu"
+Derek.availability = "1pm"
+Derek.courses = "Math"
+Derek.matched_tutors = [MrRioveros]
+Derek.grade = "12"
+#Derek.final_tutor = MrRioveros
+#Derek.final_time = "1pm"
+
+MrRioveros.name = "Mr. Rioveros"
+MrRioveros.email = "driover73@geffenacademy.ucla.edu"
+MrRioveros.grade = "12"
+MrRioveros.availability = "1pm"
+MrRioveros.courses = "Math"
+MrRioveros.matched_students = [Derek]
+MrRioveros.final_students = {Derek} 
+
+message = (f'Dear {Derek.name}, \n\nYou have been matched with {Derek.final_tutor.name} ({Derek.final_tutor.email}) for peer tutoring in these classes: \n\t{Derek.courses}. \n\nYou will meet with {Derek.final_tutor.name} on: \n\t{Derek.final_time}. \n\nCoordinated directly with {Derek.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
+subject = (f'Peer Tutoring with {Derek.final_tutor.name}')
+
+email_Matchedstudent(Derek, subject, message)
