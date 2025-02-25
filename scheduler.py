@@ -1,7 +1,5 @@
 import random
 
-# random.seed(42)
-
 def get_time_intersection(student, tutor):
     time_slots = []
     for slot in student.availability: 
