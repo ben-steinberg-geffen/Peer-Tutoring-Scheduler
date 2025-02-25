@@ -2,18 +2,33 @@
 
 {% block content %}
 <style>
+    .assignments-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;  /* Space between title and button */
+        margin-bottom: 20px;
+    }
+
+    .assignments-header h3 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+
     .download-link {
         display: inline-block;
-        padding: 8px 15px;
+        padding: 10px 20px;
         background-color: #003566;
         color: white;
         text-decoration: none;
         border-radius: 4px;
         transition: background-color 0.3s;
+        font-size: 1.05em;
+        font-weight: 400;
     }
 
     .download-link:hover {
-        background-color: #003566;
+        background-color: #004b8f;
+        color: white;
     }
 
     .assignments-table {
@@ -80,8 +95,8 @@
 -->
 
 <div class="assignments-table">
-    <h3>Current Assignments</h3>
-    <div style="margin-bottom: 15px;">
+    <div class="assignments-header">
+        <h3>Current Assignments</h3>
         <a href="{{ url_for('download_schedule') }}" class="download-link">Download Schedule CSV</a>
     </div>
     <table>
