@@ -38,7 +38,7 @@ def upload():
                     student_file.save(student_path)
                     
                     get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
-                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view assignments."
+                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view or download assignments."
                     is_uploaded = True
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
