@@ -22,8 +22,6 @@ def email_MatchedTutor(Tutor, subject, message):
     from_email = 'GeffenPeerTutors@gmail.com'
     reciever_email =  Tutor.email
 
-    #subject = (f'Peer Tutoring with {student.final_tutor.name}')
-    #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
     text =  f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -38,8 +36,6 @@ def email_NotMatchedstudent(student, subject, message):
     from_email = 'GeffenPeerTutors@gmail.com'
     reciever_email =  student.email
 
-    #subject = (f'Peer Tutoring with {student.final_tutor.name}')
-    #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
     text =  f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
