@@ -44,7 +44,7 @@ def upload():
                     student_responses = pd.read_csv(student_path)
                     
                     (student_assignment, time_assignment), not_matched = get_tutors(student_path, tutor_path)
-                    message = f"{str(not_matched)}"
+                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view assignments."
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
             else:
