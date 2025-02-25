@@ -1,6 +1,6 @@
 import random
 
-random.seed(42)
+# random.seed(42)
 
 def get_time_intersection(student, tutor):
     time_slots = []
@@ -19,15 +19,19 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
-        if not student.matched_tutors: #BUGGED
-            if not any(set(student.courses).intersection(set(tutor.courses)) == set(student.courses) for tutor in tutors):
-                reason = "No tutors available for all required courses."
-            elif all(student in tutor.not_students or tutor in student.not_tutors for tutor in tutors):
-                reason = "All potential tutors are in the not preferred list."
-            elif not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
-                reason = "No matching availability with any tutor."
-            elif set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability)) for tutor in tutors):
-                reason = "No matching availability with tutors that teach required courses."
+        if not student.matched_tutors:
+            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
+                reason = "tutors that teach your course are not available at the same time"
+            elif not any(set(student.courses).intersection(set(tutor.courses)) for tutor in tutors):
+                reason = "no tutors are availabile to teach your selected courses"
+            else:
+                reason = "NONE"
+
+
+
+
+            
+
             not_matched[student] = reason
     return students, tutors, not_matched
 

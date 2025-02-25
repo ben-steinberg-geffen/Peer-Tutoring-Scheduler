@@ -33,6 +33,7 @@ h1 {
 li {
     font-size: 18px;
     color: black;
+    margin-bottom: 12px;  /* Adds space between list items */
 }
 
 .content {
@@ -60,6 +61,11 @@ nav a {
     text-decoration: none;
     font-size: 20px;
     padding: 10px 15px;
+}
+
+.text_link {
+    color: #0d599f;
+    text-decoration: none;
 }
 
 nav a:hover {
@@ -451,7 +457,7 @@ h2 {
 }
 
 .directions {
-    margin-bottom: 1em;  /* Matches typical paragraph spacing */
+    margin-bottom: 20px;
 }
 
 ol.directions {
