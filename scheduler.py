@@ -27,7 +27,8 @@ def match_students_tutors(students, tutors):
                 
                 for tutor in tutors: 
                     if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
-                        potential_times.append(time for time in tutor.availability) 
+                        for time in tutor.availability:
+                            potential_times.append(time) 
                         potential_times = list(set(potential_times))
             elif not any(set(student.courses).intersection(set(tutor.courses)) for tutor in tutors):
                 reason = "no tutors are availabile to teach your selected courses"
