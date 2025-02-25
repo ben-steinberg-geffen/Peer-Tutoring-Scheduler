@@ -13,7 +13,7 @@ def correct_duplicates(df):
 
     Returns:
         bool: True if duplicates are found, False otherwise.
-    """
+    """ # CHECK
     duplicates = df[df.duplicated(subset=['name', 'email'], keep=False)]
     for name, group in duplicates.groupby(['name', 'email']):
         combined_availability = sorted(set(slot for sublist in group['availability'] for slot in sublist))
@@ -22,7 +22,6 @@ def correct_duplicates(df):
         df.loc[group.index, 'courses'] = [combined_courses] * len(group)
     df = df.drop_duplicates(subset=['name', 'email'])
                 
-    
     return df   
 
 def load_student_data(path="student_responses.csv"):
