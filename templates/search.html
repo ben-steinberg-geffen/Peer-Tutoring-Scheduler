@@ -2,18 +2,33 @@
 
 {% block content %}
 <style>
+    .assignments-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;  /* Space between title and button */
+        margin-bottom: 15px;
+    }
+
+    .assignments-header h3 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+
     .download-link {
         display: inline-block;
-        padding: 8px 15px;
+        padding: 10px 20px;
         background-color: #003566;
         color: white;
         text-decoration: none;
         border-radius: 4px;
         transition: background-color 0.3s;
+        font-size: 1.05em;
+        font-weight: 400;
     }
 
     .download-link:hover {
-        background-color: #45a049;
+        background-color: #004b8f;
+        color: white;
     }
 
     .assignments-table {
@@ -23,7 +38,7 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
+        margin-top: 20px;
     }
     
     th, td {
@@ -40,6 +55,35 @@
     tr:hover {
         background-color: #f9f9f9;
     }
+
+    .unassigned-section {
+        margin: 20px 0;
+        padding: 15px 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .unassigned-section h3 {
+        color: #000000;
+        margin-bottom: 12px;
+        font-size: 1.2em;
+    }
+
+    .unassigned-students {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .unassigned-student {
+        background-color: #e9ecef;
+        padding: 8px 16px;
+        border-radius: 20px;
+        color: #495057;
+        font-size: 0.95em;
+        border: 1px solid #dee2e6;
+    }
 </style>
 
 <h2>Search Students or Tutors</h2>
@@ -47,6 +91,45 @@
     <input type="text" name="name" placeholder="Search Tutor or Student" class="search-box">
     <button type="submit" class="search-btn">🔍</button>
 </form>
+
+<div class="assignments-table">
+    <div class="assignments-header">
+        <h3>Current Assignments</h3>
+        <a href="{{ url_for('download_schedule') }}" class="download-link">Download Schedule CSV</a>
+    </div>
+
+    {% if unassigned_students %}
+    <div class="unassigned-section">
+        <h3>Unassigned Students</h3>
+        <div class="unassigned-students">
+            {% for student in unassigned_students %}
+            <div class="unassigned-student">{{ student }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Peer Tutor</th>
+                <th>Subject</th>
+                <th>Time Slot</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.student }}</td>
+                <td>{{ assignment.tutor }}</td>
+                <td>{{ assignment.subject }}</td>
+                <td>{{ assignment.time_slot }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <!--
 <div class="search-categories">
@@ -78,33 +161,6 @@
     </div>
 </div>
 -->
-
-<div class="assignments-table">
-    <h3>Current Assignments</h3>
-    <div style="margin-bottom: 15px;">
-        <a href="{{ url_for('download_schedule') }}" class="download-link">Download Schedule CSV</a>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Student</th>
-                <th>Peer Tutor</th>
-                <th>Subject</th>
-                <th>Time Slot</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for assignment in assignments %}
-            <tr>
-                <td>{{ assignment.student }}</td>
-                <td>{{ assignment.tutor }}</td>
-                <td>{{ assignment.subject }}</td>
-                <td>{{ assignment.time_slot }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 
 <script>
     function openPopup() {
