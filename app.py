@@ -3,7 +3,7 @@ import pandas as pd
 from get_tutors import get_schedule
 import os
 import random
-from main_auto_email import email_Matchedstudent
+from main_auto_email import email_matched_student, email_matched_tutor, email_not_matched_student
 from models import Student, Tutor
 
 app = Flask(__name__, static_folder='static')
@@ -162,7 +162,7 @@ def email():
                 message = (f'You are scheduled for {test.availability}')
                 subject = (f'Peer Tutoring Schedule')
 
-                email_Matchedstudent(test, subject, message)
+                email_matched_student(test, subject, message)
                 flash('Successfully sent {} emails!'.format(email_count), 'success')
 
     return render_template('email.html', email_count=email_count)
