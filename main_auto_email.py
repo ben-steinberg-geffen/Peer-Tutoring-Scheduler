@@ -1,6 +1,13 @@
 import smtplib
 from models import Student, Tutor
 
+#EMAIL ACCOUNT INFORMATION
+'''
+GeffenPeerTutors@gmail.com
+IL0veG3ffen!
+'''
+
+
 def email_Matchedstudent(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
