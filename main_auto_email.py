@@ -1,18 +1,21 @@
 import smtplib
 from models import Student, Tutor
 
-#EMAIL ACCOUNT INFORMATION
-'''
-GeffenPeerTutors@gmail.com
-IL0veG3ffen!
-'''
+subject = "Geffen Peer Tutoring"
 
 
-def email_matched_student(student, subject, message):
+def email_Matchedstudent(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
     reciever_email =  student.email
 
+    studentMessage = (f'Dear {student},'
+                  f'\nYou have been matched with {student.final_tutor.name} for Peer Tutoring in the following class: {",".join(student.courses)}.'
+                  f'\n{student.final_tutor.name} is available to meet you at {student.final_time}. '
+                  f'\nPlease coordinate with {student.final_tutor.name} to set up a meeting spot.'
+                  '\nRegards,'
+                  '\n     Geffen Peer Tutoring Team'
+                  '\n\nTHIS IS AN AUTOMATED EMAIL, DO NOT REPLY TO THIS MESSAGE.')
     #subject = (f'Peer Tutoring with {student.final_tutor.name}')
     #message = (f'Dear {student.name}, \n\nYou have been matched with {student.final_tutor.name} ({student.final_tutor.email}) for peer tutoring in these classes: \n\t{student.courses}. \n\nYou will meet with {student.final_tutor.name} on: \n\t{student.final_time}. \n\nCoordinated directly with {student.final_tutor.name} to decide on a meeting location. \n\n\nThis message has been sent from a send-only e-mail address; please do not reply to this message.')
     text =  f"Subject: {subject}\n\n{message}"
@@ -24,7 +27,7 @@ def email_matched_student(student, subject, message):
 
     print("Email has been sent to " + reciever_email)
 
-def email_matched_tutor(Tutor, subject, message):
+def email_MatchedTutor(Tutor, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
     reciever_email =  Tutor.email
@@ -38,10 +41,10 @@ def email_matched_tutor(Tutor, subject, message):
 
     print("Email has been sent to " + reciever_email)
 
-def email_not_matched_student(student, subject, message):
+def email_NotMatchedstudent(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email = student.email
+    reciever_email =  student.email
 
     text =  f"Subject: {subject}\n\n{message}"
 
@@ -82,7 +85,8 @@ if __name__ == "__main__":
     message = (f'Sent by a bot')
     subject = (f'Python Email Test')
 
-    email_matched_student(Derek, subject, message)
-    email_matched_tutor(Derek, subject, message)
-    email_not_matched_student(Derek, subject, message)
-    '''
+    email_Matchedstudent(Derek, subject, message)
+    email_MatchedTutor(Derek, subject, message)
+    email_NotMatchedstudent(Derek, subject, message)
+
+'''
