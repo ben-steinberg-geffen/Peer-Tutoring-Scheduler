@@ -4,7 +4,6 @@ from get_tutors import get_schedule
 import os
 import random
 from main_auto_email import email_matched_student, email_matched_tutor, email_not_matched_student
-from main import not_matched
 from models import Student, Tutor
 
 app = Flask(__name__, static_folder='static')
@@ -148,11 +147,11 @@ def email():
                     tutor_email = row['Tutor Email']
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
-                    subject = row['Subject']
+                    subject = row['Student Courses']
 
                     # Create Student and Tutor objects
                     student = Student(student_name, student_email, student_grade, None, subject, None, None)
-                    tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, None)
+                    tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None)
                     student.matched_tutors = [tutor]
                     tutor.matched_students = [student]
 
