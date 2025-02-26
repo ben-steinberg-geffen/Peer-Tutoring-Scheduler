@@ -3,27 +3,6 @@ import csv
 import pandas as pd
 from models import Student, Tutor
 
-def correct_duplicates(df):
-    """
-    Check for duplicate entries in a DataFrame based on a specific column.
-
-    Args:
-        df (pd.DataFrame): The DataFrame to check.
-        column_name (str): The name of the column to check for duplicates.
-
-    Returns:
-        bool: True if duplicates are found, False otherwise.
-    """ # CHECK
-    duplicates = df[df.duplicated(subset=['name', 'email'], keep=False)]
-    for name, group in duplicates.groupby(['name', 'email']):
-        combined_availability = sorted(set(slot for sublist in group['availability'] for slot in sublist))
-        combined_courses = sorted(set(course for sublist in group['courses'] for course in sublist))
-        df.loc[group.index, 'availability'] = [combined_availability] * len(group)
-        df.loc[group.index, 'courses'] = [combined_courses] * len(group)
-    df = df.drop_duplicates(subset=['name', 'email'])
-                
-    return df   
-
 def load_student_data(path="student_responses.csv"):
     """
     Load student requests data from a CSV file, rename columns for consistency, and merge course selections.
@@ -62,8 +41,6 @@ def load_student_data(path="student_responses.csv"):
 
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
 
-    df = correct_duplicates(df)
-    
     return df
 
 def load_tutor_data(path="tutor_responses.csv"):
@@ -103,8 +80,6 @@ def load_tutor_data(path="tutor_responses.csv"):
     df = df.dropna(subset=["name"])
 
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
-
-    df = correct_duplicates(df)
     
     return df
 
