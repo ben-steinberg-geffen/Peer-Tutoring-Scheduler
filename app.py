@@ -114,6 +114,7 @@ def download_schedule():
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('search'))
 
+
 #CHECK THIS CODE
 #email page displays email
 @app.route('/email')
