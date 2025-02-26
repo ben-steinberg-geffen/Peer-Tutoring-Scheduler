@@ -47,6 +47,7 @@ def email_NotMatchedstudent(student, subject, message):
 
 
 #------- FOR TESTING
+'''
 
 if __name__ == "__main__":
     Derek = Student("null","null","null","null","null","null")
@@ -71,9 +72,11 @@ if __name__ == "__main__":
     MrRioveros.matched_students = [Derek]
     MrRioveros.final_students = {Derek} 
 
-    message = (f'It works')
-    subject = (f'LOL WOKS')
+    message = (f'Sent by a bot')
+    subject = (f'Python Email Test')
 
     email_Matchedstudent(Derek, subject, message)
     email_MatchedTutor(Derek, subject, message)
     email_NotMatchedstudent(Derek, subject, message)
+
+'''
