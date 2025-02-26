@@ -5,6 +5,7 @@ import os
 import random
 from main_auto_email import email_matched_student, email_matched_tutor, email_not_matched_student
 from models import Student, Tutor
+from scheduler import match_students_tutors
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -163,6 +164,7 @@ def email():
                 subject = (f'Peer Tutoring Schedule')
 
                 email_matched_student(test, subject, message)
+                
                 flash('Successfully sent {} emails!'.format(email_count), 'success')
 
     return render_template('email.html', email_count=email_count)
