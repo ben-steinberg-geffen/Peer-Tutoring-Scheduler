@@ -57,7 +57,9 @@ def main():
         student_assignment, time_assignment = result
 
         for student, reason in not_matched.items():
-            print(f"{student.name} was not matched because {reason}")
+            print(f"{student.name} was not matched because {reason[0]}")
+            if reason[1]:
+                print("Here are some potential times: ", reason[1])
         for student, tutor in student_assignment.items():
             if not set(student.courses).intersection(set(tutor.courses)):
                 print(f"{student.name} with {tutor.name} BUT SOMEHOW NO INTERSECTION.")
