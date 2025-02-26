@@ -3,6 +3,8 @@ import pandas as pd
 from get_tutors import get_schedule
 import os
 import random
+from main_auto_email import email_Matchedstudent
+from models import Student, Tutor
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -125,19 +127,43 @@ def download_schedule():
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('search'))
 
-#CHECK THIS CODE
-#email page displays email
-@app.route('/email')
+@app.route('/email', methods=['GET', 'POST'])
 def email():
     # Count the number of emails to be sent (from saved_schedule.csv)
     email_count = 0
-    try:
+
+    if is_uploaded:
         saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
         if os.path.exists(saved_schedule_path):
             df = pd.read_csv(saved_schedule_path)
             email_count = len(df)
-    except Exception as e:
-        print(f"Error counting emails: {str(e)}")
+            
+            if request.method == 'POST':
+                test = Student("null","null","null","null","null","null")
+                tutor = Tutor("null","null","null","null","null","null")
+
+                test.name = "Leo"
+                test.email = "llhert30@geffenacademy.ucla.edu"
+                test.availability = "1pm"
+                test.courses = "Math"
+                test.matched_tutors = [tutor]
+                test.grade = "12"
+                #Derek.final_tutor = MrRioveros
+                #Derek.final_time = "1pm"
+
+                tutor.name = "Mr. Rioveros"
+                tutor.email = "driover73@geffenacademy.ucla.edu"
+                tutor.grade = "12"
+                tutor.availability = "1pm"
+                tutor.courses = "Math"
+                tutor.matched_students = [test]
+                tutor.final_students = {test} 
+
+                message = (f'You are scheduled for {test.availability}')
+                subject = (f'Peer Tutoring Schedule')
+
+                email_Matchedstudent(test, subject, message)
+                flash('Successfully sent {} emails!'.format(email_count), 'success')
 
     return render_template('email.html', email_count=email_count)
 

@@ -48,32 +48,32 @@ def email_NotMatchedstudent(student, subject, message):
 
 #------- FOR TESTING
 
+if __name__ == "__main__":
+    Derek = Student("null","null","null","null","null","null")
+    MrRioveros = Tutor("null","null","null","null","null","null")
 
-Derek = Student("null","null","null","null","null","null")
-MrRioveros = Tutor("null","null","null","null","null","null")
 
 
+    Derek.name = "Derek"
+    Derek.email = "driover73@geffenacademy.ucla.edu"
+    Derek.availability = "1pm"
+    Derek.courses = "Math"
+    Derek.matched_tutors = [MrRioveros]
+    Derek.grade = "12"
+    #Derek.final_tutor = MrRioveros
+    #Derek.final_time = "1pm"
 
-Derek.name = "Derek"
-Derek.email = "driover73@geffenacademy.ucla.edu"
-Derek.availability = "1pm"
-Derek.courses = "Math"
-Derek.matched_tutors = [MrRioveros]
-Derek.grade = "12"
-#Derek.final_tutor = MrRioveros
-#Derek.final_time = "1pm"
+    MrRioveros.name = "Mr. Rioveros"
+    MrRioveros.email = "driover73@geffenacademy.ucla.edu"
+    MrRioveros.grade = "12"
+    MrRioveros.availability = "1pm"
+    MrRioveros.courses = "Math"
+    MrRioveros.matched_students = [Derek]
+    MrRioveros.final_students = {Derek} 
 
-MrRioveros.name = "Mr. Rioveros"
-MrRioveros.email = "driover73@geffenacademy.ucla.edu"
-MrRioveros.grade = "12"
-MrRioveros.availability = "1pm"
-MrRioveros.courses = "Math"
-MrRioveros.matched_students = [Derek]
-MrRioveros.final_students = {Derek} 
+    message = (f'It works')
+    subject = (f'LOL WOKS')
 
-message = (f'It works')
-subject = (f'LOL WOKS')
-
-email_Matchedstudent(Derek, subject, message)
-email_MatchedTutor(Derek, subject, message)
-email_NotMatchedstudent(Derek, subject, message)
+    email_Matchedstudent(Derek, subject, message)
+    email_MatchedTutor(Derek, subject, message)
+    email_NotMatchedstudent(Derek, subject, message)
