@@ -11,7 +11,7 @@ def load_student_data(path="student_responses.csv"):
         pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
     base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", path)
+    file_path = os.path.join(base_path, "data", "uploads", path)
     df = pd.read_csv(file_path)
 
     # Rename columns
@@ -51,7 +51,7 @@ def load_tutor_data(path="tutor_responses.csv"):
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
     base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", path)
+    file_path = os.path.join(base_path, "data", "uploads", path)
 
     # Load both CSV files
     df = pd.read_csv(file_path)
