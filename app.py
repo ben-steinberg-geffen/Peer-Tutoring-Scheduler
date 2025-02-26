@@ -3,6 +3,8 @@ import pandas as pd
 from get_tutors import get_schedule
 import os
 import random
+from main_auto_email import email_Matchedstudent
+from models import Student, Tutor
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -15,6 +17,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 is_uploaded = False
+all_students = []
 
 @app.route('/')
 def home():
@@ -22,7 +25,7 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    global is_uploaded
+    global is_uploaded, all_students
     message = None
     if request.method == 'POST':
         if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
@@ -36,9 +39,12 @@ def upload():
                     
                     student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
                     student_file.save(student_path)
+
+                    df = pd.read_csv(student_path)
+                    all_students = df["Student's Name (first and last)"].tolist()
                     
                     get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
-                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view assignments."
+                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view or download assignments."
                     is_uploaded = True
                 except Exception as e:
                     message = f"Error processing files: {str(e)}"
@@ -51,32 +57,39 @@ def upload():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    global is_uploaded
-    
-    saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
-    data = pd.read_csv(saved_schedule_path)
-    # Get the column headers from the DataFrame
-    headers = list(data.columns)
+    global is_uploaded, all_students
 
     # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
-    for index, row in data.iterrows():
-        subjects_tutor =  row['Tutor Courses'].split(", ")
-        subjects_student = row['Student Courses'].split(", ")
-        subjects_both = []
-        for subject in subjects_tutor:
-            if subject in subjects_student:
-                subjects_both.append(subject)
-        assignment = {
-            'student': row['Student Name'] if 'Student Name' in row else row[0],  # Fallback to first column if header not found
-            'tutor': row['Tutor Name'] if 'Tutor Name' in row else row[1],       # Fallback to second column if header not found
-            'subject': ", ".join(subjects_both),
-            'time_slot': row['Time'] if 'Time' in row else ''
-        }
-        assignments.append(assignment)
+    matched_students = []
+    if is_uploaded:
+        saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+        data = pd.read_csv(saved_schedule_path)
+        # Get the column headers from the DataFrame
+        for index, row in data.iterrows():
+            subjects_tutor =  row['Tutor Courses'].split(", ")
+            subjects_student = row['Student Courses'].split(", ")
+            subjects_both = []
+            for subject in subjects_tutor:
+                if subject in subjects_student:
+                    subjects_both.append(subject)
+            matched_students.append(row['Student Name'])
+            assignment = {
+                'student': row['Student Name'] if 'Student Name' in row else row[0],  # Fallback to first column if header not found
+                'tutor': row['Tutor Name'] if 'Tutor Name' in row else row[1],       # Fallback to second column if header not found
+                'subject': ", ".join(subjects_both),
+                'time_slot': row['Time'] if 'Time' in row else ''
+            }
+            assignments.append(assignment)
     
     # Sort the assignments list by tutor name first, then student name
     assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
+
+    unassigned_students = []
+    if is_uploaded:
+        for student in all_students:
+            if student not in matched_students:
+                unassigned_students.append(student)
 
     actual_assignments = []
     if request.method == 'POST':
@@ -98,7 +111,7 @@ def search():
 
     return render_template('search.html', 
                          assignments=actual_assignments,
-                         unassigned={})
+                         unassigned_students=unassigned_students)
 
 @app.route('/download_schedule')
 def download_schedule():
@@ -114,15 +127,45 @@ def download_schedule():
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('search'))
 
-#CHECK THIS CODE
-#email page displays email
-@app.route('/email')
+@app.route('/email', methods=['GET', 'POST'])
 def email():
+    # Count the number of emails to be sent (from saved_schedule.csv)
+    email_count = 0
 
-    #if emails sent, send all the emails and display message that emails were sent
-    #if emails deleted, delete email from box and display message
+    if is_uploaded:
+        saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+        if os.path.exists(saved_schedule_path):
+            df = pd.read_csv(saved_schedule_path)
+            email_count = len(df)
+            
+            if request.method == 'POST':
+                test = Student("null","null","null","null","null","null")
+                tutor = Tutor("null","null","null","null","null","null")
 
-    return render_template('email.html')
+                test.name = "Leo"
+                test.email = "llhert30@geffenacademy.ucla.edu"
+                test.availability = "1pm"
+                test.courses = "Math"
+                test.matched_tutors = [tutor]
+                test.grade = "12"
+                #Derek.final_tutor = MrRioveros
+                #Derek.final_time = "1pm"
+
+                tutor.name = "Mr. Rioveros"
+                tutor.email = "driover73@geffenacademy.ucla.edu"
+                tutor.grade = "12"
+                tutor.availability = "1pm"
+                tutor.courses = "Math"
+                tutor.matched_students = [test]
+                tutor.final_students = {test} 
+
+                message = (f'You are scheduled for {test.availability}')
+                subject = (f'Peer Tutoring Schedule')
+
+                email_Matchedstudent(test, subject, message)
+                flash('Successfully sent {} emails!'.format(email_count), 'success')
+
+    return render_template('email.html', email_count=email_count)
 
 if __name__ == '__main__':
     app.run(debug=True)
