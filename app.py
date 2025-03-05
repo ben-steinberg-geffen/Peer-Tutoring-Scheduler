@@ -144,8 +144,8 @@ def email():
                     student_name = row['Student Name']
                     student_email = "hliao38@geffenacademy.ucla.edu" # TEMPORARY
                     student_grade = row['Student Grade']
-                    tutor_name = "bsteinb53@geffenacademy.ucla.edu" # TEMPORARY
-                    tutor_email = row['Tutor Email']
+                    tutor_name = row['Tutor Name'] # TEMPORARY
+                    tutor_email = "bsteinb53@geffenacademy.ucla.edu"
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
                     subject = row['Student Courses']
@@ -166,33 +166,6 @@ def email():
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
                     flash('Successfully sent {} emails!'.format(email_count), 'success')
-
-            # if request.method == 'POST':
-            #     test = Student("null","null","null","null","null","null")
-            #     tutor = Tutor("null","null","null","null","null","null")
-
-            #     test.name = "Leo"
-            #     test.email = "llhert30@geffenacademy.ucla.edu"
-            #     test.availability = "1pm"
-            #     test.courses = "Math"
-            #     test.matched_tutors = [tutor]
-            #     test.grade = "12"
-            #     #Derek.final_tutor = MrRioveros
-            #     #Derek.final_time = "1pm"
-
-            #     tutor.name = "Mr. Rioveros"
-            #     tutor.email = "driover73@geffenacademy.ucla.edu"
-            #     tutor.grade = "12"
-            #     tutor.availability = "1pm"
-            #     tutor.courses = "Math"
-            #     tutor.matched_students = [test]
-            #     tutor.final_students = {test} 
-
-            #     message = (f'You are scheduled for {test.availability}')
-            #     subject = (f'Peer Tutoring Schedule')
-
-            #     email_matched_student(test, subject, message)
-            #     flash('Successfully sent {} emails!'.format(email_count), 'success')
 
     return render_template('email.html', email_count=email_count)
 
