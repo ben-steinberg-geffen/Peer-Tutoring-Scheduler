@@ -159,13 +159,13 @@ def email():
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n\nRegards, \nGeffen Peer Tutoring Team')
+                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
                     
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    if not str(info).lower().contains("nan"):
+                    if "nan" not in str(info).lower():
                         message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
                     else:
-                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
+                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nRegards, \nGeffen Peer Tutoring Team')
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
                 flash('Successfully sent {} emails!'.format(email_count), 'success')
