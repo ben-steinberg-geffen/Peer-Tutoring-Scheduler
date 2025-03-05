@@ -166,7 +166,7 @@ def email():
 
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
-                    flash('Successfully sent {} emails!'.format(email_count), 'success')
+                flash('Successfully sent {} emails!'.format(email_count), 'success')
 
     return render_template('email.html', email_count=email_count)
 
