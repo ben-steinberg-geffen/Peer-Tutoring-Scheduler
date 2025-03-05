@@ -7,7 +7,7 @@ subject = "Geffen Peer Tutoring"
 def email_matched_student(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  student.email
+    reciever_email = [student.email] #ADD MS MILLY EMAIL
 
     studentMessage = (f'Dear {student},'
                   f'\nYou have been matched with {student.final_tutor.name} for Peer Tutoring in the following class: {",".join(student.courses)}.'
@@ -30,7 +30,7 @@ def email_matched_student(student, subject, message):
 def email_matched_tutor(Tutor, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  Tutor.email
+    reciever_email =  [Tutor.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 
@@ -44,7 +44,7 @@ def email_matched_tutor(Tutor, subject, message):
 def email_not_matched_student(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  student.email
+    reciever_email =  [student.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 
