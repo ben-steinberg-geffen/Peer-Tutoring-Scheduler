@@ -159,10 +159,10 @@ def email():
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
+                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n\nRegards, \nGeffen Peer Tutoring Team')
 
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Student Comments: {info} \n Regards, \n Geffen Peer Tutoring Team')
+                    message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Student Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
 
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
