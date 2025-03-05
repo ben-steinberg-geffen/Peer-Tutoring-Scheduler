@@ -1,6 +1,12 @@
 import smtplib
 from models import Student, Tutor
 
+#EMAIL ACCOUNT INFORMATION
+'''
+GeffenPeerTutors@gmail.com
+IL0veG3ffen!
+'''
+
 subject = "Geffen Peer Tutoring"
 
 

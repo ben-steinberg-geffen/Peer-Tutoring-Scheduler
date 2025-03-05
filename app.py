@@ -142,7 +142,7 @@ def email():
             if request.method == 'POST':
                 for index, row in df.iterrows():
                     student_name = row['Student Name']
-                    student_email = "hliao38@geffenacademy.ucla.edu"
+                    student_email = "ryu@geffenacademy.ucla.edu"
                     student_grade = row['Student Grade']
                     tutor_name = row['Tutor Name']
                     tutor_email = "bsteinb53@geffenacademy.ucla.edu"
