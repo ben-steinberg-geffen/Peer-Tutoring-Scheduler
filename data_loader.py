@@ -28,8 +28,7 @@ def load_student_data(path="student_responses.csv"):
         "Availability [Friday]": "friday_availability",
         "Select Courses for Tutoring (MS)": "ms_courses",
         "Select Courses for Tutoring (US)": "us_courses",
-        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar,  sentence syntax, etc.": "additional_info",
-    })
+        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar, sentence syntax, etc." : "additional_info"  })
 
     # Merge course and availability selections and separate them into a list
     df['courses'] = df.apply(lambda row: list(sorted(set(course.strip() for course_list in row[['ms_courses', 'us_courses']] if pd.notna(course_list) for course in course_list.split(', ')))), axis=1)
@@ -39,7 +38,7 @@ def load_student_data(path="student_responses.csv"):
     # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
 
-    df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
+    df = df[['name', 'email', 'grade', 'courses', 'availability', 'status', 'additional_info']]
 
     return df
 
@@ -114,6 +113,7 @@ def load_existing_schedule(schedule_file, students, tutors):
                 student.final_time = row['Time']
                 tutor.final_students[student] = row['Time']
                 tutor.final_times.append(row['Time'])
+
     return student_assignment, time_assignment
 
 def update_students_tutors(student_df, tutor_df, student_assignment):
@@ -125,7 +125,7 @@ def update_students_tutors(student_df, tutor_df, student_assignment):
     
     for _, row in student_df.iterrows():
         if row['name'] not in existing_students:
-            students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
+            students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
     
     for _, row in tutor_df.iterrows():
         if row['name'] not in existing_tutors:

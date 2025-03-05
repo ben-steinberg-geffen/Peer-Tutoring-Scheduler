@@ -149,9 +149,10 @@ def email():
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
                     subject = row['Student Courses']
+                    info = row['Additional Info']
 
                     # Create Student and Tutor objects
-                    student = Student(student_name, student_email, student_grade, None, subject, None, None)
+                    student = Student(student_name, student_email, student_grade, None, subject, info, None, None)
                     tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None)
                     student.matched_tutors = [tutor]
                     tutor.matched_students = [student]
@@ -161,7 +162,7 @@ def email():
                     message_student = (f'Dear {student.name}, \n You have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
 
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    message_tutor = (f'Dear {tutor.name}, \n You have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
+                    message_tutor = (f'Dear {tutor.name}, \n You have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Student Comments: {info} \n Regards, \n Geffen Peer Tutoring Team')
 
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
