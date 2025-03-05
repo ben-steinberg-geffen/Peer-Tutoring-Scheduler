@@ -159,16 +159,44 @@ def email():
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
+                    message_student = (f'Dear {student.name}, \nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
                     
                     subject_tutor = (f'Peer Tutoring Schedule')
                     if "nan" not in str(info).lower():
-                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
+                        message_tutor = (f'Dear {tutor.name}, \nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nStudent Comments: {info} \nRegards, \nGeffen Peer Tutoring Team')
                     else:
-                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nRegards, \nGeffen Peer Tutoring Team')
-                    email_matched_student(student, subject_student, message_student)
-                    email_matched_tutor(tutor, subject_tutor, message_tutor)
+                        message_tutor = (f'Dear {tutor.name}, \nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\nRegards, \nGeffen Peer Tutoring Team')
+                    # email_matched_student(student, subject_student, message_student)
+                    # email_matched_tutor(tutor, subject_tutor, message_tutor)
                 flash('Successfully sent {} emails!'.format(email_count), 'success')
+
+    if request.method == 'POST':
+        matched_students = []
+        if is_uploaded:
+            saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+            data = pd.read_csv(saved_schedule_path)
+            # Get the column headers from the DataFrame
+            for index, row in data.iterrows():
+                subjects_tutor =  row['Tutor Courses'].split(", ")
+                subjects_student = row['Student Courses'].split(", ")
+                subjects_both = []
+                for subject in subjects_tutor:
+                    if subject in subjects_student:
+                        subjects_both.append(subject)
+                matched_students.append(row['Student Name'])
+
+            for student in all_students:
+                if student not in matched_students:
+                    subject_student = (f'Peer Tutoring Schedule')
+                    message_student = (f'Dear {student}, \nUnfortunately, we have not been able to match you with a tutor. \nRegards, \nGeffen Peer Tutoring Team')
+                    student_name = row['Student Name']
+
+                    student_email = "ryu@geffenacademy.ucla.edu"
+                    student_grade = "12th"
+
+                    # Create Student and Tutor objects
+                    student_obj = Student(student, student_email, student_grade, None, [], "", None, None)
+                    email_matched_student(student_obj, subject_student, message_student)
 
     return render_template('email.html', email_count=email_count)
 
