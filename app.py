@@ -145,7 +145,7 @@ def email():
                     student_email = "ryu@geffenacademy.ucla.edu"
                     student_grade = row['Student Grade']
                     tutor_name = row['Tutor Name']
-                    tutor_email = "bsteinb53@geffenacademy.ucla.edu"
+                    tutor_email = "ryu@geffenacademy.ucla.edu"
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
                     subject = row['Student Courses']
@@ -159,10 +159,10 @@ def email():
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'Dear {student.name}, \n You have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
+                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
 
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    message_tutor = (f'Dear {tutor.name}, \n You have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Student Comments: {info} \n Regards, \n Geffen Peer Tutoring Team')
+                    message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Student Comments: {info} \n Regards, \n Geffen Peer Tutoring Team')
 
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
