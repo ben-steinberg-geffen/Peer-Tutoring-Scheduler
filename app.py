@@ -142,9 +142,9 @@ def email():
             if request.method == 'POST':
                 for index, row in df.iterrows():
                     student_name = row['Student Name']
-                    student_email = "hliao38@geffenacademy.ucla.edu" # TEMPORARY
+                    student_email = "hliao38@geffenacademy.ucla.edu"
                     student_grade = row['Student Grade']
-                    tutor_name = row['Tutor Name'] # TEMPORARY
+                    tutor_name = row['Tutor Name']
                     tutor_email = "bsteinb53@geffenacademy.ucla.edu"
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
@@ -158,11 +158,11 @@ def email():
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'You are scheduled for: {time_slot} with {tutor_name} for the course: {subject}.')
+                    message_student = (f'Dear {student.name}, \n You have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
 
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    message_tutor = (f'You are scheduled for: {time_slot} with {student_name} for the course: {subject}.')
-                    
+                    message_tutor = (f'Dear {tutor.name}, \n You have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}. \n Regards, \n Geffen Peer Tutoring Team')
+
                     email_matched_student(student, subject_student, message_student)
                     email_matched_tutor(tutor, subject_tutor, message_tutor)
                     flash('Successfully sent {} emails!'.format(email_count), 'success')
