@@ -8,7 +8,7 @@ from scheduler import match_students_tutors, backtrack
 def save_schedule(student_assignment, path):
     with open(path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
+        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
         for student, tutor in student_assignment.items():
             writer.writerow([
                 student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
