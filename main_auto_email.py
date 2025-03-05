@@ -1,13 +1,19 @@
 import smtplib
 from models import Student, Tutor
 
+#EMAIL ACCOUNT INFORMATION
+'''
+GeffenPeerTutors@gmail.com
+IL0veG3ffen!
+'''
+
 subject = "Geffen Peer Tutoring"
 
 
-def email_Matchedstudent(student, subject, message):
+def email_matched_student(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  student.email
+    reciever_email = [student.email] #ADD MS MILLY EMAIL
 
     studentMessage = (f'Dear {student},'
                   f'\nYou have been matched with {student.final_tutor.name} for Peer Tutoring in the following class: {",".join(student.courses)}.'
@@ -27,10 +33,10 @@ def email_Matchedstudent(student, subject, message):
 
     print("Email has been sent to " + reciever_email)
 
-def email_MatchedTutor(Tutor, subject, message):
+def email_matched_tutor(Tutor, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  Tutor.email
+    reciever_email =  [Tutor.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 
@@ -41,10 +47,10 @@ def email_MatchedTutor(Tutor, subject, message):
 
     print("Email has been sent to " + reciever_email)
 
-def email_NotMatchedstudent(student, subject, message):
+def email_not_matched_student(student, subject, message):
 
     from_email = 'GeffenPeerTutors@gmail.com'
-    reciever_email =  student.email
+    reciever_email =  [student.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 

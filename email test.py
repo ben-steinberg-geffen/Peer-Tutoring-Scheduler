@@ -22,4 +22,4 @@ server.login(email, "pykeojyjixudpodl") # 1: pyke ojyj ixud podl
 server.sendmail(email, reciever_email, text)
 server.quit()
 
-print("Email has been sent to " + reciever_email)
+print("Email has been sent to ", reciever_email)
