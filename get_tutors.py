@@ -11,7 +11,7 @@ def save_schedule(student_assignment, path):
         writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
         for student, tutor in student_assignment.items():
             writer.writerow([
-                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses),
+                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
                 student.not_tutors, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
                 student.final_time
             ])
@@ -27,7 +27,7 @@ def get_schedule(student_path, tutor_path, save_path):
     tutors = []
 
     for _, row in student_df.iterrows():
-        students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
+        students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
 
     for _, row in tutor_df.iterrows():
         tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
