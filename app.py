@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
-from get_tutors import get_schedule
+from get_assignment import get_schedule
 import os
 import random
 from auto_email import auto_email
