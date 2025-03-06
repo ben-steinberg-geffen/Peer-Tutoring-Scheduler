@@ -41,8 +41,6 @@ def main():
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
-    print(not_matched)
-
     # Perform backtracking to find a valid schedule
     result = None
     n = 0
@@ -57,11 +55,6 @@ def main():
     # Save the result
     if result:
         student_assignment, time_assignment = result
-
-        for student, tutor in student_assignment.items():
-            if not set(student.courses).intersection(set(tutor.courses)):
-                print(f"{student.name} with {tutor.name} BUT SOMEHOW NO INTERSECTION.")
-        save_schedule(student_assignment)
     else:
         print("No solution found.")
 

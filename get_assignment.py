@@ -57,6 +57,5 @@ def get_schedule(student_path, tutor_path, save_path):
     
     if result:
         student_assignment, time_assignment = result
-        print("No solution found.")
 
     return student_assignment, time_assignment, not_matched_students
