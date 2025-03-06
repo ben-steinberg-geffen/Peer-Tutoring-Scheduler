@@ -8,7 +8,6 @@ def get_time_intersection(student, tutor):
     return time_slots
 
 def match_students_tutors(students, tutors):
-    not_matched = {}
     for student in students:
         reason = ""
         for tutor in tutors:
@@ -17,11 +16,15 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
+    return students, tutors
+
+def get_not_matched(students, tutors):
+    not_matched = {}
+    for student in students:
         if not student.matched_tutors:
             potential_times = []
             if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 reason = "tutors that teach your course are not available at the same time"
-                
                 for tutor in tutors: 
                     if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                         for time in tutor.availability:
@@ -31,9 +34,8 @@ def match_students_tutors(students, tutors):
                 reason = "no tutors are availabile to teach your selected courses"
             else:
                 reason = "NONE"
-
             not_matched[student] = [reason, potential_times]
-    return students, tutors, not_matched
+    return not_matched
 
 def select_unassigned_tutor(students):
     for student in students: 

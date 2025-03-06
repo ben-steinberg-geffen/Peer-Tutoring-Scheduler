@@ -2,8 +2,7 @@ import csv
 import os
 from models import Student, Tutor
 from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors
-from constraint_loader import load_constraints, apply_constraints
-from scheduler import match_students_tutors, backtrack
+from scheduler import match_students_tutors, get_not_matched, backtrack
 
 def main():
     def save_schedule(student_assignment):
@@ -40,26 +39,25 @@ def main():
 
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
-    students, tutors, not_matched = match_students_tutors(students, tutors)
-
-    # Load and apply constraints
-    constraints = load_constraints('constraints.csv')
-    apply_constraints(students, tutors, constraints)
+    students, tutors = match_students_tutors(students, tutors)
+    not_matched = get_not_matched(students, tutors)
+    print(not_matched)
 
     # Perform backtracking to find a valid schedule
     result = None
+    n = 0
 
     while not result:
+        n += 1
+        if n > 500:
+            print("No solution found.")
+            break
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
     # Save the result
     if result:
         student_assignment, time_assignment = result
 
-        for student, reason in not_matched.items():
-            print(f"{student.name} was not matched because {reason[0]}")
-            if reason[1]:
-                print("Here are some potential times: ", reason[1])
         for student, tutor in student_assignment.items():
             if not set(student.courses).intersection(set(tutor.courses)):
                 print(f"{student.name} with {tutor.name} BUT SOMEHOW NO INTERSECTION.")
