@@ -3,7 +3,7 @@ import pandas as pd
 from get_tutors import get_schedule
 import os
 import random
-from main_auto_email import auto_email
+from auto_email import auto_email
 from models import Student, Tutor
 from scheduler import match_students_tutors
 
@@ -174,11 +174,9 @@ def email():
             for student in not_matched_students.keys():
                 subject_student = (f'Peer Tutoring Arrangement')
                 if not not_matched_students[student][1]:
-                    message_student = (f'Dear {student}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nRegards, \nGeffen Peer Tutoring Team')
+                    message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nRegards, \nGeffen Peer Tutoring Team')
                 else:
                     message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nHere are possible time slots you could consider: {not_matched_students[student][1]}\n\nRegards, \nGeffen Peer Tutoring Team')
-
-                # Create Student and Tutor objects
                 auto_email(student, subject_student, message_student)
             flash('Successfully sent {} emails!'.format(email_count), 'success')
 
