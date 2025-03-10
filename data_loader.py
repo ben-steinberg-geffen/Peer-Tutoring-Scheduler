@@ -45,6 +45,19 @@ def load_student_data():
 
     return df
 
+def split_student_data(df):
+    new_rows = []
+    for _, row in df.iterrows():
+        courses = row['courses']
+        if len(courses) > 1:
+            for course in courses:
+                new_row = row.copy()
+                new_row['courses'] = [course]
+                new_rows.append(new_row)
+        else:
+            new_rows.append(row)
+    return pd.DataFrame(new_rows)
+
 def load_tutor_data(path="tutor_responses.csv"):
     """
     Load tutor requests data from spring and fall CSV files, combine them, and rename columns for consistency.
