@@ -55,6 +55,7 @@ def main():
     # Save the result
     if result:
         student_assignment, time_assignment = result
+        save_schedule(student_assignment)
     else:
         print("No solution found.")
 

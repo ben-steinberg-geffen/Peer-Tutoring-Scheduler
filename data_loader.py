@@ -1,17 +1,20 @@
 import os
 import csv
 import pandas as pd
+import requests
+from io import StringIO
 from models import Student, Tutor
 
-def load_student_data(path="student_responses.csv"):
+def load_student_data():
     """
     Load student requests data from a CSV file, rename columns for consistency, and merge course selections.
 
     Returns:
         pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
-    base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", "uploads", path)
+    response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
+    assert response.status_code == 200, 'Wrong status code'
+    file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
 
     # Rename columns
@@ -49,12 +52,14 @@ def load_tutor_data(path="tutor_responses.csv"):
     Returns:
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
-    base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "data", "uploads", path)
-
-    # Load both CSV files
+    response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
+    assert response.status_code == 200, 'Wrong status code'
+    file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
-    
+
+    # Print the first few rows of the dataframe to check if it is loaded correctly
+    print(df.head())
+
     # Rename columns
     df = df.rename(columns={
         "Timestamp": "timestamp",
@@ -70,6 +75,9 @@ def load_tutor_data(path="tutor_responses.csv"):
         "Select Courses for Tutoring (US)": "us_courses",
     })
 
+    # Print the dataframe after renaming columns to check if the columns are renamed correctly
+    print(df.head())
+
     # Merge course and availability selections and separate them into a list removes duplicate courses as well
     df['courses'] = df.apply(lambda row: list(sorted(set(course.strip() for course_list in row[['ms_courses', 'us_courses']] if pd.notna(course_list) for course in course_list.split(', ')))), axis=1)
     df['availability'] = df.apply(lambda row: [f"{day_name}: {slot.strip()}" for day_name, day in zip(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], row[['monday_availability', 'tuesday_availability', 'wednesday_availability', 'thursday_availability', 'friday_availability']]) if pd.notna(day) and day != 'Not Available' for slot in day.split(',')], axis=1)
@@ -77,6 +85,9 @@ def load_tutor_data(path="tutor_responses.csv"):
 
     # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
+
+    # Print the dataframe after processing to check if the data is processed correctly
+    print(df.head())
 
     df = df[['name', 'email', 'grade', 'courses', 'availability', 'status']]
     

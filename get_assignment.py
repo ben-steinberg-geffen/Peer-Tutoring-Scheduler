@@ -18,8 +18,8 @@ def save_schedule(student_assignment, path):
 
 def get_schedule(student_path, tutor_path, save_path):
     # Load data
-    student_df = load_student_data(student_path)
-    tutor_df = load_tutor_data(tutor_path)
+    student_df = load_student_data()
+    tutor_df = load_tutor_data()
 
     # Initialize students and tutors
     students = []
