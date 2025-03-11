@@ -145,11 +145,11 @@ def email():
                 for index, row in df.iterrows():
                     student_name = row['Student Name']
                     # temporary
-                    student_email = "llhert30@geffenacademy.ucla.edu"
+                    student_email = "erobins95@geffenacademy.ucla.edu"
                     student_grade = row['Student Grade']
                     tutor_name = row['Tutor Name']
                     
-                    tutor_email = "llhert30@geffenacademy.ucla.edu"
+                    tutor_email = "erobins95@geffenacademy.ucla.edu"
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
                     subject = row['Student Courses']
