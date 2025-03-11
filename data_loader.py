@@ -13,7 +13,6 @@ def load_student_data():
         pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
     response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
-    assert response.status_code == 200, 'Wrong status code'
     file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
 
@@ -58,7 +57,7 @@ def split_student_data(df):
             new_rows.append(row)
     return pd.DataFrame(new_rows)
 
-def load_tutor_data(path="tutor_responses.csv"):
+def load_tutor_data():
     """
     Load tutor requests data from spring and fall CSV files, combine them, and rename columns for consistency.
 
@@ -66,7 +65,6 @@ def load_tutor_data(path="tutor_responses.csv"):
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
     response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
-    assert response.status_code == 200, 'Wrong status code'
     file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
 
@@ -96,21 +94,6 @@ def load_tutor_data(path="tutor_responses.csv"):
     
     return df
 
-def load_assignment():
-    base_path = os.path.dirname(__file__)
-    file_path = os.path.join(base_path, "tutoring_schedule.csv")
-    student_assignment = {}
-    time_assignment = {}
-
-    df = 0
-
-    if os.path.exists(file_path):
-        df = pd.read_csv(file_path)
-        student_assignment = {df['Student Object'] : df['Tutor Object']}
-        time_assignment = {df['Student Object'] : df['Time']}
-
-    return student_assignment, time_assignment
-
 def load_existing_schedule(schedule_file, students, tutors):
     student_assignment = {}
     time_assignment = {}
@@ -130,8 +113,8 @@ def load_existing_schedule(schedule_file, students, tutors):
     return student_assignment, time_assignment
 
 def update_students_tutors(student_df, tutor_df, student_assignment):
-    existing_students = {student.name for student in student_assignment.keys()}
-    existing_tutors = {tutor.name for tutor in student_assignment.values()}
+    existing_students = [student.name for student in student_assignment.keys()]
+    existing_tutors = [tutor.name for tutor in student_assignment.values()]
     
     students = []
     tutors = []
