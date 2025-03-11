@@ -19,7 +19,7 @@ def main():
         
     # Load data
     student_df = load_student_data()
-    # student_df = split_student_data(student_df)
+    student_df = split_student_data(student_df)
     tutor_df = load_tutor_data()
 
     # Initialize students and tutors
