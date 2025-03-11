@@ -1,7 +1,7 @@
 import csv
 import os
 from models import Student, Tutor
-from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors
+from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors, split_student_data
 from scheduler import match_students_tutors, get_not_matched, backtrack
 
 def main():
@@ -19,6 +19,7 @@ def main():
         
     # Load data
     student_df = load_student_data()
+    student_df = split_student_data(student_df)
     tutor_df = load_tutor_data()
 
     # Initialize students and tutors
