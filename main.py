@@ -19,7 +19,7 @@ def main():
         
     # Load data
     student_df = load_student_data()
-    student_df = split_student_data(student_df)
+    # student_df = split_student_data(student_df)
     tutor_df = load_tutor_data()
 
     # Initialize students and tutors
@@ -42,15 +42,11 @@ def main():
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
+
     # Perform backtracking to find a valid schedule
     result = None
-    n = 0
 
     while not result:
-        n += 1
-        if n > 500:
-            print("No solution found.")
-            break
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
     # Save the result
@@ -67,4 +63,3 @@ def main():
 
 if __name__ == "__main__":
     student_assignment, time_assignment = main()
-    
