@@ -56,6 +56,9 @@ def main():
     # Save the result
     if result:
         student_assignment, time_assignment = result
+        for student in student_assignment.keys():
+            if not set(student_assignment[student].courses).intersection(set(student.courses)):
+                print(f"Warning: Tutor {student_assignment[student].name} does not tutor any of the courses selected by {student.name}.")
         save_schedule(student_assignment)
     else:
         print("No solution found.")
