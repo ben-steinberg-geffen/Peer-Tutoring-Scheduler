@@ -23,7 +23,7 @@ def get_not_matched(students, tutors):
     for student in students:
         if not student.matched_tutors:
             potential_times = []
-            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
+            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 reason = "tutors that teach your course are not available at the same time"
                 for tutor in tutors: 
                     if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
@@ -101,6 +101,14 @@ def check_constraints(student_assignment, time_assignment):
         for other in time_assignment.keys():
             if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
                 return False
+            
+    for student in time_assignment.keys():
+        for student_2 in time_assignment.keys():
+            if student == student_2:
+                continue
+            if student.name == student_2.name and time_assignment[student] == time_assignment[student_2]:
+                return False
+            
     for tutor in student_assignment.values():
         if len(tutor.final_students) > 2:
             return False
