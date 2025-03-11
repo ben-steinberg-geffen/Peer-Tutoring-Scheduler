@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
-from get_tutors import get_schedule
+from get_assignment import get_schedule
 import os
 import random
-from main_auto_email import email_matched_student, email_matched_tutor, email_not_matched_student
+from auto_email import auto_email
 from models import Student, Tutor
 from scheduler import match_students_tutors
 
@@ -19,6 +19,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 is_uploaded = False
 all_students = []
+not_matched_students = {}
 
 @app.route('/')
 def home():
@@ -26,7 +27,7 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    global is_uploaded, all_students
+    global is_uploaded, all_students, not_matched_students
     message = None
     if request.method == 'POST':
         if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
@@ -37,14 +38,14 @@ def upload():
                 try:
                     tutor_path = os.path.join(app.config['UPLOAD_FOLDER'], tutor_file.filename)
                     tutor_file.save(tutor_path)
-                    
+
                     student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
                     student_file.save(student_path)
 
                     df = pd.read_csv(student_path)
                     all_students = df["Student's Name (first and last)"].tolist()
-                    
-                    get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
+
+                    student_assignment, time_assignment, not_matched_students = get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
                     message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view or download assignments."
                     is_uploaded = True
                 except Exception as e:
@@ -82,7 +83,7 @@ def search():
                 'time_slot': row['Time'] if 'Time' in row else ''
             }
             assignments.append(assignment)
-    
+
     # Sort the assignments list by tutor name first, then student name
     assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
 
@@ -99,9 +100,9 @@ def search():
             flash('Please enter a name to search.', 'warning')
         else:
             for assignment in assignments:
-                if (name.lower() in assignment['student'].lower() or 
-                    name.lower() in assignment['tutor'].lower() or 
-                    name.lower() in assignment['subject'].lower() or 
+                if (name.lower() in assignment['student'].lower() or
+                    name.lower() in assignment['tutor'].lower() or
+                    name.lower() in assignment['subject'].lower() or
                     name.lower() in assignment['time_slot'].lower()):
                     actual_assignments.append(assignment)
 
@@ -110,7 +111,7 @@ def search():
     else:
         actual_assignments = assignments
 
-    return render_template('search.html', 
+    return render_template('search.html',
                          assignments=actual_assignments,
                          unassigned_students=unassigned_students)
 
@@ -137,62 +138,52 @@ def email():
         saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
         if os.path.exists(saved_schedule_path):
             df = pd.read_csv(saved_schedule_path)
-            email_count = len(df)
-            
+            email_count = len(df) + len(not_matched_students)
+
             if request.method == 'POST':
+                
                 for index, row in df.iterrows():
                     student_name = row['Student Name']
-                    student_email = "erobins95@geffenacademy.ucla.edu" # TEMPORARY
+                    student_email = "erobins95@geffenacademy.ucla.edu"
                     student_grade = row['Student Grade']
-                    tutor_name = "bsteinb53@geffenacademy.ucla.edu" # TEMPORARY
-                    tutor_email = row['Tutor Email']
+                    tutor_name = row['Tutor Name']
+                    tutor_email = "erobins95@geffenacademy.ucla.edu"
                     tutor_grade = row['Tutor Grade']
                     time_slot = row['Time']
                     subject = row['Student Courses']
+                    info = row['Additional Info']
 
                     # Create Student and Tutor objects
-                    student = Student(student_name, student_email, student_grade, None, subject, None, None)
+                    student = Student(student_name, student_email, student_grade, None, subject, info, None, None)
                     tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None)
                     student.matched_tutors = [tutor]
                     tutor.matched_students = [student]
 
                     # Send emails
                     subject_student = (f'Peer Tutoring Schedule')
-                    message_student = (f'You are scheduled for: {time_slot} with {tutor_name} for the course: {subject}.')
+                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
 
                     subject_tutor = (f'Peer Tutoring Schedule')
-                    message_tutor = (f'You are scheduled for: {time_slot} with {student_name} for the course: {subject}.')
+                    if "nan" not in str(info).lower():
+                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
+                    else:
+                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
                     
-                    email_matched_student(student, subject_student, message_student)
-                    email_matched_tutor(tutor, subject_tutor, message_tutor)
-                    flash('Successfully sent {} emails!'.format(email_count), 'success')
+                    auto_email(student, subject_student, message_student)
+                    auto_email(tutor, subject_tutor, message_tutor)
+                    
 
-            # if request.method == 'POST':
-            #     test = Student("null","null","null","null","null","null")
-            #     tutor = Tutor("null","null","null","null","null","null")
-
-            #     test.name = "Leo"
-            #     test.email = "llhert30@geffenacademy.ucla.edu"
-            #     test.availability = "1pm"
-            #     test.courses = "Math"
-            #     test.matched_tutors = [tutor]
-            #     test.grade = "12"
-            #     #Derek.final_tutor = MrRioveros
-            #     #Derek.final_time = "1pm"
-
-            #     tutor.name = "Mr. Rioveros"
-            #     tutor.email = "driover73@geffenacademy.ucla.edu"
-            #     tutor.grade = "12"
-            #     tutor.availability = "1pm"
-            #     tutor.courses = "Math"
-            #     tutor.matched_students = [test]
-            #     tutor.final_students = {test} 
-
-            #     message = (f'You are scheduled for {test.availability}')
-            #     subject = (f'Peer Tutoring Schedule')
-
-            #     email_matched_student(test, subject, message)
-            #     flash('Successfully sent {} emails!'.format(email_count), 'success')
+                
+                for student in not_matched_students.keys():
+                    subject_student = (f'Peer Tutoring Arrangement')
+                    student.email = "llhert30@geffenacademy.ucla.edu"
+                    if not not_matched_students[student][1]:
+                        message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nRegards, \nGeffen Peer Tutoring Team')
+                    else:
+                        message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nHere are possible time slots you could consider: {not_matched_students[student][1]}\n\nRegards, \nGeffen Peer Tutoring Team')
+                    auto_email(student, subject_student, message_student)
+                flash('Successfully sent {} emails!'.format(email_count), 'success')
+                
 
     return render_template('email.html', email_count=email_count)
 

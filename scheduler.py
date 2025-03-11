@@ -8,7 +8,6 @@ def get_time_intersection(student, tutor):
     return time_slots
 
 def match_students_tutors(students, tutors):
-    not_matched = {}
     for student in students:
         reason = ""
         for tutor in tutors:
@@ -17,12 +16,15 @@ def match_students_tutors(students, tutors):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
+    return students, tutors
+
+def get_not_matched(students, tutors):
+    not_matched = {}
+    for student in students:
         if not student.matched_tutors:
             potential_times = []
-            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
+            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 reason = "tutors that teach your course are not available at the same time"
-                # now find possible reason 
-                
                 for tutor in tutors: 
                     if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                         for time in tutor.availability:
@@ -32,9 +34,8 @@ def match_students_tutors(students, tutors):
                 reason = "no tutors are availabile to teach your selected courses"
             else:
                 reason = "NONE"
-
             not_matched[student] = [reason, potential_times]
-    return students, tutors, not_matched
+    return not_matched
 
 def select_unassigned_tutor(students):
     for student in students: 
@@ -95,29 +96,27 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     return False
 
 def check_constraints(student_assignment, time_assignment):
-    '''
-    Tutors can't teach two students at the same time slot*
-    # Tutors and students must have the same classes
-    # It must be at the same time as well
-    # Tutors with no students take priority over students with tutors * 
-    * are the ones that we need to handle here
-    '''
     # Check if any tutor is assigned to more than one student at the same time
     for student in time_assignment.keys():
         for other in time_assignment.keys():
             if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
-                # print("Constraint violated: Two students assigned to the same tutor at the same time.")
                 return False
+            
+    for student in time_assignment.keys():
+        for student_2 in time_assignment.keys():
+            if student == student_2:
+                continue
+            if student.name == student_2.name and time_assignment[student] == time_assignment[student_2]:
+                return False
+            
     for tutor in student_assignment.values():
         if len(tutor.final_students) > 2:
-            # print("Constraint violated: Tutor assigned to more than two students.")
             return False
     # Ensure tutors without a student take priority over those with one already
     for student in student_assignment.keys():
         if student_assignment[student].final_students and len(student_assignment[student].final_students) == 1:
             for other_student in student_assignment.keys():
                 if student_assignment[other_student] == student_assignment[student] and other_student != student:
-                    # print("Constraint violated: Tutor with a student assigned another student while there are tutors without students.")
                     return False
     return True 
 
