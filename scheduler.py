@@ -41,6 +41,8 @@ def get_not_matched(students, tutors):
 
         # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
         # line up for other courses then we need to add that to the not_matched dictionary
+            
+        # the amount of courses needs to have the same amount or more UNIQUE time values that line up
 
     return not_matched
 
