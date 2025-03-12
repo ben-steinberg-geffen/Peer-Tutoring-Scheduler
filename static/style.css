@@ -546,8 +546,8 @@ h2 {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
-    color: black;
-    background-color: #ffc300;
+    color: white;
+    background-color: #003566;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -555,7 +555,7 @@ h2 {
 }
 
 .submit-btn:hover {
-    background-color: #f6ce4d;
+    background-color: #1d5387;
     transform: translateY(-1px);
 }
 
