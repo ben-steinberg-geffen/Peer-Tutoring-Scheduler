@@ -9,7 +9,6 @@ def get_time_intersection(student, tutor):
 
 def match_students_tutors(students, tutors):
     for student in students:
-        reason = ""
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
@@ -39,6 +38,7 @@ def get_not_matched(students, tutors):
             reason = "student needs to enter more times of availability"
             not_matched[student] = [reason, []]
 
+    
         # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
         # line up for other courses then we need to add that to the not_matched dictionary
             
