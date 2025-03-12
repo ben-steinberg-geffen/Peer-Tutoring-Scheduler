@@ -176,7 +176,7 @@ def email():
                 
                 for student in not_matched_students.keys():
                     subject_student = (f'Peer Tutoring Arrangement')
-                    student.email = "llhert30@geffenacademy.ucla.edu"
+                    student.email = "erobins95@geffenacademy.ucla.edu"
                     if not not_matched_students[student][1]:
                         message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nRegards, \nGeffen Peer Tutoring Team')
                     else:
