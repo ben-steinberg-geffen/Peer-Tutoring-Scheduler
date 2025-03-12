@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="setup-container">
+    <h2>Update Spreadsheet Links</h2>
+    <p class="setup-description">Please provide the Google Sheets links for both tutor and student responses.</p>
+    
+    <form method="POST" id="linkForm" onsubmit="return validateForm()">
+        <div class="form-group">
+            <label for="tutor_form_link">Peer Tutor Responses Sheet:</label>
+            <input type="url" 
+                   id="tutor_form_link" 
+                   name="tutor_form_link" 
+                   class="form-control" 
+                   placeholder="Paste Google Sheets link for tutor responses" 
+                   required>
+        </div>
+        
+        <div class="form-group">
+            <label for="student_form_link">Student Responses Sheet:</label>
+            <input type="url" 
+                   id="student_form_link" 
+                   name="student_form_link" 
+                   class="form-control" 
+                   placeholder="Paste Google Sheets link for student responses" 
+                   required>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            <i class="fas fa-sync-alt"></i>
+            Update Links
+        </button>
+    </form>
+
+    {% if message is not none %}
+        <div class="alert">{{ message|safe }}</div>
+    {% endif %}
+</div>
+
+<script>
+function validateForm() {
+    const tutorLink = document.getElementById('tutor_form_link').value;
+    const studentLink = document.getElementById('student_form_link').value;
+    
+    if (!tutorLink || !studentLink) {
+        alert('Please enter both spreadsheet links');
+        return false;
+    }
+
+    if (!tutorLink.includes('docs.google.com/spreadsheets') || !studentLink.includes('docs.google.com/spreadsheets')) {
+        alert('Please enter valid Google Sheets links');
+        return false;
+    }
+
+    return true;
+}
+</script>
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

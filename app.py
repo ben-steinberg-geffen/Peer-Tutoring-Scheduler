@@ -7,6 +7,9 @@ from auto_email import auto_email
 from models import Student, Tutor
 from scheduler import match_students_tutors
 
+from persistent_data import save_data, load_data
+
+
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
 
@@ -25,37 +28,14 @@ not_matched_students = {}
 def home():
     return render_template('home.html')
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
+@app.route('/setup', methods=['GET', 'POST'])
+def setup():
     global is_uploaded, all_students, not_matched_students
     message = None
     if request.method == 'POST':
-        if 'peer_tutor_responses_file' in request.files and 'student_responses_file' in request.files:
-            tutor_file = request.files['peer_tutor_responses_file']
-            student_file = request.files['student_responses_file']
+        pass
 
-            if tutor_file.filename != '' and student_file.filename != '':
-                try:
-                    tutor_path = os.path.join(app.config['UPLOAD_FOLDER'], tutor_file.filename)
-                    tutor_file.save(tutor_path)
-
-                    student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_file.filename)
-                    student_file.save(student_path)
-
-                    df = pd.read_csv(student_path)
-                    all_students = df["Student's Name (first and last)"].tolist()
-
-                    student_assignment, time_assignment, not_matched_students = get_schedule(student_path, tutor_path, os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv"))
-                    message = f"Upload successful! Go to the <a class='text_link', href='{url_for('search')}'>Search</a> page to view or download assignments."
-                    is_uploaded = True
-                except Exception as e:
-                    message = f"Error processing files: {str(e)}"
-            else:
-                message = "Please select both files"
-        else:
-            message = "Please upload both required files"
-
-    return render_template('upload.html', message=message)
+    return render_template('setup.html', message=message)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
