@@ -9,7 +9,6 @@ from scheduler import match_students_tutors
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
-
 # Define upload folder path
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

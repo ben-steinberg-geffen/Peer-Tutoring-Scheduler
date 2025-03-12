@@ -37,7 +37,6 @@ def get_not_matched(students, tutors):
         if len(student.availability) < len(student.courses):
             reason = "student needs to enter more times of availability"
             not_matched[student] = [reason, []]
-
     
         # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
         # line up for other courses then we need to add that to the not_matched dictionary
