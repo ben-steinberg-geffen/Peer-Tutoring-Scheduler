@@ -9,6 +9,18 @@ def get_time_intersection(student, tutor):
 
 def match_students_tutors(students, tutors):
     for student in students:
+
+        course_length = 1
+        for student_2 in students: 
+            if student == student_2: 
+                continue
+            if student.name == student_2.name:
+                course_length += 1
+
+        if len(student.availability) < course_length:
+            print('here')
+            continue
+        
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
@@ -34,9 +46,18 @@ def get_not_matched(students, tutors):
             else:
                 reason = "NONE"
             not_matched[student] = [reason, potential_times]
-        if len(student.availability) < len(student.courses):
+
+        course_length = 1
+        for student_2 in students: 
+            if student == student_2: 
+                continue
+            if student.name == student_2.name:
+                course_length += 1
+
+        if len(student.availability) < course_length:
             reason = "student needs to enter more times of availability"
             not_matched[student] = [reason, []]
+            
 
     
         # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
