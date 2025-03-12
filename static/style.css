@@ -264,7 +264,7 @@ nav a.active {
 }
 
 .modal-btn {
-    background-color: #457b9d;
+    background-color: #ffc300;
     color: white;
     border: none;
     padding: 10px;
@@ -275,7 +275,7 @@ nav a.active {
 }
 
 .modal-btn:hover {
-    background-color: #3a6c85;
+    background-color: #f8c622;
 }
 
 p {
@@ -479,4 +479,122 @@ h2 {
 
 .send-email-btn:hover {
     background-color: #004e96; 
+}
+
+/* Setup page styles */
+.setup-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.setup-container h2 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.setup-description {
+    color: #4a5568;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2d3748;
+    background-color: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.form-control::placeholder {
+    color: #a0aec0;
+}
+
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: black;
+    background-color: #ffc300;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.submit-btn:hover {
+    background-color: #f6ce4d;
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn i {
+    margin-right: 0.5rem;
+}
+
+.alert {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+/* Make the alert red if it contains an error message */
+.alert:has(span.error) {
+    background-color: #fff5f5;
+    color: #c53030;
+    border-color: #fed7d7;
+}
+
+/* Add responsive design */
+@media (max-width: 768px) {
+    .setup-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .setup-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-control {
+        font-size: 16px; /* Prevents zoom on mobile */
+    }
 }
