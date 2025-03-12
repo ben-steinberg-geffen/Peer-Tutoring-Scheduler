@@ -33,11 +33,13 @@ def main():
         tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
 
     # Load existing schedule if any
+    
     if os.path.exists('tutoring_schedule.csv'):
         student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
     else:
         student_assignment, time_assignment = {}, {}
-
+    
+    student_assignment, time_assignment = {}, {}
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
@@ -48,7 +50,7 @@ def main():
 
     while not result:
         n += 1
-        if n > 500:
+        if n > 5000:
             print("No solution found.")
             break
         result = backtrack(student_assignment, time_assignment, students, tutors)
@@ -56,9 +58,6 @@ def main():
     # Save the result
     if result:
         student_assignment, time_assignment = result
-        for student in student_assignment.keys():
-            if not set(student_assignment[student].courses).intersection(set(student.courses)):
-                print(f"Warning: Tutor {student_assignment[student].name} does not tutor any of the courses selected by {student.name}.")
         save_schedule(student_assignment)
     else:
         print("No solution found.")
@@ -67,4 +66,5 @@ def main():
 
 if __name__ == "__main__":
     student_assignment, time_assignment = main()
-    
+    for student in student_assignment:
+        print(f"{student.name} is matched with {student_assignment[student].name} at {time_assignment[student]}")
