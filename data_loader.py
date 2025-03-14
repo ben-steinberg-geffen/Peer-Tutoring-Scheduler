@@ -100,7 +100,7 @@ def load_existing_schedule(schedule_file, students, tutors):
     with open(schedule_file, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            student = next((s for s in students if s.name == row['Student Name']), None)
+            student = next((s for s in students if s.name == row['Student Name'] and s.courses == row['Student Courses']), None)
             tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
             if student and tutor:
                 student_assignment[student] = tutor
