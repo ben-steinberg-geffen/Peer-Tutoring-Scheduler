@@ -3,7 +3,8 @@ import csv
 import pandas as pd
 import requests
 from io import StringIO
-from models import Student, Tutor
+from models import Student, Tutor 
+from persistent_data import load_data
 
 def load_student_data():
     """
@@ -12,7 +13,13 @@ def load_student_data():
     Returns:
         pd.DataFrame: A pandas DataFrame containing the student requests data.
     """
-    response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
+    message = load_data("links")
+    if  message is not None:
+        student_link = message["student_link"]
+        link_export = student_link + "/export?format=csv"
+        response = requests.get(link_export)
+    else:
+        response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
 
@@ -64,7 +71,13 @@ def load_tutor_data():
     Returns:
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
-    response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
+    message = load_data("links")
+    if  message is not None:
+        tutor_link = message["tutor_link"]
+        link_export = tutor_link + "/export?format=csv"
+        response = requests.get(link_export)
+    else:
+        response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))
     df = pd.read_csv(file_path)
 
