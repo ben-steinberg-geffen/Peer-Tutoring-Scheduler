@@ -12,7 +12,7 @@ subject = "Geffen Peer Tutoring"
 
 def email_matched_student(student, subject, message):
 
-    from_email = 'GeffenPeerTutors@gmail.com'
+    from_email = 'peertutoring2@geffenacademy.ucla.edu'
     reciever_email = [student.email] #ADD MS MILLY EMAIL
 
     studentMessage = (f'Dear {student},'
@@ -28,35 +28,35 @@ def email_matched_student(student, subject, message):
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login(from_email, "pyke ojyj ixud podl")
+    server.login(from_email, "auam cwoo skkj epqv")
     server.sendmail(from_email, reciever_email, text)    
 
     print("Email has been sent to " + reciever_email)
 
 def email_matched_tutor(Tutor, subject, message):
 
-    from_email = 'GeffenPeerTutors@gmail.com'
+    from_email = 'peertutoring2@geffenacademy.ucla.edu'
     reciever_email =  [Tutor.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login(from_email, "pyke ojyj ixud podl")
+    server.login(from_email, "auam cwoo skkj epqv")
     server.sendmail(from_email, reciever_email, text)    
 
     print("Email has been sent to " + reciever_email)
 
 def email_not_matched_student(student, subject, message):
 
-    from_email = 'GeffenPeerTutors@gmail.com'
+    from_email = 'peertutoring2@geffenacademy.ucla.edu'
     reciever_email =  [student.email] #ADD MS MILLY EMAIL
 
     text =  f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login(from_email, "pyke ojyj ixud podl")
+    server.login(from_email, "auam cwoo skkj epqv")
     server.sendmail(from_email, reciever_email, text)    
 
     print("Email has been sent to " + reciever_email)
