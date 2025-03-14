@@ -18,7 +18,6 @@ def match_students_tutors(students, tutors):
                 course_length += 1
 
         if len(student.availability) < course_length:
-            print(f'{student.name} reached here')
             continue
 
         for tutor in tutors:
@@ -60,10 +59,17 @@ def get_not_matched(students, tutors):
                 reason = "NONE"
             not_matched[student] = [reason, potential_times]
 
-        
-            
+        course_length = 1
+        for student_2 in students: 
+            if student == student_2: 
+                continue
+            if student.name == student_2.name:
+                course_length += 1
 
-    
+        if len(student.availability) < course_length:
+            reason = "student needs to enter more times of availability"
+            not_matched[student] = [reason, []]
+            
         # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
         # line up for other courses then we need to add that to the not_matched dictionary
             
@@ -110,13 +116,6 @@ def backtrack(student_assignment, time_assignment, students, tutors):
 
         tutor.final_students[student] = time
         tutor.final_times.append(time)
-
-
-        for student in time_assignment.keys():
-            for student_2 in time_assignment.keys():
-                if student != student_2:        
-                    if student.name == student_2.name and time_assignment[student] == time_assignment[student_2]:
-                        print(f"Student {student.name} with course {student.courses} and {student_2.courses} are assigned to the same time {time_assignment[student]}")
 
         if check_constraints(student_assignment, time_assignment):
             result = backtrack(student_assignment, time_assignment, students, tutors)
