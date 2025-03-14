@@ -39,11 +39,13 @@ def main():
     else:
         student_assignment, time_assignment = {}, {}
     
-    student_assignment, time_assignment = {}, {}
+    # student_assignment, time_assignment = {}, {}
+    
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
+
     # Perform backtracking to find a valid schedule
     result = None
     n = 0
@@ -58,6 +60,9 @@ def main():
     # Save the result
     if result:
         student_assignment, time_assignment = result
+        for student in student_assignment.keys():
+            if not set(student.courses).intersection(student_assignment[student].courses):
+                print(f"Student {student.name} with course {student.courses} is not matched with tutor {student_assignment[student].name} with course {student_assignment[student].courses}")
         save_schedule(student_assignment)
     else:
         print("No solution found.")
@@ -66,5 +71,5 @@ def main():
 
 if __name__ == "__main__":
     student_assignment, time_assignment = main()
-    for student in student_assignment:
-        print(f"{student.name} is matched with {student_assignment[student].name} at {time_assignment[student]}")
+    # for student in student_assignment:
+    #     print(f"{student.name} is matched with {student_assignment[student].name} at {time_assignment[student]}")
