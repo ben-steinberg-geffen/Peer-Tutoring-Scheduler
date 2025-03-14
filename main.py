@@ -45,6 +45,7 @@ def main():
     not_matched = get_not_matched(students, tutors)
     for student in not_matched.keys():
         print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
+    
     # Perform backtracking to find a valid schedule
     result = None
     n = 0

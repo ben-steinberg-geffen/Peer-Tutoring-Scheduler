@@ -8,7 +8,6 @@ from models import Student, Tutor
 from scheduler import match_students_tutors
 from persistent_data import save_data, load_data
 
-
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
 # Define upload folder path
@@ -35,7 +34,7 @@ def setup():
         student_sheet_link = request.form.get('student_form_link')
         tutor_sheet_link = request.form.get('tutor_form_link')
 
-        data = {"student_link": student_sheet_link}
+        data = {"student_link": student_sheet_link, "tutor_link": tutor_sheet_link}
         save_data(data, "links")
         pass
 
