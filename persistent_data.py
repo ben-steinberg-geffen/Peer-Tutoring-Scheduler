@@ -8,10 +8,10 @@ def save_data(data, path):
     with open(new_path, 'w') as f:
         json.dump(data, f)
 
-def load_data(data, path):
+def load_data(path):
     new_path = os.path.join(DATA_FOLDER, path)
     try:
         with open(new_path, 'r') as f:
-            return json.load(data, f)
+            return json.load(f)
     except:
         return None

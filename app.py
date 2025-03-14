@@ -29,9 +29,15 @@ def home():
 
 @app.route('/setup', methods=['GET', 'POST'])
 def setup():
-    global is_uploaded, all_students, not_matched_students
-    message = None
+    message = load_data("links")
+    if  message is not None:
+        message = message["student_link"]
     if request.method == 'POST':
+        student_sheet_link = request.form.get('student_form_link')
+        tutor_sheet_link = request.form.get('tutor_form_link')
+
+        data = {"student_link": student_sheet_link}
+        save_data(data, "links")
         pass
 
     return render_template('setup.html', message=message)

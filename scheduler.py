@@ -19,7 +19,7 @@ def match_students_tutors(students, tutors):
 
         if len(student.availability) < course_length:
             continue
-        
+
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
