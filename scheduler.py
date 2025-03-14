@@ -18,7 +18,7 @@ def match_students_tutors(students, tutors):
                 course_length += 1
 
         if len(student.availability) < course_length:
-            print('here')
+            print(f'{student.name} reached here')
             continue
 
         for tutor in tutors:
@@ -34,6 +34,19 @@ def get_not_matched(students, tutors):
     for student in students:
         reason = "tutors that teach your course are not available at the same time"
         if not student.matched_tutors:
+
+            course_length = 1
+            for student_2 in students: 
+                if student == student_2: 
+                    continue
+                if student.name == student_2.name:
+                    course_length += 1
+
+            if len(student.availability) < course_length:
+                reason = "student needs to enter more times of availability"
+                not_matched[student] = [reason, []]
+                continue
+
             potential_times = []
             if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 for tutor in tutors: 
@@ -47,16 +60,7 @@ def get_not_matched(students, tutors):
                 reason = "NONE"
             not_matched[student] = [reason, potential_times]
 
-        course_length = 1
-        for student_2 in students: 
-            if student == student_2: 
-                continue
-            if student.name == student_2.name:
-                course_length += 1
-
-        if len(student.availability) < course_length:
-            reason = "student needs to enter more times of availability"
-            not_matched[student] = [reason, []]
+        
             
 
     
@@ -64,7 +68,6 @@ def get_not_matched(students, tutors):
         # line up for other courses then we need to add that to the not_matched dictionary
             
         # the amount of courses needs to have the same amount or more UNIQUE time values that line up
-
     return not_matched
 
 def select_unassigned_tutor(students):
