@@ -1,5 +1,9 @@
 #This is used to test if the email is working: Problems may come from app password in google account
-
+'''
+peertutoring2@geffenacademy.ucla.edu
+OREOSAREBADFORYOU35
+App password: auam cwoo skkj epqv
+'''
 
 import smtplib
 
