@@ -39,8 +39,6 @@ def main():
     else:
         student_assignment, time_assignment = {}, {}
     
-    # student_assignment, time_assignment = {}, {}
-    
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
