@@ -8,20 +8,33 @@ def get_time_intersection(student, tutor):
     return time_slots
 
 def match_students_tutors(students, tutors):
-    not_matched = {}
     for student in students:
-        reason = ""
+
+        course_length = 1
+        for student_2 in students: 
+            if student == student_2: 
+                continue
+            if student.name == student_2.name:
+                course_length += 1
+
+        if len(student.availability) < course_length:
+            continue
+
         for tutor in tutors:
             if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                 if set(student.availability).intersection(set(tutor.availability)):
                     if not student in tutor.not_students and not tutor in student.not_tutors:
                         student.matched_tutors.append(tutor)
                         tutor.matched_students.append(student)
+    return students, tutors
+
+def get_not_matched(students, tutors):
+    not_matched = {}
+    for student in students:
+        reason = "tutors that teach your course are not available at the same time"
         if not student.matched_tutors:
             potential_times = []
-            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any (set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
-                reason = "tutors that teach your course are not available at the same time"
-                
+            if (set(student.courses).intersection(set(tutor.courses)) == set(student.courses) and not any(set(student.availability).intersection(set(tutor.availability))) for tutor in tutors):
                 for tutor in tutors: 
                     if set(student.courses).intersection(set(tutor.courses)) == set(student.courses):
                         for time in tutor.availability:
@@ -31,9 +44,25 @@ def match_students_tutors(students, tutors):
                 reason = "no tutors are availabile to teach your selected courses"
             else:
                 reason = "NONE"
-
             not_matched[student] = [reason, potential_times]
-    return students, tutors, not_matched
+
+        course_length = 1
+        for student_2 in students: 
+            if student == student_2: 
+                continue
+            if student.name == student_2.name:
+                course_length += 1
+
+        if len(student.availability) < course_length:
+            reason = "student needs to enter more times of availability"
+            not_matched[student] = [reason, []]
+            
+        # this is the only precaution we took for this case, we need to make it so that if the availability doesn't 
+        # line up for other courses then we need to add that to the not_matched dictionary
+            
+        # the amount of courses needs to have the same amount or more UNIQUE time values that line up
+
+    return not_matched
 
 def select_unassigned_tutor(students):
     for student in students: 
@@ -99,6 +128,13 @@ def check_constraints(student_assignment, time_assignment):
         for other in time_assignment.keys():
             if student != other and student.final_time == other.final_time and student_assignment[student] == student_assignment[other]:
                 return False
+            
+    for student in time_assignment.keys():
+       for student_2 in time_assignment.keys():
+           if student != student_2:        
+               if student.name == student_2.name and time_assignment[student] == time_assignment[student_2]:
+                   return False
+            
     for tutor in student_assignment.values():
         if len(tutor.final_students) > 2:
             return False

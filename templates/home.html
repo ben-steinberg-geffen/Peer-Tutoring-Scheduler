@@ -13,11 +13,12 @@
         </ol>
         <h4>Directions</h4>
         <ol class="directions">
-            <li>Go to the Google Sheets with the student responses</li>
-            <li>Go to file -> download -> .csv</li>
-            <li>Repeat this process for the tutor responses sheet</li>
-            <li>Go to the <a class="text_link", href="{{ url_for('upload') }}">Upload</a> tab and upload both files </li>
-            <li>After upload is complete, go to the <a class="text_link", href="{{ url_for('search') }}">Search</a> tab to view student assignments and request changes </li>
+            <li>Go to both the Google Sheets with the student responses and tutor responses.</li>
+            <li>Make sure both Google Sheet links are accessible to everyone. </li>
+            <li>Copy link and go to Setup page.</li>
+            <li>Go to the <a class="text_link", href="{{ url_for('setup') }}">Setup</a> and copy each respected link. </li>
+            <li>After setup is complete, go to the <a class="text_link", href="{{ url_for('search') }}">Search</a> tab to view student assignments and request changes. </li>
+            <li>Go to the <a class="text_link", href="{{ url_for('email') }}">Email</a> tab to view and automatically send emails to students and tutors. </li>
         </ol>
     </div>
     <div class="image-container">
