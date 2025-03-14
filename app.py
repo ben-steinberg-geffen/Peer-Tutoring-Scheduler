@@ -8,6 +8,7 @@ from models import Student, Tutor
 from scheduler import match_students_tutors
 
 from persistent_data import save_data, load_data
+from update_schedule import main
 
 
 app = Flask(__name__, static_folder='static')
@@ -36,8 +37,9 @@ def setup():
         student_sheet_link = request.form.get('student_form_link')
         tutor_sheet_link = request.form.get('tutor_form_link')
 
-        data = {"student_link": student_sheet_link}
+        data = {"student_link": student_sheet_link, "tutor_link": tutor_sheet_link}
         save_data(data, "links")
+        main()
         pass
 
     return render_template('setup.html', message=message)
@@ -50,7 +52,7 @@ def search():
     assignments = []
     matched_students = []
     if is_uploaded:
-        saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+        saved_schedule_path = "saved_schedule.csv"
         data = pd.read_csv(saved_schedule_path)
         # Get the column headers from the DataFrame
         for index, row in data.iterrows():
