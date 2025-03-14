@@ -1,6 +1,5 @@
 #This is used to test if the email is working: Problems may come from app password in google account
 
-
 import smtplib
 
 
