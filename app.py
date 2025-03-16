@@ -51,8 +51,8 @@ def search():
     # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
     matched_students = []
-    if is_uploaded:
-        saved_schedule_path = "saved_schedule.csv"
+    saved_schedule_path = "saved_schedule.csv"
+    if os.path.exists(saved_schedule_path):
         data = pd.read_csv(saved_schedule_path)
         # Get the column headers from the DataFrame
         for index, row in data.iterrows():
