@@ -63,7 +63,7 @@ def search():
             matched_students.append(row['Student Name'])
             assignment = {
                 'student': row['Student Name'] if 'Student Name' in row else row[0],  # Fallback to first column if header not found
-                'tutor': row['Tutor Name'] if 'Tutor Name' in row else row[1],       # Fallback to second column if header not found
+                'tutor': row['Tutor Name'] if 'Tutor Name' in row else row[1],  # Fallback to second column if header not found
                 'subject': ", ".join(subjects_both),
                 'time_slot': row['Time'] if 'Time' in row else ''
             }
