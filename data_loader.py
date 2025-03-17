@@ -15,9 +15,8 @@ def load_student_data():
     """
     message = load_data("links")
     if  message is not None:
-        student_link = message["student_link"]
-        link_export = student_link + "/export?format=csv"
-        response = requests.get(link_export)
+        student_link = message["student_link"].replace("/edit?usp=sharing", "/export?format=csv")
+        response = requests.get(student_link)
     else:
         response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))
@@ -73,9 +72,8 @@ def load_tutor_data():
     """
     message = load_data("links")
     if  message is not None:
-        tutor_link = message["tutor_link"]
-        link_export = tutor_link + "/export?format=csv"
-        response = requests.get(link_export)
+        tutor_link = message["tutor_link"].replace("/edit?usp=sharing", "/export?format=csv")
+        response = requests.get(tutor_link)
     else:
         response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))

@@ -1,0 +1,3 @@
+from save_schedule_assignment import save_schedule_assignment
+
+save_schedule_assignment()
