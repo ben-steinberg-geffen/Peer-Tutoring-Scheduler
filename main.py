@@ -51,6 +51,7 @@ def main():
 
     while not result:
         result = backtrack(student_assignment, time_assignment, students, tutors)
+        print("n at completion: ", n)
 
     # Save the result
     if result:

@@ -44,7 +44,6 @@ def setup():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-
     # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
     matched_students = []
