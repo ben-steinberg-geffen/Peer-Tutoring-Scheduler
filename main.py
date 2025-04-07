@@ -48,8 +48,10 @@ def main():
     
     # Perform backtracking to find a valid schedule
     result = None
+    n = 0
 
     while not result:
+        n += 1
         result = backtrack(student_assignment, time_assignment, students, tutors)
         print("n at completion: ", n)
 
