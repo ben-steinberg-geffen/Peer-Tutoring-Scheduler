@@ -53,10 +53,11 @@ def main():
 
     while not result:
         n += 1
-        if n > 5000:
+        if n > 500000:
             print("No solution found.")
             break
         result = backtrack(student_assignment, time_assignment, students, tutors)
+        print("n at completion: ", n)
 
     # Save the result
     if result:
