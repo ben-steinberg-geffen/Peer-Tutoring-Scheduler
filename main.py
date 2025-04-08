@@ -50,11 +50,10 @@ def main():
     result = None
     n = 0
 
-    while not result:
+    while not result and n < 1000:
         n += 1
         result = backtrack(student_assignment, time_assignment, students, tutors)
-        print("n at completion: ", n)
-
+    
     # Save the result
     if result:
         student_assignment, time_assignment = result
