@@ -26,8 +26,25 @@
         font-weight: 400;
     }
 
+    .clear-search-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #FFC300;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        font-size: 1.05em;
+        font-weight: 400;
+    }
+
     .download-link:hover {
         background-color: #004b8f;
+        color: white;
+    }
+
+    .clear-search-btn:hover {
+        background-color: #FFD60A;
         color: white;
     }
 
@@ -178,6 +195,11 @@
         alert("You selected to change " + (type === "peer_tutor" ? "Peer Tutor" : "Student"));
         closePopup();
     }
+    function clear_search() {
+        document.querySelector('.search-box').value = '';
+        document.querySelector('.search-form').submit();
+    }
 </script>
+
 
 {% endblock %}
