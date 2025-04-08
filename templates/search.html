@@ -97,6 +97,7 @@
     <div class="assignments-header">
         <h3>Current Assignments</h3>
         <a href="{{ url_for('download_schedule') }}" class="download-link">Download Schedule CSV</a>
+        <button onclick="clear_search()" class="clear-search-btn">Clear Search</button>
     </div>
 
     {% if unassigned_students %}
