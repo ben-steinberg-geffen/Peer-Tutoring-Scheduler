@@ -148,7 +148,7 @@ def check_constraints(student_assignment, time_assignment):
                    return False
             
     for tutor in student_assignment.values():
-        if len(tutor.final_students) > 1:
+        if len(tutor.final_students) > 2:
             return False
         
     # Ensure tutors without a student take priority over those with one already
