@@ -115,17 +115,28 @@ def download_schedule():
 
 @app.route('/email', methods=['GET', 'POST'])
 def email():
-    # Count the number of emails to be sent (from saved_schedule.csv)
     email_count = 0
+    assignments = []  # List to store all assignments for preview
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
+    
     if os.path.exists(saved_schedule_path):
         df = pd.read_csv(saved_schedule_path)
         email_count = len(df) + len(not_matched_students)
 
+        # Create preview data
+        for _, row in df.iterrows():
+            assignment = {
+                'student': row['Student Name'],
+                'tutor': row['Tutor Name'],
+                'subject': row['Student Courses'],
+                'time_slot': row['Time'],
+                'additional_info': row['Additional Info']
+            }
+            assignments.append(assignment)
+
         if request.method == 'POST':
-            
             for index, row in df.iterrows():
                 student_name = row['Student Name']
                 student_email = "hliao38@geffenacademy.ucla.edu"
@@ -171,7 +182,7 @@ def email():
             flash('Successfully sent {} emails!'.format(email_count), 'success')
                 
 
-    return render_template('email.html', email_count=email_count)
+    return render_template('email.html', email_count=email_count, assignments=assignments)
 
 if __name__ == '__main__':
     app.run(debug=True)
