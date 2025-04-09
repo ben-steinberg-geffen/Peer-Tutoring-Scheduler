@@ -26,8 +26,26 @@
         font-weight: 400;
     }
 
+    .clear-search-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #FFC300;
+        color: white;
+        text-decoration: none;
+        border-color: #FFC300;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        font-size: 1.05em;
+        font-weight: 400;
+        border-color: #FFC300    }
+
     .download-link:hover {
         background-color: #004b8f;
+        color: white;
+    }
+
+    .clear-search-btn:hover {
+        background-color: #FFD60A;
         color: white;
     }
 
@@ -85,6 +103,7 @@
         font-size: 0.95em;
         border: 1px solid #dee2e6;
     }
+    
 </style>
 
 <h2>Search Students or Tutors</h2>
@@ -97,6 +116,7 @@
     <div class="assignments-header">
         <h3>Current Assignments</h3>
         <a href="{{ url_for('download_schedule') }}" class="download-link">Download Schedule CSV</a>
+        <button onclick="clear_search()" class="clear-search-btn">Clear Search</button>
     </div>
 
     {% if unassigned_students %}
@@ -176,6 +196,11 @@
         alert("You selected to change " + (type === "peer_tutor" ? "Peer Tutor" : "Student"));
         closePopup();
     }
+    function clear_search() {
+        document.querySelector('.search-box').value = 'day';
+        document.querySelector('.search-form').submit();
+    }
 </script>
+
 
 {% endblock %}

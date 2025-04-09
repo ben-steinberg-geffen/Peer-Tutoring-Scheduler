@@ -43,26 +43,23 @@ def main():
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
-    for student in not_matched.keys():
-        print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
+    # for student in not_matched.keys():
+    #     print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
     
     # Perform backtracking to find a valid schedule
     result = None
     n = 0
 
-    while not result:
+    while not result and n < 1000:
         n += 1
-        if n > 5000:
-            print("No solution found.")
-            break
         result = backtrack(student_assignment, time_assignment, students, tutors)
-
+    
     # Save the result
     if result:
         student_assignment, time_assignment = result
-        for student in student_assignment.keys():
-            if not set(student.courses).intersection(student_assignment[student].courses):
-                print(f"Student {student.name} with course {student.courses} is not matched with tutor {student_assignment[student].name} with course {student_assignment[student].courses}")
+        # for student in student_assignment.keys():
+            # if not set(student.courses).intersection(student_assignment[student].courses):
+            #     print(f"Student {student.name} with course {student.courses} is not matched with tutor {student_assignment[student].name} with course {student_assignment[student].courses}")
         save_schedule(student_assignment)
     else:
         print("No solution found.")
