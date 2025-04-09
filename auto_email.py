@@ -15,4 +15,4 @@ def auto_email(recipient, subject, message):
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
     server.login(from_email, "OREOSAREBADFORYOU35")
-    server.sendmail(from_email, recipient_email, text)    
+    server.sendmail(from_email, recipient_email, text)

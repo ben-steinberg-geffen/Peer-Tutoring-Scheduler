@@ -136,32 +136,30 @@ def email():
                 time_slot = row['Time']
                 subject = row['Student Courses']
                 info = row['Additional Info']
-                email_sent_status = None
+                email_status = row['Student Email Status']
 
-                # Create Student and Tutor objects
-                student = Student(student_name, student_email, student_grade, None, subject, info, None, email_sent_status, None)
-                tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, email_sent_status)
-                student.matched_tutors = [tutor]
-                tutor.matched_students = [student]
+                if email_status == False:
 
-                # Send emails
-                if student.email_status == False or tutor.email_status == False:
-                  subject_student = (f'Peer Tutoring Schedule')
-                  message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
+                    # Create Student and Tutor objects
+                    student = Student(student_name, student_email, student_grade, None, subject, info, None, True, None)
+                    tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, True)
+                    student.matched_tutors = [tutor]
+                    tutor.matched_students = [student]
 
-                  subject_tutor = (f'Peer Tutoring Schedule')
-                  if "nan" not in str(info).lower():
-                     message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
-                  else:
-                     message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
-                  
-                  auto_email(student, subject_student, message_student)
-                  auto_email(tutor, subject_tutor, message_tutor)
-                  student.email_status = True
-                  tutor.email_status = True
+                    subject_student = (f'Peer Tutoring Schedule')
+                    message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
+
+                    subject_tutor = (f'Peer Tutoring Schedule')
+                    if "nan" not in str(info).lower():
+                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
+                    else:
+                        message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
+                    
+                    auto_email(student, subject_student, message_student)
+                    auto_email(tutor, subject_tutor, message_tutor)
+                    student.email_status = True
+                    tutor.email_status = True
                 
-
-            
             for student in not_matched_students.keys():
                 subject_student = (f'Peer Tutoring Arrangement')
                 student.email = "erobins95@geffenacademy.ucla.edu"

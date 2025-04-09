@@ -1,5 +1,5 @@
 class Student:
-    def __init__(self, name, email, grade, availability, courses, additional_info, not_tutors, email_status, final_tutor=None):
+    def __init__(self, name, email, grade, availability, courses, additional_info, not_tutors, email_status=False, final_tutor=None):
         self.name = name
         self.email = email
         self.grade = grade
@@ -12,10 +12,10 @@ class Student:
         self.final_tutor = final_tutor
         self.final_time = None
         self.info = additional_info
-        self.email_status = False
+        self.email_status = email_status
 
 class Tutor:
-    def __init__(self, name, email, grade, availability, courses, not_students, email_status):
+    def __init__(self, name, email, grade, availability, courses, not_students, email_status=False):
         self.name = name
         self.email = email
         self.grade = grade
@@ -25,4 +25,4 @@ class Tutor:
         self.matched_students = []
         self.final_students = {}
         self.final_times = []
-        self.email_status = False
+        self.email_status = email_status
