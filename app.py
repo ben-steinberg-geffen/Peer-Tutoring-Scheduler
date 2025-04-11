@@ -142,7 +142,7 @@ def email():
                 student_email = "hliao38@geffenacademy.ucla.edu"
                 student_grade = row['Student Grade']
                 tutor_name = row['Tutor Name']
-                tutor_email = "bsteinb53@geffenacademy.ucla.edu"
+                tutor_email = "hliao38@geffenacademy.ucla.edu"
                 tutor_grade = row['Tutor Grade']
                 time_slot = row['Time']
                 subject = row['Student Courses']
@@ -173,7 +173,7 @@ def email():
                 
             for student in not_matched_students.keys():
                 subject_student = (f'Peer Tutoring Arrangement')
-                student.email = "erobins95@geffenacademy.ucla.edu"
+                student.email = "hliao38@geffenacademy.ucla.edu"
                 if not not_matched_students[student][1]:
                     message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nRegards, \nGeffen Peer Tutoring Team')
                 else:
