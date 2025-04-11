@@ -71,3 +71,5 @@ if __name__ == "__main__":
     student_assignment, time_assignment = main()
     # for student in student_assignment:
     #     print(f"{student.name} is matched with {student_assignment[student].name} at {time_assignment[student]} for this course: {student.courses}")
+
+
