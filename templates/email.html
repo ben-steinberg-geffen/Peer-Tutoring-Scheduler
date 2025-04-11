@@ -20,7 +20,6 @@
 <div class="preview-container">
     <h3>Email Preview</h3>
     <div class="email-preview">
-        <p> Dear,</p>
         {% for assignment in assignments %}
         <p> Dear {{ assignment.tutor }},</p>
         <p> You have been matched with {{ assignment.student }} for these classes: {{ assignment.subject }}. {{ assignment.student }} is available to meet with you at {{ assignment.time_slot }}. </p>
