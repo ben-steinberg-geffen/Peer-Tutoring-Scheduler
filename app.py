@@ -5,9 +5,10 @@ import os
 import random
 from auto_email import auto_email
 from models import Student, Tutor
-from scheduler import match_students_tutors
+from scheduler import match_students_tutors, get_not_matched
 from persistent_data import save_data, load_data
-from save_schedule_assignment import save_schedule_assignment
+from save_schedule_assignment import load_student_data, load_tutor_data, split_student_data, save_schedule_assignment, load_existing_schedule
+from data_loader import update_students_tutors
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -20,7 +21,35 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 is_uploaded = False
 all_students = []
-not_matched_students = {}
+
+student_df = load_student_data()
+student_df = split_student_data(student_df)
+tutor_df = load_tutor_data()
+
+# Initialize students and tutors
+students = []
+tutors = []
+
+for _, row in student_df.iterrows():
+    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
+
+for _, row in tutor_df.iterrows():
+    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
+
+# Load existing schedule if any
+
+if os.path.exists('tutoring_schedule.csv'):
+    student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
+else:
+    student_assignment, time_assignment = {}, {}
+
+# Update students and tutors with new data
+students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
+students, tutors = match_students_tutors(students, tutors)
+not_matched = get_not_matched(students, tutors)
+
+students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
+not_matched_students = get_not_matched(students, tutors)
 
 @app.route('/')
 def home():
