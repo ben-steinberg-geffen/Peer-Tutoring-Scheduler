@@ -76,6 +76,7 @@ def search():
     # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
     matched_students = []
+    unassigned_students = set(not_matched_students.keys())
     script_dir = os.path.dirname(os.path.abspath(__file__))
     saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
     if os.path.exists(saved_schedule_path):
@@ -100,11 +101,6 @@ def search():
     # Sort the assignments list by tutor name first, then student name
     assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
 
-    unassigned_students = []
-    if is_uploaded:
-        for student in all_students:
-            if student not in matched_students:
-                unassigned_students.append(student)
 
     actual_assignments = []
     if request.method == 'POST':
@@ -146,6 +142,7 @@ def download_schedule():
 def email():
     email_count = 0
     assignments = []  # List to store all assignments for preview
+    
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
