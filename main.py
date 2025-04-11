@@ -8,12 +8,12 @@ def main():
     def save_schedule(student_assignment):
         with open('tutoring_schedule.csv', mode='w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status'])
+            writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status'])
             for student, tutor in student_assignment.items():
                 writer.writerow([
                     student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
                     student.not_tutors, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
-                    student.final_time, student.email_status
+                    student.final_time, student.email_status, student.tutor_email_status
                 ])
         print("Results saved to tutoring_schedule.csv")
         
@@ -43,6 +43,7 @@ def main():
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
+
     # for student in not_matched.keys():
     #     print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
     

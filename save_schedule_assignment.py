@@ -11,12 +11,12 @@ def save_schedule(student_assignment):
     
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status'])
+        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status'])
         for student, tutor in student_assignment.items():
             writer.writerow([
                 student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
                 student.not_tutors, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
-                student.final_time, student.email_status
+                student.final_time, student.email_status, student.tutor_email_status
             ])
     print(f"Results saved to {file_path}")
 

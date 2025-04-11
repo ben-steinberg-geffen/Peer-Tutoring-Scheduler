@@ -1,5 +1,5 @@
 class Student:
-    def __init__(self, name, email, grade, availability, courses, additional_info, not_tutors, email_status=False, final_tutor=None):
+    def __init__(self, name, email, grade, availability, courses, additional_info, not_tutors, email_status=False, tutor_email_status=False, final_tutor=None):
         self.name = name
         self.email = email
         self.grade = grade
@@ -13,6 +13,7 @@ class Student:
         self.final_time = None
         self.info = additional_info
         self.email_status = email_status
+        self.tutor_email_status = tutor_email_status
 
 class Tutor:
     def __init__(self, name, email, grade, availability, courses, not_students, email_status=False):
