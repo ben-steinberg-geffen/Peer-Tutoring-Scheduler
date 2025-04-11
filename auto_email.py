@@ -2,13 +2,14 @@ import smtplib
 
 #EMAIL ACCOUNT INFORMATION
 '''
-peertutoring2@geffenacademy.ucla.edu
-OREOSAREBADFORYOU35
+Email: peertutoring2@geffenacademy.ucla.edu
+Password: OREOSAREBADFORYOU35
+App Password: 
 '''
 
 def auto_email(recipient, subject, message):
     from_email = 'peertutoring2@geffenacademy.ucla.edu'
-    recipient_email = recipient.email
+    recipient_email = "hliao38@geffenacademy.ucla"
 
     text = f"Subject: {subject}\n\n{message}"
 
