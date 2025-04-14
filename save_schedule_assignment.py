@@ -58,13 +58,8 @@ def save_schedule_assignment():
         print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
     # Perform backtracking to find a valid schedule
     result = None
-    n = 0
 
     while not result:
-        n += 1
-        if n > 50000:
-            print("No solution found.")
-            break
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
     # Save the result
