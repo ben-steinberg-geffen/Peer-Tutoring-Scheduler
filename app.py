@@ -4,10 +4,8 @@ import os
 import random
 from auto_email import auto_email
 from models import Student, Tutor
-from scheduler import match_students_tutors, get_not_matched
 from persistent_data import save_data, load_data
-from save_schedule_assignment import load_student_data, load_tutor_data, split_student_data, save_schedule_assignment, load_existing_schedule
-from data_loader import update_students_tutors
+from save_schedule_assignment import save_schedule_assignment
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -20,7 +18,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 is_uploaded = False
 all_students = []
-
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
