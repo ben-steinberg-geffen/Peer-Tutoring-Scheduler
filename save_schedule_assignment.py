@@ -4,19 +4,24 @@ from models import Student, Tutor
 from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors, split_student_data
 from scheduler import match_students_tutors, get_not_matched, backtrack
 
-def save_schedule(student_assignment):
+def save_schedule(student_assignment, not_matched):
     # Define the directory where you want to save the file
     script_dir = os.path.dirname(os.path.abspath(__file__))  # Gets the directory where the script is located
     file_path = os.path.join(script_dir, 'saved_schedule.csv')
     
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status'])
+        writer.writerow(['Status', 'Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status'])
         for student, tutor in student_assignment.items():
             writer.writerow([
-                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
+                'Matched', student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
                 student.not_tutors, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
                 student.final_time, student.email_status, student.tutor_email_status
+            ])
+        for student in not_matched.keys():
+            writer.writerow([
+                'Not Matched', student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
+                student.not_tutors, '', '', '', '', '', '', student.email_status
             ])
     print(f"Results saved to {file_path}")
 
@@ -57,7 +62,7 @@ def save_schedule_assignment():
 
     while not result:
         n += 1
-        if n > 5000:
+        if n > 50000:
             print("No solution found.")
             break
         result = backtrack(student_assignment, time_assignment, students, tutors)
@@ -68,7 +73,7 @@ def save_schedule_assignment():
         for student in student_assignment.keys():
             if not set(student.courses).intersection(student_assignment[student].courses):
                 print(f"Student {student.name} with course {student.courses} is not matched with tutor {student_assignment[student].name} with course {student_assignment[student].courses}")
-        save_schedule(student_assignment)
+        save_schedule(student_assignment, not_matched)
     else:
         print("No solution found.")
 

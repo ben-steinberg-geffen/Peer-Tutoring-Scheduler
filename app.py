@@ -82,6 +82,8 @@ def search():
         data = pd.read_csv(saved_schedule_path)
         # Get the column headers from the DataFrame
         for index, row in data.iterrows():
+            if row['Status'] == 'Not Matched':
+                continue
             subjects_tutor =  row['Tutor Courses'].split(", ")
             subjects_student = row['Student Courses'].split(", ")
             subjects_both = []
