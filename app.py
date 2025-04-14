@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
-from get_assignment import get_schedule
 import os
 import random
 from auto_email import auto_email
@@ -140,7 +139,6 @@ def download_schedule():
 
 @app.route('/email', methods=['GET', 'POST'])
 def email():
-    email_count = 0
     assignments = []  # List to store all assignments for preview
     
 
@@ -149,7 +147,7 @@ def email():
     
     if os.path.exists(saved_schedule_path):
         df = pd.read_csv(saved_schedule_path)
-        email_count = len(df) + len(not_matched_students)
+        email_count = len(df) * 2 + len(not_matched_students)
 
         # Create preview data
         for _, row in df.iterrows():
@@ -174,28 +172,30 @@ def email():
                 subject = row['Student Courses']
                 info = row['Additional Info']
                 email_status = row['Student Email Status']
+                tutor_email_status = row['Tutor Email Status']
+
+                student = Student(student_name, student_email, student_grade, None, subject, info, None, True, None)
+                tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, True)
+                tutor.matched_students = [student]
+                student.matched_tutors = [tutor]
 
                 if email_status == False:
-
-                    # Create Student and Tutor objects
-                    student = Student(student_name, student_email, student_grade, None, subject, info, None, True, None)
-                    tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, True)
-                    student.matched_tutors = [tutor]
-                    tutor.matched_students = [student]
-
                     subject_student = (f'Peer Tutoring Schedule')
                     message_student = (f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
+                    
+                    auto_email(student, subject_student, message_student)
+                    df.at[index, 'Student Email Status'] = True  # Update email status in DataFrame
 
+                if tutor_email_status == False:
                     subject_tutor = (f'Peer Tutoring Schedule')
+
                     if "nan" not in str(info).lower():
                         message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team')
                     else:
                         message_tutor = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
-                    
-                    auto_email(student, subject_student, message_student)
-                    auto_email(tutor, subject_tutor, message_tutor)
-                    student.email_status = True
-                    tutor.email_status = True
+
+                    auto_email(tutor, subject_tutor, message_tutor)                    
+                    df.at[index, 'Tutor Email Status'] = True  # Update email status in DataFrame
                 
             for student in not_matched_students.keys():
                 subject_student = (f'Peer Tutoring Arrangement')
@@ -205,8 +205,10 @@ def email():
                 else:
                     message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {not_matched_students[student][0]}. \n\nHere are possible time slots you could consider: {not_matched_students[student][1]}\n\nRegards, \nGeffen Peer Tutoring Team')
                 auto_email(student, subject_student, message_student)
+
+            # Save the updated DataFrame back to the CSV file
+            df.to_csv(saved_schedule_path, index=False)
             flash('Successfully sent {} emails!'.format(email_count), 'success')
-                
 
     return render_template('email.html', email_count=email_count, assignments=assignments)
 
