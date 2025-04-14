@@ -149,7 +149,13 @@ def email():
     
     if os.path.exists(saved_schedule_path):
         df = pd.read_csv(saved_schedule_path)
-        email_count = len(df) * 2 + len(not_matched_students)
+        email_count = 0
+        for _, row in df.iterrows():
+            if row['Student Email Status'] == False:
+                email_count += 1
+            if row['Tutor Email Status'] == False:
+                email_count += 1
+
 
         # Create preview data
         for _, row in df.iterrows():
