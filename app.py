@@ -29,6 +29,8 @@ if os.path.exists(saved_schedule_path):
     not_matched = df[df['Status'] == 'Not Matched']
     not_matched_students = set(not_matched['Student Name'].tolist())
     unassigned_students = not_matched_students
+    for student in unassigned_students: 
+        print("student: ", student)
 
 
 
