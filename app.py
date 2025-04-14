@@ -21,7 +21,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 is_uploaded = False
 all_students = []
 
-
 script_dir = os.path.dirname(os.path.abspath(__file__))
 saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
 if os.path.exists(saved_schedule_path):
