@@ -111,16 +111,15 @@ def load_existing_schedule(schedule_file, students, tutors):
     with open(schedule_file, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            if row['Status'] == 'Matched':
-                student = next((s for s in students if s.name == row['Student Name'] and s.courses == row['Student Courses']), None)
-                tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
-                if student and tutor:
-                    student_assignment[student] = tutor
-                    time_assignment[student] = row['Time']
-                    student.final_tutor = tutor
-                    student.final_time = row['Time']
-                    tutor.final_students[student] = row['Time']
-                    tutor.final_times.append(row['Time'])
+            student = next((s for s in students if s.name == row['Student Name'] and s.courses == row['Student Courses']), None)
+            tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
+            if student and tutor:
+                student_assignment[student] = tutor
+                time_assignment[student] = row['Time']
+                student.final_tutor = tutor
+                student.final_time = row['Time']
+                tutor.final_students[student] = row['Time']
+                tutor.final_times.append(row['Time'])
 
     return student_assignment, time_assignment
 
