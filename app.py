@@ -21,35 +21,16 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 is_uploaded = False
 all_students = []
 
-student_df = load_student_data()
-student_df = split_student_data(student_df)
-tutor_df = load_tutor_data()
 
-# Initialize students and tutors
-students = []
-tutors = []
-
-for _, row in student_df.iterrows():
-    students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
-
-for _, row in tutor_df.iterrows():
-    tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
-
-# Load existing schedule if any
-
-if os.path.exists('tutoring_schedule.csv'):
-    student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
-else:
-    student_assignment, time_assignment = {}, {}
-
-# Update students and tutors with new data
-students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
-students, tutors = match_students_tutors(students, tutors)
-not_matched = get_not_matched(students, tutors)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
+if os.path.exists(saved_schedule_path):
+    df = pd.read_csv(saved_schedule_path)
+    not_matched = df[df['Status'] == 'Not Matched']
+    not_matched_students = set(not_matched['Student Name'].tolist())
+    unassigned_students = not_matched_students
 
 
-students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
-not_matched_students = get_not_matched(students, tutors)
 
 @app.route('/')
 def home():
@@ -76,7 +57,6 @@ def search():
     # Convert DataFrame rows to a list of dictionaries for the template
     assignments = []
     matched_students = []
-    unassigned_students = set(not_matched_students.keys())
     script_dir = os.path.dirname(os.path.abspath(__file__))
     saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
     if os.path.exists(saved_schedule_path):
