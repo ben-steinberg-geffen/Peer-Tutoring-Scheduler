@@ -41,20 +41,22 @@ def main():
     
     if os.path.exists('tutoring_schedule.csv'):
         student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
-    else:
-        student_assignment, time_assignment = {}, {}
+    # else:
+    #     student_assignment, time_assignment = {}, {}
+
+    print(student_assignment)
     
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
 
-    for student in not_matched.keys():
-        print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
+    # for student in not_matched.keys():
+    #     print(f"Student {student.name} with courses {student.courses} could not be matched because {not_matched[student][0]}")
     
     # Perform backtracking to find a valid schedule
     result = None
-    
+
     while not result:
         result = backtrack(student_assignment, time_assignment, students, tutors)
     
