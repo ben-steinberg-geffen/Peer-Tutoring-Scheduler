@@ -121,34 +121,107 @@ def download_schedule():
 
 @app.route('/email', methods=['GET', 'POST'])
 def email():
-    assignments = []  # List to store all assignments for preview
-    
+    email_previews = [] # List to store preview data for the template
+    email_count = 0     # Counter for emails that *will* be sent
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
-    
-    if os.path.exists(saved_schedule_path):
+
+    if not os.path.exists(saved_schedule_path):
+        flash('Error: saved_schedule.csv not found.', 'danger')
+        return render_template('email.html', email_count=0, previews=[])
+
+    try:
         df = pd.read_csv(saved_schedule_path)
-        email_count = 0
-        for _, row in df.iterrows():
-            if row['Student Email Status'] == False:
-                email_count += 1
-            if row['Tutor Email Status'] == False:
-                email_count += 1
+        # *** FIX for NaN: Fill NaN in relevant columns with empty strings ***
+        # Adjust columns if needed based on your actual CSV headers
+        cols_to_fill = ['Student Name', 'Tutor Name', 'Student Courses', 'Time', 'Additional Info', 'Student Grade', 'Tutor Grade']
+        # Ensure columns exist before filling
+        for col in cols_to_fill:
+            if col in df.columns:
+                df[col] = df[col].fillna('')
+            else:
+                print(f"Warning: Column '{col}' not found in CSV. Skipping NaN fill for it.")
+                # Optionally create the column with empty strings if it's critical
+                # df[col] = '' 
 
+        # Ensure Status columns exist and are boolean, fill NaN with False
+        if 'Student Email Status' in df.columns:
+             df['Student Email Status'] = df['Student Email Status'].fillna(False).astype(bool)
+        else:
+            print("Warning: Column 'Student Email Status' not found. Assuming all need emails.")
+            df['Student Email Status'] = False # Create it if missing
 
-        # Create preview data
-        for _, row in df.iterrows():
-            assignment = {
-                'student': row['Student Name'],
-                'tutor': row['Tutor Name'],
-                'subject': row['Student Courses'],
-                'time_slot': row['Time'],
-                'additional_info': row['Additional Info']
-            }
-            assignments.append(assignment)
+        if 'Tutor Email Status' in df.columns:
+            df['Tutor Email Status'] = df['Tutor Email Status'].fillna(False).astype(bool)
+        else:
+            print("Warning: Column 'Tutor Email Status' not found. Assuming all need emails.")
+            df['Tutor Email Status'] = False # Create it if missing
+            
 
-        if request.method == 'POST':
+    except Exception as e:
+        flash(f'Error reading or processing CSV: {e}', 'danger')
+        return render_template('email.html', email_count=0, previews=[])
+
+    # --- Logic for GET request (Generate Previews) ---
+    for index, row in df.iterrows():
+        # Extract data safely using .get() with defaults or direct access after fillna
+        student_name = str(row.get('Student Name', 'N/A'))
+        tutor_name = str(row.get('Tutor Name', 'N/A'))
+        subject = str(row.get('Student Courses', 'N/A'))
+        time_slot = str(row.get('Time', 'N/A'))
+        info = str(row.get('Additional Info', '')) # Keep info as string, handle emptiness later
+        student_email_status = bool(row.get('Student Email Status', False))
+        tutor_email_status = bool(row.get('Tutor Email Status', False))
+
+        # Generate preview for Student if email not sent
+        if not student_email_status:
+            email_count += 1
+            subject_student = f'Peer Tutoring Schedule'
+            # Use f-string directly, checking for empty names just in case
+            message_student = (f'Dear {student_name or "Student"},\n\n'
+                               f'You have been matched with {tutor_name or "a tutor"} for these classes: {subject or "specified subjects"}. '
+                               f'{tutor_name or "Your tutor"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                               f'Regards,\n'
+                               f'Geffen Peer Tutoring Team')
+            email_previews.append({
+                'recipient_type': 'Student',
+                'recipient_name': student_name or "Unknown Student",
+                'subject': subject_student,
+                'body': message_student
+            })
+
+        # Generate preview for Tutor if email not sent
+        if not tutor_email_status:
+            email_count += 1
+            subject_tutor = f'Peer Tutoring Schedule'
+            # Conditional message based on 'info'
+            # Check if info is not empty AND does not contain 'nan' (case-insensitive)
+            # The check for 'nan' might be redundant after fillna('') but kept for safety
+            if info and "nan" not in info.lower():
+                 message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
+                                 f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
+                                 f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                 f'Student Comments: {info}\n\n'
+                                 f'Regards,\n'
+                                 f'Geffen Peer Tutoring Team')
+            else:
+                 message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
+                                 f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
+                                 f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                 f'Regards,\n'
+                                 f'Geffen Peer Tutoring Team')
+            email_previews.append({
+                'recipient_type': 'Tutor',
+                'recipient_name': tutor_name or "Unknown Tutor",
+                'subject': subject_tutor,
+                'body': message_tutor
+            })
+
+    # --- Logic for POST request (Send Emails) ---
+    if request.method == 'POST':
+        send_count = 0
+        try:
             for index, row in df.iterrows():
                 student_name = row['Student Name']
                 student_email = "hliao38@geffenacademy.ucla.edu"
@@ -166,6 +239,7 @@ def email():
 
                 student = Student(student_name, student_email, student_grade, None, subject, info, None, True, None)
                 tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, True)
+                # Note: Matching logic here might be simplified; adapt if needed
                 tutor.matched_students = [student]
                 student.matched_tutors = [tutor]
 
@@ -199,9 +273,18 @@ def email():
 
             # Save the updated DataFrame back to the CSV file
             df.to_csv(saved_schedule_path, index=False)
-            flash('Successfully sent {} emails!'.format(email_count), 'success')
+            flash(f'Successfully sent {send_count} emails!', 'success')
+            # Redirect to GET to avoid re-posting on refresh and show updated previews (which should now be empty)
+            return redirect(url_for('email'))
 
-    return render_template('email.html', email_count=email_count, assignments=assignments)
+        except Exception as e:
+             flash(f'An error occurred during email sending: {e}', 'danger')
+             # Re-render the page but show the previews generated before the error
+             return render_template('email.html', email_count=email_count, previews=email_previews)
+
+
+    # Render the template with the generated previews for the GET request
+    return render_template('email.html', email_count=email_count, previews=email_previews)
 
 if __name__ == '__main__':
     app.run(debug=True)

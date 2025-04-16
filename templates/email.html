@@ -17,16 +17,44 @@
     </div>
 </div>
 
-<div class="preview-container">
-    <h3>Email Preview</h3>
-    <div class="email-preview">
-        {% for assignment in assignments %}
-        <p> Dear {{ assignment.tutor }},</p>
-        <p> You have been matched with {{ assignment.student }} for these classes: {{ assignment.subject }}. {{ assignment.student }} is available to meet with you at {{ assignment.time_slot }}. </p>
-        <p>Regards,</p>
-        <p>Geffen Peer Tutoring Team</p>
-        {% endfor %}
-    </div>
+<!-- Make sure you have a way to display flashed messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div> <!-- Assuming Bootstrap alerts -->
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="email-page-container"> <!-- Optional overall container -->
+
+    <h2>Email Center</h2>
+
+    {% if previews %}
+        <p>There are {{ email_count }} email(s) ready to be sent.</p>
+        <form method="POST" action="{{ url_for('email') }}">
+            <button type="submit" class="btn btn-primary">Send All Pending Emails</button> <!-- Style as needed -->
+        </form>
+
+        <hr> <!-- Separator -->
+
+        <h3>Email Previews</h3>
+        <div class="previews-list">
+            {% for preview in previews %}
+            <div class="email-preview-item"> <!-- Box around each preview -->
+                <h4>Preview for: {{ preview.recipient_name }} ({{ preview.recipient_type }})</h4>
+                <strong>Subject: {{ preview.subject }}</strong>
+                <!-- Use <pre> tag to preserve line breaks from the Python message string -->
+                <pre>{{ preview.body }}</pre>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p>No pending emails to send or preview.</p>
+        <p><a href="{{ url_for('route_to_generate_schedule') }}">Generate or Load Schedule?</a></p> <!-- Link to previous step? -->
+    {% endif %}
+
 </div>
 
 <style>
