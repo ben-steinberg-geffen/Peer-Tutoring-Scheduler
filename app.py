@@ -107,7 +107,8 @@ def search():
 
 @app.route('/download_schedule')
 def download_schedule():
-    saved_schedule_path = os.path.join(app.config['UPLOAD_FOLDER'], "saved_schedule.csv")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
     try:
         return send_file(
             saved_schedule_path,
