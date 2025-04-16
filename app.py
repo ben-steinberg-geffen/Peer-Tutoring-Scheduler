@@ -165,6 +165,8 @@ def email():
 
     # --- Logic for GET request (Generate Previews) ---
     for index, row in df.iterrows():
+        email_count = df['Student Email Status'].value_counts().get(False, 0) + df['Tutor Email Status'].value_counts().get(False, 0)
+
         # Extract data safely using .get() with defaults or direct access after fillna
         student_name = str(row.get('Student Name', 'N/A'))
         tutor_name = str(row.get('Tutor Name', 'N/A'))
@@ -173,50 +175,74 @@ def email():
         info = str(row.get('Additional Info', '')) # Keep info as string, handle emptiness later
         student_email_status = bool(row.get('Student Email Status', False))
         tutor_email_status = bool(row.get('Tutor Email Status', False))
+        student_status = bool(row.get('Status', ''))
+        reason = str(row.get('Reason', ''))
+        potential_times = str(row.get('Potential Times', ''))
 
         # Generate preview for Student if email not sent
-        if not student_email_status:
-            email_count += 1
-            subject_student = f'Peer Tutoring Schedule'
-            # Use f-string directly, checking for empty names just in case
-            message_student = (f'Dear {student_name or "Student"},\n\n'
-                               f'You have been matched with {tutor_name or "a tutor"} for these classes: {subject or "specified subjects"}. '
-                               f'{tutor_name or "Your tutor"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
-                               f'Regards,\n'
-                               f'Geffen Peer Tutoring Team')
-            email_previews.append({
-                'recipient_type': 'Student',
-                'recipient_name': student_name or "Unknown Student",
-                'subject': subject_student,
-                'body': message_student
-            })
+        if student_status == 'Matched':
+            if not student_email_status:
+                subject_student = f'Peer Tutoring Schedule'
+                # Use f-string directly, checking for empty names just in case
+                message_student = (f'Dear {student_name or "Student"},\n\n'
+                                f'You have been matched with {tutor_name or "a tutor"} for these classes: {subject or "specified subjects"}. '
+                                f'{tutor_name or "Your tutor"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                f'Regards,\n'
+                                f'Geffen Peer Tutoring Team')
+                email_previews.append({
+                    'recipient_type': 'Student',
+                    'recipient_name': student_name or "Unknown Student",
+                    'subject': subject_student,
+                    'body': message_student
+                })
+                # Generate preview for Tutor if email not sent
 
-        # Generate preview for Tutor if email not sent
+        if student_status == 'Not Matched':
+            if not student_email_status:
+                subject_student = f'Peer Tutoring Arrangement'
+                # Use f-string directly, checking for empty names just in case
+                if potential_times:
+                    message_student = (f'Dear {student_name or "Student"},\n\n'
+                                    f'Unfortunately, we have not been able to match you with a tutor because {reason}. \n\n'
+                                    f'Here are possible time slots you could consider: {potential_times} \n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team')
+                else:
+                    message_student = (f'Dear {student_name or "Student"},\n\n'
+                                    f'Unfortunately, we have not been able to match you with a tutor because {reason}. \n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team')
+                email_previews.append({
+                    'recipient_type': 'Student',
+                    'recipient_name': student_name or "Unknown Student",
+                    'subject': subject_student,
+                    'body': message_student
+                })
+
         if not tutor_email_status:
-            email_count += 1
-            subject_tutor = f'Peer Tutoring Schedule'
-            # Conditional message based on 'info'
-            # Check if info is not empty AND does not contain 'nan' (case-insensitive)
-            # The check for 'nan' might be redundant after fillna('') but kept for safety
-            if info and "nan" not in info.lower():
-                 message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
-                                 f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
-                                 f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
-                                 f'Student Comments: {info}\n\n'
-                                 f'Regards,\n'
-                                 f'Geffen Peer Tutoring Team')
-            else:
-                 message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
-                                 f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
-                                 f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
-                                 f'Regards,\n'
-                                 f'Geffen Peer Tutoring Team')
-            email_previews.append({
-                'recipient_type': 'Tutor',
-                'recipient_name': tutor_name or "Unknown Tutor",
-                'subject': subject_tutor,
-                'body': message_tutor
-            })
+                subject_tutor = f'Peer Tutoring Schedule'
+                # Conditional message based on 'info'
+                # Check if info is not empty AND does not contain 'nan' (case-insensitive)
+                # The check for 'nan' might be redundant after fillna('') but kept for safety
+                if info and "nan" not in info.lower():
+                    message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
+                                    f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
+                                    f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                    f'Student Comments: {info}\n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team')
+                else:
+                    message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
+                                    f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
+                                    f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team')
+                email_previews.append({
+                    'recipient_type': 'Tutor',
+                    'recipient_name': tutor_name or "Unknown Tutor",
+                    'subject': subject_tutor,
+                    'body': message_tutor
+                })
 
     # --- Logic for POST request (Send Emails) ---
     if request.method == 'POST':
@@ -233,13 +259,12 @@ def email():
                 subject = row['Student Courses']
                 info = row['Additional Info']
                 email_status = row['Student Email Status']
-                tutor_email_status = row['Tutor Email Status']
+                tutor_email_status = row['Tutor Email Status'] 
                 reason = row['Reason']
                 potential_times = row['Potential Times']
-
+                
                 student = Student(student_name, student_email, student_grade, None, subject, info, None, True, None)
                 tutor = Tutor(tutor_name, tutor_email, tutor_grade, None, subject, None, True)
-                # Note: Matching logic here might be simplified; adapt if needed
                 tutor.matched_students = [student]
                 student.matched_tutors = [tutor]
 
@@ -265,10 +290,10 @@ def email():
                 if row['Status'] == 'Not Matched':       
                     subject_student = (f'Peer Tutoring Arrangement')
                     student.email = "hliao38@geffenacademy.ucla.edu"
-                    if not potential_times:
+                    if potential_times == []:
                         message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nRegards, \nGeffen Peer Tutoring Team')
-                    else:
-                        message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nHere are possible time slots you could consider: {not_matched_students[student][1]}\n\nRegards, \nGeffen Peer Tutoring Team')
+                    elif potential_times != []:
+                        message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nHere are possible time slots you could consider: {potential_times}\n\nRegards, \nGeffen Peer Tutoring Team')
                     auto_email(student, subject_student, message_student)
 
             # Save the updated DataFrame back to the CSV file
@@ -281,7 +306,6 @@ def email():
              flash(f'An error occurred during email sending: {e}', 'danger')
              # Re-render the page but show the previews generated before the error
              return render_template('email.html', email_count=email_count, previews=email_previews)
-
 
     # Render the template with the generated previews for the GET request
     return render_template('email.html', email_count=email_count, previews=email_previews)
