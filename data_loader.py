@@ -112,22 +112,19 @@ def load_existing_schedule(schedule_file, students, tutors):
     with open(schedule_file, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            for student in students: 
-                if student.name == row['Student Name']:
-                    print("student", student.name, " with courses: ", student.courses[0])
-                    print('df says: ', row['Student Courses'])
-
-            student = next((s for s in students if s.name == row['Student Name'] and s.courses[0] == row['Student Courses']), None)
-            tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
-            
-            if student and tutor:
-                student_assignment[student] = tutor
-                time_assignment[student] = row['Time']
-                student.final_tutor = tutor
-                student.final_time = row['Time']
-                tutor.final_students[student] = row['Time']
-                tutor.final_times.append(row['Time'])
-            
+            if row['Status'] == 'Matched':
+                student = next((s for s in students if s.name == row['Student Name'] and s.courses[0] == row['Student Courses']), None)
+                tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
+                
+                if student and tutor:
+                    student_assignment[student] = tutor
+                    time_assignment[student] = row['Time']
+                    student.final_tutor = tutor
+                    student.final_time = row['Time']
+                    tutor.final_students[student] = row['Time']
+                    tutor.final_times.append(row['Time'])
+                    student.email_status = row['Student Email Status']
+                    tutor.email_status = row['Tutor Email Status']
 
     return student_assignment, time_assignment
 
@@ -140,7 +137,6 @@ def update_students_tutors(student_df, tutor_df, student_assignment):
     
     for _, row in student_df.iterrows():
         if row['name'] not in existing_students:
-            # print(row['name'])
             students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
     
     for _, row in tutor_df.iterrows():
