@@ -4,18 +4,16 @@ import smtplib
 '''
 Email: peertutoring2@geffenacademy.ucla.edu
 Password: OREOSAREBADFORYOU35
-App Password: 
+App Password: auam cwoo skkj epqv
 '''
-# aiwy sost pake vabx
 
 def auto_email(recipient, subject, message):
-    # from_email = 'peertutoring2@geffenacademy.ucla.edu'
-    from_email = "geffentutoring@gmail.com"
+    from_email = 'peertutoring2@geffenacademy.ucla.edu'
     recipient_email = "hliao38@geffenacademy.ucla.edu"
 
     text = f"Subject: {subject}\n\n{message}"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login(from_email, "aiwy sost pake vabx")
+    server.login(from_email, "auam cwoo skkj epqv")
     server.sendmail(from_email, recipient_email, text)

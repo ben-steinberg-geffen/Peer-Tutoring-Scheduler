@@ -11,7 +11,7 @@ def save_schedule(student_assignment, not_matched):
     
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Status', 'Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status'])
+        writer.writerow(['Status', 'Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time', 'Student Email Status', 'Tutor Email Status', 'Reason', 'Potential Times'])
         for student, tutor in student_assignment.items():
             writer.writerow([
                 'Matched', student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
@@ -21,7 +21,7 @@ def save_schedule(student_assignment, not_matched):
         for student in not_matched.keys():
             writer.writerow([
                 'Not Matched', student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
-                student.not_tutors, '', '', '', '', '', '', student.email_status
+                student.not_tutors, '', '', '', '', '', '', student.email_status, '', not_matched[student][0], not_matched[student][1]
             ])
     print(f"Results saved to {file_path}")
 
