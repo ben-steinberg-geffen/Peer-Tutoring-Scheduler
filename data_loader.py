@@ -15,9 +15,8 @@ def load_student_data():
     """
     message = load_data("links")
     if  message is not None:
-        student_link = message["student_link"]
-        link_export = student_link + "/export?format=csv"
-        response = requests.get(link_export)
+        student_link = message["student_link"].replace("/edit?usp=sharing", "/export?format=csv")
+        response = requests.get(student_link)
     else:
         response = requests.get('https://docs.google.com/spreadsheets/d/1t3wSutzLqKCV6-ZZVaEEU3NZaRT_ZNhVyxHPAqK_oE8/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))
@@ -73,9 +72,8 @@ def load_tutor_data():
     """
     message = load_data("links")
     if  message is not None:
-        tutor_link = message["tutor_link"]
-        link_export = tutor_link + "/export?format=csv"
-        response = requests.get(link_export)
+        tutor_link = message["tutor_link"].replace("/edit?usp=sharing", "/export?format=csv")
+        response = requests.get(tutor_link)
     else:
         response = requests.get('https://docs.google.com/spreadsheets/d/1UCMF2kBOBzqD_s-PTI-z4tFNxH5FLjEYzVAkymsGH7M/export?format=csv')
     file_path = StringIO(response.content.decode('utf-8'))
@@ -110,18 +108,23 @@ def load_tutor_data():
 def load_existing_schedule(schedule_file, students, tutors):
     student_assignment = {}
     time_assignment = {}
+    
     with open(schedule_file, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            student = next((s for s in students if s.name == row['Student Name'] and s.courses == row['Student Courses']), None)
-            tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
-            if student and tutor:
-                student_assignment[student] = tutor
-                time_assignment[student] = row['Time']
-                student.final_tutor = tutor
-                student.final_time = row['Time']
-                tutor.final_students[student] = row['Time']
-                tutor.final_times.append(row['Time'])
+            if row['Status'] == 'Matched':
+                student = next((s for s in students if s.name == row['Student Name'] and s.courses[0] == row['Student Courses']), None)
+                tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
+                
+                if student and tutor:
+                    student_assignment[student] = tutor
+                    time_assignment[student] = row['Time']
+                    student.final_tutor = tutor
+                    student.final_time = row['Time']
+                    tutor.final_students[student] = row['Time']
+                    tutor.final_times.append(row['Time'])
+                    student.email_status = row['Student Email Status']
+                    tutor.email_status = row['Tutor Email Status']
 
     return student_assignment, time_assignment
 

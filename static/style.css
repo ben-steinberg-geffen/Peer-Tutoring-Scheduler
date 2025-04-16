@@ -598,3 +598,47 @@ h2 {
         font-size: 16px; /* Prevents zoom on mobile */
     }
 }
+
+.email-page-container {
+    padding: 20px;
+    max-width: 900px; /* Limit width for better readability */
+    margin: 20px auto; /* Center the container */
+  }
+  
+  .previews-list {
+    margin-top: 20px;
+  }
+  
+  .email-preview-item {
+    border: 1px solid #ccc;     /* A simple grey border */
+    padding: 15px;             /* Space inside the box */
+    margin-bottom: 20px;      /* Space between preview boxes */
+    background-color: #f9f9f9; /* A very light grey background */
+    border-radius: 5px;         /* Slightly rounded corners */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .email-preview-item h4 {
+    margin-top: 0; /* Remove default top margin from heading */
+    margin-bottom: 10px;
+    color: #333; /* Darker heading color */
+    border-bottom: 1px solid #eee; /* Separator line under heading */
+    padding-bottom: 5px;
+  }
+  
+  .email-preview-item strong {
+      display: inline-block; /* Allows margin */
+      margin-bottom: 10px;
+      color: #555; /* Slightly lighter color for subject label */
+  }
+  
+  .email-preview-item pre {
+    white-space: pre-wrap;     /* Allows text to wrap naturally */
+    word-wrap: break-word;     /* Breaks long words if necessary */
+    font-family: Consolas, monospace; /* Use a monospace font for email look */
+    font-size: 0.9em;          /* Slightly smaller font size */
+    background-color: #ffffff; /* White background for the message body */
+    padding: 10px;             /* Padding within the pre block */
+    border: 1px dashed #ddd;   /* Subtle dashed border for the body */
+    line-height: 1.4;          /* Improve readability */
+  }
