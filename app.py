@@ -29,8 +29,6 @@ if os.path.exists(saved_schedule_path):
     for student in unassigned_students: 
         print("student: ", student)
 
-
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -176,51 +174,49 @@ def email():
         info = str(row.get('Additional Info', '')) # Keep info as string, handle emptiness later
         student_email_status = bool(row.get('Student Email Status', False))
         tutor_email_status = bool(row.get('Tutor Email Status', False))
-        student_status = bool(row.get('Status', ''))
+        student_status = str(row.get('Status', ''))
         reason = str(row.get('Reason', ''))
-        potential_times = str(row.get('Potential Times', ''))
+        potential_times = str(row.get('Potential Times', '[]'))
 
         # Generate preview for Student if email not sent
-        if student_status == 'Matched':
-            if not student_email_status:
-                subject_student = f'Peer Tutoring Schedule'
-                # Use f-string directly, checking for empty names just in case
+        if not student_email_status and student_status == 'Matched':
+            subject_student = f'Peer Tutoring Schedule'
+            # Use f-string directly, checking for empty names just in case
+            message_student = (f'Dear {student_name or "Student"},\n\n'
+                            f'You have been matched with {tutor_name or "a tutor"} for these classes: {subject or "specified subjects"}. '
+                            f'{tutor_name or "Your tutor"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                            f'Regards,\n'
+                            f'Geffen Peer Tutoring Team')
+            email_previews.append({
+                'recipient_type': 'Student',
+                'recipient_name': student_name or "Unknown Student",
+                'subject': subject_student,
+                'body': message_student
+            })
+            # Generate preview for Tutor if email not sent
+
+        if not student_email_status and student_status == 'Not Matched':
+            subject_student = f'Peer Tutoring Arrangement'
+            # Use f-string directly, checking for empty names just in case
+            if potential_times != '[]':
                 message_student = (f'Dear {student_name or "Student"},\n\n'
-                                f'You have been matched with {tutor_name or "a tutor"} for these classes: {subject or "specified subjects"}. '
-                                f'{tutor_name or "Your tutor"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                f'Unfortunately, we have not been able to match you with a tutor for your selected course: {subject} because {reason}. \n\n'
+                                f'Here are possible time slots you could consider: {potential_times} \n\n'
                                 f'Regards,\n'
                                 f'Geffen Peer Tutoring Team')
-                email_previews.append({
-                    'recipient_type': 'Student',
-                    'recipient_name': student_name or "Unknown Student",
-                    'subject': subject_student,
-                    'body': message_student
-                })
-                # Generate preview for Tutor if email not sent
+            else:
+                message_student = (f'Dear {student_name or "Student"},\n\n'
+                                f'Unfortunately, we have not been able to match you with a tutor because {reason}. \n\n'
+                                f'Regards,\n'
+                                f'Geffen Peer Tutoring Team')
+            email_previews.append({
+                'recipient_type': 'Student',
+                'recipient_name': student_name or "Unknown Student",
+                'subject': subject_student,
+                'body': message_student
+            })
 
-        if student_status == 'Not Matched':
-            if not student_email_status:
-                subject_student = f'Peer Tutoring Arrangement'
-                # Use f-string directly, checking for empty names just in case
-                if potential_times:
-                    message_student = (f'Dear {student_name or "Student"},\n\n'
-                                    f'Unfortunately, we have not been able to match you with a tutor because {reason}. \n\n'
-                                    f'Here are possible time slots you could consider: {potential_times} \n\n'
-                                    f'Regards,\n'
-                                    f'Geffen Peer Tutoring Team')
-                else:
-                    message_student = (f'Dear {student_name or "Student"},\n\n'
-                                    f'Unfortunately, we have not been able to match you with a tutor because {reason}. \n\n'
-                                    f'Regards,\n'
-                                    f'Geffen Peer Tutoring Team')
-                email_previews.append({
-                    'recipient_type': 'Student',
-                    'recipient_name': student_name or "Unknown Student",
-                    'subject': subject_student,
-                    'body': message_student
-                })
-
-        if not tutor_email_status:
+        if not tutor_email_status and student_status == 'Matched':
                 subject_tutor = f'Peer Tutoring Schedule'
                 # Conditional message based on 'info'
                 # Check if info is not empty AND does not contain 'nan' (case-insensitive)

@@ -106,8 +106,9 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     
     tutor, student = result
     times = get_time_intersection(student, tutor)
+    print(student.name)
 
-    for time in times:
+    for time in times:  
         student_assignment[student] = tutor
         time_assignment[student] = time
 
@@ -148,8 +149,9 @@ def check_constraints(student_assignment, time_assignment):
                    return False
             
     for tutor in student_assignment.values():
-        if len(tutor.final_students) > 1:
+        if len(tutor.final_students) > 2:
             return False
+        
     # Ensure tutors without a student take priority over those with one already
     for student in student_assignment.keys():
         if student_assignment[student].final_students and len(student_assignment[student].final_students) == 1:
