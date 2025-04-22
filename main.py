@@ -57,7 +57,7 @@ def main():
     # Perform backtracking to find a valid schedule
     result = None
     n = 0
-    while not result:
+    while not result and n < 1000:  # Limit the number of iterations to prevent infinite loop
         n += 1
         print(f"Backtracking iteration {n}")
         result = backtrack(student_assignment, time_assignment, students, tutors)
