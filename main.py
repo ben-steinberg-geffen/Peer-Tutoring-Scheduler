@@ -44,7 +44,7 @@ def main():
     # else:
     #     student_assignment, time_assignment = {}, {}
 
-    print(student_assignment)
+    # print(student_assignment)
     
     # Update students and tutors with new data
     students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
