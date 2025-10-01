@@ -41,8 +41,8 @@ def main():
     
     if os.path.exists('tutoring_schedule.csv'):
         student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
-    # else:
-    #     student_assignment, time_assignment = {}, {}
+    else:
+        student_assignment, time_assignment = {}, {}
 
     # print(student_assignment)
     
