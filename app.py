@@ -21,13 +21,15 @@ all_students = []
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 saved_schedule_path = os.path.join(script_dir, "saved_schedule.csv")
+unassigned_students = set()  # Safefail: default to empty set
 if os.path.exists(saved_schedule_path):
     df = pd.read_csv(saved_schedule_path)
-    not_matched = df[df['Status'] == 'Not Matched']
-    not_matched_students = set(not_matched['Student Name'].tolist())
-    unassigned_students = not_matched_students
-    for student in unassigned_students: 
-        print("student: ", student)
+    if 'Status' in df.columns and 'Student Name' in df.columns:
+        not_matched = df[df['Status'] == 'Not Matched']
+        not_matched_students = set(not_matched['Student Name'].tolist())
+        unassigned_students = not_matched_students
+        for student in unassigned_students: 
+            print("student: ", student)
 
 @app.route('/')
 def home():
