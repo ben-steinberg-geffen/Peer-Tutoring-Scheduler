@@ -9,7 +9,7 @@ App Password: auam cwoo skkj epqv
 
 def auto_email(recipient, subject, message):
     from_email = 'peertutoring2@geffenacademy.ucla.edu'
-    recipient_email = "hliao38@geffenacademy.ucla.edu"
+    recipient_email = recipient.email
 
     text = f"Subject: {subject}\n\n{message}"
 

@@ -159,7 +159,6 @@ def email():
             print("Warning: Column 'Tutor Email Status' not found. Assuming all need emails.")
             df['Tutor Email Status'] = False # Create it if missing
             
-
     except Exception as e:
         flash(f'Error reading or processing CSV: {e}', 'danger')
         return render_template('email.html', email_count=0, previews=[])
@@ -170,7 +169,9 @@ def email():
 
         # Extract data safely using .get() with defaults or direct access after fillna
         student_name = str(row.get('Student Name', 'N/A'))
+        student_email = str(row.get('Student Email', 'N/A'))
         tutor_name = str(row.get('Tutor Name', 'N/A'))
+        tutor_email = str(row.get('Tutor Email', 'N/A'))
         subject = str(row.get('Student Courses', 'N/A'))
         time_slot = str(row.get('Time', 'N/A'))
         info = str(row.get('Additional Info', '')) # Keep info as string, handle emptiness later
@@ -249,10 +250,10 @@ def email():
         try:
             for index, row in df.iterrows():
                 student_name = row['Student Name']
-                student_email = "hliao38@geffenacademy.ucla.edu"
+                student_email = row['Student Email']
                 student_grade = row['Student Grade']
                 tutor_name = row['Tutor Name']
-                tutor_email = "hliao38@geffenacademy.ucla.edu"
+                tutor_email = row['Tutor Email']
                 tutor_grade = row['Tutor Grade']
                 time_slot = row['Time']
                 subject = row['Student Courses']
@@ -288,7 +289,6 @@ def email():
                 
                 if row['Status'] == 'Not Matched':       
                     subject_student = (f'Peer Tutoring Arrangement')
-                    student.email = "hliao38@geffenacademy.ucla.edu"
                     if potential_times == []:
                         message_student = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nRegards, \nGeffen Peer Tutoring Team')
                     elif potential_times != []:
@@ -302,9 +302,9 @@ def email():
             return redirect(url_for('email'))
 
         except Exception as e:
-             flash(f'An error occurred during email sending: {e}', 'danger')
-             # Re-render the page but show the previews generated before the error
-             return render_template('email.html', email_count=email_count, previews=email_previews)
+            flash(f'An error occurred during email sending: {e}', 'danger')
+            # Re-render the page but show the previews generated before the error
+            return render_template('email.html', email_count=email_count, previews=email_previews)
 
     # Render the template with the generated previews for the GET request
     return render_template('email.html', email_count=email_count, previews=email_previews)
