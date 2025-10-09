@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import pandas as pd
 import os
@@ -141,38 +142,41 @@ def generate_email_previews(df):
                 'subject': 'Peer Tutoring Arrangement',
                 'body': body
             })
+
+
         if not tutor_email_status and student_status == 'Matched':
-            body = (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\n'
-                    f'Student Comments: {info}\n\nRegards,\nGeffen Peer Tutoring Team') if info and "nan" not in info.lower() else \
-                   (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\nRegards,\nGeffen Peer Tutoring Team')
-            previews.append({
-                'recipient_type': 'Tutor',
-                'recipient_name': tutor_name,
-                'subject': 'Peer Tutoring Schedule',
-                'body': body
-            })
-    return previews
+                subject_tutor = f'Peer Tutoring Schedule'
+                # Conditional message based on 'info'
+                # Check if info is not empty AND does not contain 'nan' (case-insensitive)
+                # The check for 'nan' might be redundant after fillna('') but kept for safety
+                timePeriod = time_slot.split(':')
+                if info and "nan" not in info.lower():
+                    if timePeriod[1] == ' H Block (After School)':
 
-@app.route('/email', methods=['GET', 'POST'])
-def email():
-    """Preview and send emails to students and tutors."""
-    if not os.path.exists(SCHEDULE_PATH):
-        flash('Error: saved_schedule.csv not found.', 'danger')
-        return render_template('email.html', email_count=0, previews=[])
+                        message_tutor = (f'You and {student_name} be working together for one-on-one tutoring for {subject or "the subject"} during {time_slot or "the scheduled time"}. '
+                                         f'Your first meeting will be {timePeriod[1] or "on the assigned date"}. '
+                                         f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                                         f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
+                                         f'Please meet outside the academic lab room #317 at the start of H block. '
+                                         f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                                         f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
+                                         f'Please fill out the form promptly and let me know if you have any other questions!')
 
-    try:
-        df = pd.read_csv(SCHEDULE_PATH)
-        cols_to_fill = ['Student Name', 'Tutor Name', 'Student Courses', 'Time', 'Additional Info', 'Student Grade', 'Tutor Grade']
-        df = fill_missing_columns(df, cols_to_fill)
-        df = fill_email_status(df, 'Student Email Status')
-        df = fill_email_status(df, 'Tutor Email Status')
-    except Exception as e:
-        flash(f'Error reading or processing CSV: {e}', 'danger')
-        return render_template('email.html', email_count=0, previews=[])
 
-    email_previews = generate_email_previews(df)
-    email_count = sum(~df['Student Email Status']) + sum(~df['Tutor Email Status'])
+                else:
+                    message_tutor = (f'Dear {tutor_name or "Tutor"},\n\n'
+                                    f'You have been matched with {student_name or "a student"} for these classes: {subject or "specified subjects"}. '
+                                    f'{student_name or "The student"} is available to meet with you at {time_slot or "the scheduled time"}.\n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team')
+                email_previews.append({
+                    'recipient_type': 'Tutor',
+                    'recipient_name': tutor_name or "Unknown Tutor",
+                    'subject': subject_tutor,
+                    'body': message_tutor
+                })
 
+    # --- Logic for POST request (Send Emails) ---
     if request.method == 'POST':
         send_count = 0
         try:
