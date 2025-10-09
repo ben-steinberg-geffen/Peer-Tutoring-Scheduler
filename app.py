@@ -231,13 +231,16 @@ def email():
                     if timePeriod[1] == ' H Block (After School)':
 
                         message_tutor = (f'You and {student_name} be working together for one-on-one tutoring for {subject or "the subject"} during {time_slot or "the scheduled time"}. '
-                                         f'Your first meeting will be {timePeriod[1] or "on the assigned date"}. '
+                                         f'Your first meeting will be {timePeriod or "on the assigned date"}. '
                                          f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-                                         f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
+                                         f'Please come to the meeting prepared .\n\n'
                                          f'Please meet outside the academic lab room #317 at the start of H block. '
                                          f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
                                          f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
-                                         f'Please fill out the form promptly and let me know if you have any other questions!')
+                                         f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
+                                         f'Student Comments: {info}\n\n'
+                                         f'Regards,\n'
+                                         f'Geffen Peer Tutoring Team')
 
 
                 else:
