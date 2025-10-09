@@ -126,25 +126,27 @@ def generate_email_previews(df):
         time_period = time_slot.split(':')[1]
 
         if not student_email_status and student_status == 'Matched':
+            if time_period == " H Block (After School)":
+                body = (
+                        f'Dear {student_name},\n\n'
+                        f'You and {student_name} be working together for one-on-one tutoring for {subject or "the subject"} during {time_slot or "the scheduled time"}. '
+                        f'Your first meeting will be {time_period or "on the assigned date"}. '
+                        f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                        f'Please come to the meeting prepared .\n\n'
+                        f'Please meet outside the academic lab room #317 at the start of H block.'
+                        f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                        f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
+                        f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
+                        f'Student Comments: {info}\n\n'
+                        f'Regards,\n'
+                        f'Geffen Peer Tutoring Team'
+                                )
             previews.append({
                 'recipient_type': 'Student',
                 'recipient_name': student_name,
                 'subject': 'Peer Tutoring Schedule',
+                'body': body
                 })
-            if time_period == " H Block (After School)":
-                previews.append({'body': 
-                                f'You and {student_name} be working together for one-on-one tutoring for {subject or "the subject"} during {time_slot or "the scheduled time"}. '
-                                f'Your first meeting will be {time_period or "on the assigned date"}. '
-                                f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-                                f'Please come to the meeting prepared .\n\n'
-                                f'Please meet outside the academic lab room #317 at the start of H block. '
-                                f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
-                                f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
-                                f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
-                                f'Student Comments: {info}\n\n'
-                                f'Regards,\n'
-                                f'Geffen Peer Tutoring Team'
-                                })
 
         if not student_email_status and student_status == 'Not Matched':
             body = (f'Dear {student_name},\n\nUnfortunately, we have not been able to match you with a tutor for your selected course: {subject} because {reason}.\n\n'
