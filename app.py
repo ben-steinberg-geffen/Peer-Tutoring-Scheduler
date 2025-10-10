@@ -143,6 +143,7 @@ def generate_email_previews(df):
                     f'Regards,\n'
                     f'Geffen Peer Tutoring Team'
                 )
+                
             elif time_period == " Lunch":
                 body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
