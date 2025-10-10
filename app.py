@@ -124,6 +124,7 @@ def generate_email_previews(df):
         student_email_status = bool(row.get('Student Email Status', False))
         tutor_email_status = bool(row.get('Tutor Email Status', False))
         time_period = time_slot.split(':')[1]
+        timeday = time_slot.split(':')[0]
 
         if not student_email_status and student_status == 'Matched':
             previews.append({
@@ -146,6 +147,41 @@ def generate_email_previews(df):
                                 f'Geffen Peer Tutoring Team'
                                 })
             elif time_period == " Lunch":
+                previews.append({'body':
+                            f'You two will be working together for one-on-one tutoring for {subject or "the subject"} '
+                            f'during lunch on {time_period or "the scheduled days"}. '
+                            f'Your first meeting will be {timeday or "on the assigned date"}. '
+                            f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+
+                            f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
+
+                            f'Please meet outside the academic lab room #317 at 12:30pm. '
+                            f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+
+                            f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me '
+                            f'with a Google Form to get your feedback. Please fill out the form promptly and let me know if you have any other questions!'
+                            f'Student Comments: {info}\n\n'
+                            f'Regards,\n'
+                            f'Geffen Peer Tutoring Team'
+                                })
+            elif time_period == " Before School":
+                previews.append({'body':
+                                    f'You two will be working together for one-on-one tutoring for {subject or "the subject"} '
+                                    f'before school on {time_period or "the scheduled days"}. '
+                                    f'Your first meeting will be {timeday or "on the assigned date"}. '
+                                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+
+                                    f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
+
+                                    f'Please meet outside the academic lab room #317 at 8:15am. '
+                                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+
+                                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me '
+                                    f'with a Google Form to get your feedback. Please fill out the form promptly and let me know if you have any other questions!'
+                                    f'Student Comments: {info}\n\n'
+                                    f'Regards,\n'
+                                    f'Geffen Peer Tutoring Team' 
+                                    })
 
         if not student_email_status and student_status == 'Not Matched':
             body = (f'Dear {student_name},\n\nUnfortunately, we have not been able to match you with a tutor for your selected course: {subject} because {reason}.\n\n'
