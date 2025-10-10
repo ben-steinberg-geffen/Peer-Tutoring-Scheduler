@@ -175,8 +175,8 @@ def generate_email_previews(df):
                 )
             else:
                 student_body = (
-                    f'Dear {student_name},\n\n'
-                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Dear {student_name} and {tutor_name},\n\n'
+                    f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
                     f'Please come to the meeting prepared.\n\n'
