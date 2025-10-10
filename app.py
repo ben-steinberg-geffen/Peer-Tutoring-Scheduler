@@ -147,6 +147,7 @@ def generate_email_previews(df):
                                 f'Geffen Peer Tutoring Team'
                                 })
             elif time_period == " Lunch":
+                
                 previews.append({'body':
                             f'You two will be working together for one-on-one tutoring for {subject or "the subject"} '
                             f'during lunch on {time_period or "the scheduled days"}. '
