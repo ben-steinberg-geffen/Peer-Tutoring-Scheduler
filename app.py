@@ -129,6 +129,7 @@ def generate_email_previews(df):
         # Student matched email
         if not student_email_status and student_status == 'Matched':
             if time_period == " H Block (After School)":
+                
                 student_body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
                     f'You two will be working together for one-on-one tutoring for {subject}. '
