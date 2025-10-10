@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Email Checker</h2>
-
-    <div class="button-container">
-        <form method="POST" action="{{ url_for('email') }}">
-            <button type="submit" class="send-email-btn">Send All Emails ({{ email_count }})</button>
-        </form>
-    </div>
-</div>
 
 <!-- Make sure you have a way to display flashed messages -->
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -25,13 +17,12 @@
 
     {% if previews %}
         <p>There are {{ email_count }} email(s) ready to be sent.</p>
-        <form method="POST" action="{{ url_for('email') }}">
-            <button type="submit" class="btn btn-primary">Send All Pending Emails</button> <!-- Style as needed -->
-        </form>
-
         <hr> <!-- Separator -->
-
-        <h3>Email Previews</h3>
+        <div class="button-container">
+            <form method="POST" action="{{ url_for('email') }}">
+                <button type="submit" name="send_all" value="1" class="send-email-btn">Send All Emails ({{ email_count }})</button>
+            </form>
+        </div>
         <div class="previews-list">
             {% for preview in previews %}
             <div class="email-preview-item"> <!-- Box around each preview -->
@@ -39,17 +30,23 @@
                 <strong>Subject: {{ preview.subject }}</strong>
                 <!-- Use <pre> tag to preserve line breaks from the Python message string -->
                 <pre>{{ preview.body }}</pre>
+
+                <!-- Per-preview send button -->
+                <form method="POST" action="{{ url_for('email') }}" style="margin-top:8px;">
+                    <input type="hidden" name="row_index" value="{{ preview.row_index }}">
+                    <input type="hidden" name="recipient_type" value="{{ preview.recipient_type }}">
+                    <button type="submit" name="single_send" value="1" class="send-email-btn" style="padding:6px 12px; font-size:0.95em;">Send</button>
+                </form>
             </div>
             {% endfor %}
         </div>
 
     {% else %}
         <p>No pending emails to send or preview.</p>
-        <p><a href="{{ url_for('download_schedule') }}">Generate or Load Schedule?</a></p> Link to previous step?
+        <p><a href="{{ url_for('download_schedule') }}">Generate or Load Schedule?</a></p>
     {% endif %}
 
 </div>
-
 <style>
     .alert {
         padding: 15px;
@@ -79,11 +76,21 @@
         cursor: pointer;
         font-size: 1.05em;
         transition: background-color 0.3s;
+        display: inline-block;
     }
 
     .send-email-btn:hover {
         background-color: #004b8f;
     }
+
+    /* Center the button container */
+    .button-container {
+        display: flex;
+        justify-content: left;
+        align-items: left;
+        margin-bottom: 1rem;
+    }
 </style>
+
 
 {% endblock %}
