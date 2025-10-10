@@ -134,7 +134,7 @@ def generate_email_previews(df):
                     f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-                    f'Please come to the meeting prepared .\n\n'
+                    f'Please come to the meeting prepared.\n\n'
                     f'Please meet outside the academic lab room #317 at the start of H block. '
                     f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
                     f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
@@ -149,7 +149,7 @@ def generate_email_previews(df):
                     f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-                    f'Please come to the meeting prepared .\n\n'
+                    f'Please come to the meeting prepared.\n\n'
                     f'Please meet outside the academic lab room #317 at the start of H block. '
                     f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
                     f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
@@ -176,10 +176,15 @@ def generate_email_previews(df):
             else:
                 student_body = (
                     f'Dear {student_name},\n\n'
-                    f'You and {tutor_name} will be working together for one-on-one tutoring for {subject}.'
-                    f'Your first meeting will be {time_slot}. '
+                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
                     f'Please come to the meeting prepared.\n\n'
+                    f'Please meet outside the academic lab room #317 at the meeting. '
+                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
+                    f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
+                    f'Student Comments: {info}\n\n'
                     f'Regards,\n'
                     f'Geffen Peer Tutoring Team'
                 )
@@ -245,32 +250,74 @@ def email():
     if request.method == 'POST':
         send_count = 0
         try:
-            for preview in email_previews:
-                idx = preview['row_index']
+            # Single-item send (per-preview send button)
+            if request.form.get('single_send'):
+                try:
+                    idx = int(request.form.get('row_index'))
+                except Exception:
+                    flash('Invalid row index for single send.', 'danger')
+                    return redirect(url_for('email'))
+
+                recipient_type = request.form.get('recipient_type', 'Student')
+                if idx < 0 or idx >= len(df):
+                    flash('Row index out of range.', 'danger')
+                    return redirect(url_for('email'))
+
                 row = df.iloc[idx]
                 # Prepare Student and Tutor objects
                 student = Student(
-                    row['Student Name'], row.get('Student Email', ''), row.get('Student Grade', ''),
+                    row.get('Student Name', ''), row.get('Student Email', ''), row.get('Student Grade', ''),
                     None, row.get('Student Courses', ''), row.get('Additional Info', ''), None, True, None
                 )
                 tutor = Tutor(
-                    row['Tutor Name'], row.get('Tutor Email', ''), row.get('Tutor Grade', ''),
+                    row.get('Tutor Name', ''), row.get('Tutor Email', ''), row.get('Tutor Grade', ''),
                     None, row.get('Student Courses', ''), None, True
                 )
                 tutor.matched_students = [student]
                 student.matched_tutors = [tutor]
 
-                # Send email only if not already sent
-                if preview['recipient_type'] == 'Student':
+                if recipient_type == 'Student':
                     if not row.get('Student Email Status', False):
-                        auto_email(student, preview['subject'], preview['body'])
+                        auto_email(student, request.form.get('subject', 'Peer Tutoring Schedule'), request.form.get('body', ''))
                         df.at[idx, 'Student Email Status'] = True
-                        send_count += 1
-                elif preview['recipient_type'] == 'Tutor':
+                        send_count = 1
+                else:
                     if not row.get('Tutor Email Status', False):
-                        auto_email(tutor, preview['subject'], preview['body'])
+                        auto_email(tutor, request.form.get('subject', 'Peer Tutoring Schedule'), request.form.get('body', ''))
                         df.at[idx, 'Tutor Email Status'] = True
-                        send_count += 1
+                        send_count = 1
+
+            # Send-all (original behavior)
+            elif request.form.get('send_all'):
+                for preview in email_previews:
+                    idx = preview['row_index']
+                    row = df.iloc[idx]
+                    # Prepare Student and Tutor objects
+                    student = Student(
+                        row.get('Student Name', ''), row.get('Student Email', ''), row.get('Student Grade', ''),
+                        None, row.get('Student Courses', ''), row.get('Additional Info', ''), None, True, None
+                    )
+                    tutor = Tutor(
+                        row.get('Tutor Name', ''), row.get('Tutor Email', ''), row.get('Tutor Grade', ''),
+                        None, row.get('Student Courses', ''), None, True
+                    )
+                    tutor.matched_students = [student]
+                    student.matched_tutors = [tutor]
+
+                    if preview['recipient_type'] == 'Student':
+                        if not row.get('Student Email Status', False):
+                            auto_email(student, preview['subject'], preview['body'])
+                            df.at[idx, 'Student Email Status'] = True
+                            send_count += 1
+                    elif preview['recipient_type'] == 'Tutor':
+                        if not row.get('Tutor Email Status', False):
+                            auto_email(tutor, preview['subject'], preview['body'])
+                            df.at[idx, 'Tutor Email Status'] = True
+                            send_count += 1
+
+            else:
+                flash('Unknown action.', 'warning')
+                return redirect(url_for('email'))
 
             df.to_csv(SCHEDULE_PATH, index=False)
             flash(f'Successfully sent {send_count} emails!', 'success')
