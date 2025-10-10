@@ -2,15 +2,6 @@
 
 {% block content %}
 
-<!-- Make sure you have a way to display flashed messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div> <!-- Assuming Bootstrap alerts -->
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 <div class="email-page-container"> <!-- Optional overall container -->
 
     <h2>Email Center</h2>
