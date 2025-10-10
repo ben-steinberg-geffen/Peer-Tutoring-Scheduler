@@ -129,7 +129,7 @@ def generate_email_previews(df):
         # Student matched email
         if not student_email_status and student_status == 'Matched':
             if time_period == " H Block (After School)":
-                student_body = (
+                body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
                     f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
@@ -144,7 +144,7 @@ def generate_email_previews(df):
                     f'Geffen Peer Tutoring Team'
                 )
             elif time_period == " Lunch":
-                student_body = (
+                body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
                     f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
@@ -159,7 +159,7 @@ def generate_email_previews(df):
                     f'Geffen Peer Tutoring Team'
                 )
             elif time_period == " Before School":
-                student_body = (
+                body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
                     f'You two will be working together for one on one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
@@ -174,7 +174,7 @@ def generate_email_previews(df):
                     f'Geffen Peer Tutoring Team'
                 )
             else:
-                student_body = (
+                body = (
                     f'Dear {student_name} and {tutor_name},\n\n'
                     f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
@@ -194,9 +194,19 @@ def generate_email_previews(df):
                 'recipient_name': student_name,
                 'recipient_email': row.get('Student Email', ''),
                 'subject': 'Peer Tutoring Schedule',
-                'body': student_body,
+                'body': body,
                 'row_index': idx
-            })
+                })
+            
+            if tutor_email_status == False:
+                previews.append({
+                    'recipient_type': 'Tutor',
+                    'recipient_name': tutor_name,
+                    'recipient_email': row.get('Tutor Email', ''),
+                    'subject': 'Peer Tutoring Schedule',
+                    'body': body,
+                    'row_index': idx
+                })
 
         # Student not matched email
         if not student_email_status and student_status == 'Not Matched':
@@ -212,19 +222,6 @@ def generate_email_previews(df):
                 'row_index': idx
             })
 
-        # Tutor matched email
-        if not tutor_email_status and student_status == 'Matched':
-            body = (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\n'
-                    f'Student Comments: {info}\n\nRegards,\nGeffen Peer Tutoring Team') if info and "nan" not in info.lower() else \
-                    (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\nRegards,\nGeffen Peer Tutoring Team')
-            previews.append({
-                'recipient_type': 'Tutor',
-                'recipient_name': tutor_name,
-                'recipient_email': row.get('Tutor Email', ''),
-                'subject': 'Peer Tutoring Schedule',
-                'body': body,
-                'row_index': idx
-            })
     return previews
 
 @app.route('/email', methods=['GET', 'POST'])
