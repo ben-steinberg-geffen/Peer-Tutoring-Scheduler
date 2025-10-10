@@ -112,7 +112,7 @@ def download_schedule():
 
 def generate_email_previews(df):
     previews = []
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
         student_name = str(row.get('Student Name', 'N/A'))
         tutor_name = str(row.get('Tutor Name', 'N/A'))
         subject = str(row.get('Student Courses', 'N/A'))
@@ -123,86 +123,102 @@ def generate_email_previews(df):
         potential_times = str(row.get('Potential Times', '[]'))
         student_email_status = bool(row.get('Student Email Status', False))
         tutor_email_status = bool(row.get('Tutor Email Status', False))
-        time_period = time_slot.split(':')[1]
-        timeday = time_slot.split(':')[0]
+        time_period = time_slot.split(':')[1] if ':' in time_slot else ''
+        time_day = time_slot.split(':')[0] if ':' in time_slot else ''
 
+        # Student matched email
         if not student_email_status and student_status == 'Matched':
+            if time_period == " H Block (After School)":
+                student_body = (
+                    f'Dear {student_name},\n\n'
+                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Your first meeting will be on {time_slot}. '
+                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                    f'Please come to the meeting prepared .\n\n'
+                    f'Please meet outside the academic lab room #317 at the start of H block. '
+                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
+                    f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
+                    f'Student Comments: {info}\n\n'
+                    f'Regards,\n'
+                    f'Geffen Peer Tutoring Team'
+                )
+            elif time_period == " Lunch":
+                student_body = (
+                    f'Dear {student_name},\n\n'
+                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Your first meeting will be on {time_slot}. '
+                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                    f'Please come to the meeting prepared .\n\n'
+                    f'Please meet outside the academic lab room #317 at the start of H block. '
+                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
+                    f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
+                    f'Student Comments: {info}\n\n'
+                    f'Regards,\n'
+                    f'Geffen Peer Tutoring Team'
+                )
+            elif time_period == " Before School":
+                student_body = (
+                    f'Dear {student_name},\n\n'
+                    f'You and {tutor_name} will be working together for one-on-one tutoring for {subject}.'
+                    f'Your first meeting will be {time_day}. '
+                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                    f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
+                    f'Please meet outside the academic lab room #317 at 8:15am. '
+                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
+                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me '
+                    f'with a Google Form to get your feedback. Please fill out the form promptly and let me know if you have any other questions!'
+                    f'Student Comments: {info}\n\n'
+                    f'Regards,\n'
+                    f'Geffen Peer Tutoring Team'
+                )
+            else:
+                student_body = (
+                    f'Dear {student_name},\n\n'
+                    f'You and {tutor_name} will be working together for one-on-one tutoring for {subject}.'
+                    f'Your first meeting will be {time_slot}. '
+                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                    f'Please come to the meeting prepared.\n\n'
+                    f'Regards,\n'
+                    f'Geffen Peer Tutoring Team'
+                )
+
             previews.append({
                 'recipient_type': 'Student',
                 'recipient_name': student_name,
+                'recipient_email': row.get('Student Email', ''),
                 'subject': 'Peer Tutoring Schedule',
-                })
-            if time_period == " H Block (After School)":
-                previews.append({'body': 
-                                f'You and {student_name} be working together for one-on-one tutoring for {subject or "the subject"} during {time_slot or "the scheduled time"}. '
-                                f'Your first meeting will be {time_period or "on the assigned date"}. '
-                                f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-                                f'Please come to the meeting prepared .\n\n'
-                                f'Please meet outside the academic lab room #317 at the start of H block. '
-                                f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
-                                f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me with a Google Form to get your feedback. '
-                                f'Please fill out the form promptly and let me know if you have any other questions!\n\n'
-                                f'Student Comments: {info}\n\n'
-                                f'Regards,\n'
-                                f'Geffen Peer Tutoring Team'
-                                })
-            elif time_period == " Lunch":
-                
-                previews.append({'body':
-                            f'You two will be working together for one-on-one tutoring for {subject or "the subject"} '
-                            f'during lunch on {time_period or "the scheduled days"}. '
-                            f'Your first meeting will be {timeday or "on the assigned date"}. '
-                            f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
+                'body': student_body,
+                'row_index': idx
+            })
 
-                            f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
-
-                            f'Please meet outside the academic lab room #317 at 12:30pm. '
-                            f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
-
-                            f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me '
-                            f'with a Google Form to get your feedback. Please fill out the form promptly and let me know if you have any other questions!'
-                            f'Student Comments: {info}\n\n'
-                            f'Regards,\n'
-                            f'Geffen Peer Tutoring Team'
-                                })
-            elif time_period == " Before School":
-                previews.append({'body':
-                                    f'You two will be working together for one-on-one tutoring for {subject or "the subject"} '
-                                    f'before school on {time_period or "the scheduled days"}. '
-                                    f'Your first meeting will be {timeday or "on the assigned date"}. '
-                                    f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
-
-                                    f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
-
-                                    f'Please meet outside the academic lab room #317 at 8:15am. '
-                                    f'If you feel like the space is too loud, you may choose to leave and work in another place on campus.\n\n'
-
-                                    f'I will be checking in with both of you afterwards to see how it went—be on the lookout for a follow-up email from me '
-                                    f'with a Google Form to get your feedback. Please fill out the form promptly and let me know if you have any other questions!'
-                                    f'Student Comments: {info}\n\n'
-                                    f'Regards,\n'
-                                    f'Geffen Peer Tutoring Team' 
-                                    })
-
+        # Student not matched email
         if not student_email_status and student_status == 'Not Matched':
             body = (f'Dear {student_name},\n\nUnfortunately, we have not been able to match you with a tutor for your selected course: {subject} because {reason}.\n\n'
                     f'Here are possible time slots you could consider: {potential_times}\n\nRegards,\nGeffen Peer Tutoring Team') if potential_times != '[]' else \
-                   (f'Dear {student_name},\n\nUnfortunately, we have not been able to match you with a tutor because {reason}.\n\nRegards,\nGeffen Peer Tutoring Team')
+                    (f'Dear {student_name},\n\nUnfortunately, we have not been able to match you with a tutor because {reason}.\n\nRegards,\nGeffen Peer Tutoring Team')
             previews.append({
                 'recipient_type': 'Student',
                 'recipient_name': student_name,
+                'recipient_email': row.get('Student Email', ''),
                 'subject': 'Peer Tutoring Arrangement',
-                'body': body
+                'body': body,
+                'row_index': idx
             })
+
+        # Tutor matched email
         if not tutor_email_status and student_status == 'Matched':
             body = (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\n'
                     f'Student Comments: {info}\n\nRegards,\nGeffen Peer Tutoring Team') if info and "nan" not in info.lower() else \
-                   (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\nRegards,\nGeffen Peer Tutoring Team')
+                    (f'Dear {tutor_name},\n\nYou have been matched with {student_name} for these classes: {subject}. {student_name} is available to meet with you at {time_slot}.\n\nRegards,\nGeffen Peer Tutoring Team')
             previews.append({
                 'recipient_type': 'Tutor',
                 'recipient_name': tutor_name,
+                'recipient_email': row.get('Tutor Email', ''),
                 'subject': 'Peer Tutoring Schedule',
-                'body': body
+                'body': body,
+                'row_index': idx
             })
     return previews
 
@@ -229,44 +245,32 @@ def email():
     if request.method == 'POST':
         send_count = 0
         try:
-            for index, row in df.iterrows():
+            for preview in email_previews:
+                idx = preview['row_index']
+                row = df.iloc[idx]
+                # Prepare Student and Tutor objects
                 student = Student(
-                    row['Student Name'], row['Student Email'], row['Student Grade'],
-                    None, row['Student Courses'], row['Additional Info'], None, True, None
+                    row['Student Name'], row.get('Student Email', ''), row.get('Student Grade', ''),
+                    None, row.get('Student Courses', ''), row.get('Additional Info', ''), None, True, None
                 )
                 tutor = Tutor(
-                    row['Tutor Name'], row['Tutor Email'], row['Tutor Grade'],
-                    None, row['Student Courses'], None, True
+                    row['Tutor Name'], row.get('Tutor Email', ''), row.get('Tutor Grade', ''),
+                    None, row.get('Student Courses', ''), None, True
                 )
                 tutor.matched_students = [student]
                 student.matched_tutors = [tutor]
 
-                status = row['Status']
-                reason = row.get('Reason', '')
-                potential_times = row.get('Potential Times', '')
-                info = row.get('Additional Info', '')
-                subject = row.get('Student Courses', '')
-                time_slot = row.get('Time', '')
-
-                if status == 'Matched':
-                    if not row['Student Email Status']:
-                        auto_email(student, 'Peer Tutoring Schedule',
-                                   f'Dear {student.name}, \n\nYou have been matched with {tutor.name} for these classes: {subject}. {tutor.name} is available to meet with you at {time_slot}. \nRegards, \nGeffen Peer Tutoring Team')
-                        df.at[index, 'Student Email Status'] = True
+                # Send email only if not already sent
+                if preview['recipient_type'] == 'Student':
+                    if not row.get('Student Email Status', False):
+                        auto_email(student, preview['subject'], preview['body'])
+                        df.at[idx, 'Student Email Status'] = True
                         send_count += 1
-                    if not row['Tutor Email Status']:
-                        body = (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nStudent Comments: {info} \n\nRegards, \nGeffen Peer Tutoring Team') \
-                            if "nan" not in str(info).lower() else \
-                            (f'Dear {tutor.name}, \n\nYou have been matched with {student.name} for these classes: {subject}. {student.name} is available to meet with you at {time_slot}.\n\nRegards, \nGeffen Peer Tutoring Team')
-                        auto_email(tutor, 'Peer Tutoring Schedule', body)
-                        df.at[index, 'Tutor Email Status'] = True
+                elif preview['recipient_type'] == 'Tutor':
+                    if not row.get('Tutor Email Status', False):
+                        auto_email(tutor, preview['subject'], preview['body'])
+                        df.at[idx, 'Tutor Email Status'] = True
                         send_count += 1
-                elif status == 'Not Matched':
-                    body = (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nRegards, \nGeffen Peer Tutoring Team') \
-                        if potential_times == [] else \
-                        (f'Dear {student.name}, \n\nUnfortunately, we have not been able to match you with a tutor because {reason}. \n\nHere are possible time slots you could consider: {potential_times}\n\nRegards, \nGeffen Peer Tutoring Team')
-                    auto_email(student, 'Peer Tutoring Arrangement', body)
-                    send_count += 1
 
             df.to_csv(SCHEDULE_PATH, index=False)
             flash(f'Successfully sent {send_count} emails!', 'success')
