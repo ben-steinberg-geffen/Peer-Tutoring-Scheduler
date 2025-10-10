@@ -129,9 +129,10 @@ def generate_email_previews(df):
         # Student matched email
         if not student_email_status and student_status == 'Matched':
             if time_period == " H Block (After School)":
+                
                 student_body = (
-                    f'Dear {student_name},\n\n'
-                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Dear {student_name} and {tutor_name},\n\n'
+                    f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
                     f'Please come to the meeting prepared.\n\n'
@@ -145,8 +146,8 @@ def generate_email_previews(df):
                 )
             elif time_period == " Lunch":
                 student_body = (
-                    f'Dear {student_name},\n\n'
-                    f'You and {tutor_name} be working together for one-on-one tutoring for {subject}. '
+                    f'Dear {student_name} and {tutor_name},\n\n'
+                    f'You two will be working together for one-on-one tutoring for {subject}. '
                     f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
                     f'Please come to the meeting prepared.\n\n'
@@ -160,9 +161,9 @@ def generate_email_previews(df):
                 )
             elif time_period == " Before School":
                 student_body = (
-                    f'Dear {student_name},\n\n'
-                    f'You and {tutor_name} will be working together for one-on-one tutoring for {subject}.'
-                    f'Your first meeting will be {time_day}. '
+                    f'Dear {student_name} and {tutor_name},\n\n'
+                    f'You two will be working together for one-on-one tutoring for {subject}. '
+                    f'Your first meeting will be on {time_slot}. '
                     f'If there is a scheduling conflict, please reply all to this email (so we are all in the loop).\n\n'
                     f'Please come to the meeting prepared with questions for your tutor or an assignment that you would like to go over.\n\n'
                     f'Please meet outside the academic lab room #317 at 8:15am. '
