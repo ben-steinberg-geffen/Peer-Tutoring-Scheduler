@@ -3,13 +3,6 @@
 {% block content %}
 <h2>Email Checker</h2>
 
-<div class="email-container">
-    <div class="email-display">
-        <p>Dear [student/tutor],</p>
-        <p> You have been matched with [student/tutor] for these classes: [class]. [tutor/student] is available to meet with you at [time] on [day]. </p>
-        <p>Regards,</p>
-        <p>Geffen Peer Tutoring Team</p>
-    </div>
     <div class="button-container">
         <form method="POST" action="{{ url_for('email') }}">
             <button type="submit" class="send-email-btn">Send All Emails ({{ email_count }})</button>
