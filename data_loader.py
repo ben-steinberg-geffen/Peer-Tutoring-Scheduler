@@ -36,13 +36,13 @@ def load_student_data():
         "Availability [Friday]": "friday_availability",
         "Select Courses for Tutoring (MS)": "ms_courses",
         "Select Courses for Tutoring (US)": "us_courses",
-        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar, sentence syntax, etc." : "additional_info"  })
+        "If there is a specific area/topic that the sessions should focus on, please list it here. Examples: linear equations, graphing, grammar, sentence syntax, etc. If you have a tutor in mind, you may also request them here. " : "additional_info"})
 
     # Merge course and availability selections and separate them into a list
     df['courses'] = df.apply(lambda row: list(sorted(set(course.strip() for course_list in row[['ms_courses', 'us_courses']] if pd.notna(course_list) for course in course_list.split(', ')))), axis=1)
     df['availability'] = df.apply(lambda row: [f"{day_name}: {slot.strip()}" for day_name, day in zip(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], row[['monday_availability', 'tuesday_availability', 'wednesday_availability', 'thursday_availability', 'friday_availability']]) if pd.notna(day) and day != 'Not Available' for slot in day.split(',')], axis=1)
     df['additional_info'] = df['additional_info'].apply(lambda x: x.replace('\n', ' ') if pd.notna(x) else x)
-
+    # df['additional_info'] = df['additional_info'].apply(lambda x: x.replace(',', '') if pd.notna(x) else x)
     # Drop rows with missing names in case the data is incomplete
     df = df.dropna(subset=["name"])
 
