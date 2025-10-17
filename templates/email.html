@@ -7,29 +7,49 @@
     <h2>Email Center</h2>
 
     {% if previews %}
-        <p>There are {{ email_count }} email(s) ready to be sent.</p>
-        <hr> <!-- Separator -->
-        <div class="button-container">
-            <form method="POST" action="{{ url_for('email') }}">
-                <button type="submit" name="send_all" value="1" class="send-email-btn">Send All Emails ({{ email_count }})</button>
-            </form>
-        </div>
-        <div class="previews-list">
-            {% for preview in previews %}
-            <div class="email-preview-item"> <!-- Box around each preview -->
-                <h4>Preview for: {{ preview.recipient_name }} ({{ preview.recipient_type }})</h4>
-                <strong>Subject: {{ preview.subject }}</strong>
-                <!-- Use <pre> tag to preserve line breaks from the Python message string -->
-                <pre>{{ preview.body }}</pre>
-
-                <!-- Per-preview send button -->
-                <form method="POST" action="{{ url_for('email') }}" style="margin-top:8px;">
-                    <input type="hidden" name="row_index" value="{{ preview.row_index }}">
-                    <input type="hidden" name="recipient_type" value="{{ preview.recipient_type }}">
-                    <button type="submit" name="single_send" value="1" class="send-email-btn" style="padding:6px 12px; font-size:0.95em;">Send</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <p style="margin:0;">There are {{ email_count }} email(s) ready to be sent.</p>
+            <div>
+                <button id="expand-all" type="button" class="send-email-btn" style="margin-right:8px;">Expand all</button>
+                <button id="collapse-all" type="button" class="send-email-btn">Collapse all</button>
+                <form method="POST" action="{{ url_for('email') }}" style="display:inline; margin-left:12px;">
+                    <button type="submit" name="send_all" value="1" class="send-email-btn">Send All Emails ({{ email_count }})</button>
                 </form>
             </div>
+    </div>
+        <hr>
+        <div class="previews-list">
+            {% for preview in previews %}
+            <details class="email-preview-item" open>
+                <summary><strong>{{ preview.recipient_name }} ({{ preview.recipient_type }}) — {{ preview.subject }}</strong></summary>
+                <div style="padding:8px 0;">
+                    <pre>{{ preview.body }}</pre>
+                    <form method="POST" action="{{ url_for('email') }}" style="margin-top:8px;">
+                        <input type="hidden" name="row_index" value="{{ preview.row_index }}">
+                        <input type="hidden" name="recipient_type" value="{{ preview.recipient_type }}">
+                        <input type="hidden" name="subject" value="{{ preview.subject }}">
+                        <input type="hidden" name="body" value="{{ preview.body }}">
+                        <button type="submit" name="single_send" value="1" class="send-email-btn" style="padding:6px 12px; font-size:0.95em;">Send</button>
+                    </form>
+                </div>
+            </details>
             {% endfor %}
+        </div>
+
+        <!-- Sent Emails Section -->
+        <hr>
+        <h3>Sent Emails</h3>
+        <div class="sent-previews-list">
+            {% if sent_previews %}
+                {% for s in sent_previews %}
+                <details class="email-preview-item">
+                    <summary><strong>{{ s.recipient_name }} ({{ s.recipient_type }}) — {{ s.subject }}</strong></summary>
+                    <div style="padding:8px 0;"><pre>{{ s.body }}</pre></div>
+                </details>
+                {% endfor %}
+            {% else %}
+                <p>No emails have been sent yet.</p>
+            {% endif %}
         </div>
 
     {% else %}
@@ -82,6 +102,16 @@
         margin-bottom: 1rem;
     }
 </style>
-
+    <script>
+        // Wire up expand/collapse after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('expand-all').addEventListener('click', function(){
+                document.querySelectorAll('.email-preview-item').forEach(function(d){ d.open = true; });
+            });
+            document.getElementById('collapse-all').addEventListener('click', function(){
+                document.querySelectorAll('.email-preview-item').forEach(function(d){ d.open = false; });
+            });
+        });
+    </script>
 
 {% endblock %}

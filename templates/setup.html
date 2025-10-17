@@ -9,31 +9,39 @@
         <div class="form-group">
             <label for="tutor_form_link">Peer Tutor Responses Sheet:</label>
             <input type="url" 
-                   id="tutor_form_link" 
-                   name="tutor_form_link" 
-                   class="form-control" 
-                   placeholder="Paste Google Sheets link for tutor responses" 
-                   required>
+             id="tutor_form_link" 
+             name="tutor_form_link" 
+             class="form-control" 
+             placeholder="Paste Google Sheets link for tutor responses" 
+             value="{{ saved_links.get('tutor_link','') }}"
+             required>
         </div>
         
         <div class="form-group">
             <label for="student_form_link">Student Responses Sheet:</label>
             <input type="url" 
-                   id="student_form_link" 
-                   name="student_form_link" 
-                   class="form-control" 
-                   placeholder="Paste Google Sheets link for student responses" 
-                   required>
+             id="student_form_link" 
+             name="student_form_link" 
+             class="form-control" 
+             placeholder="Paste Google Sheets link for student responses" 
+             value="{{ saved_links.get('student_link','') }}"
+             required>
         </div>
 
-        <button type="submit" class="submit-btn">
+        <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+            <button type="submit" class="submit-btn">
             <i class="fas fa-sync-alt"></i>
             Update Links
         </button>
+            <button type="button" id="use-last-links" class="submit-btn">Use Last Saved Links</button>
+        </div>
     </form>
 
-    {% if message is not none %}
-        <div class="alert">{{ message|safe }}</div>
+    {% if saved_links %}
+        <div style="margin-top:12px;">
+            <strong>Last saved links:</strong>
+            <div><a href="{{ saved_links.tutor_link }}" target="_blank">Tutor Sheet</a> | <a href="{{ saved_links.student_link }}" target="_blank">Student Sheet</a></div>
+        </div>
     {% endif %}
 </div>
 
@@ -47,13 +55,31 @@ function validateForm() {
         return false;
     }
 
-    if (!tutorLink.includes('docs.google.com/spreadsheets') || !studentLink.includes('docs.google.com/spreadsheets')) {
+    // stricter validation: either an export CSV link or an edit link with query params
+    const validPattern = /docs\.google\.com\/spreadsheets\/(d|u|c)\/[^\s]+/i;
+    if (!validPattern.test(tutorLink) || !validPattern.test(studentLink)) {
         alert('Please enter valid Google Sheets links');
         return false;
     }
 
     return true;
 }
+</script>
+<script>
+var LAST_TUTOR_LINK = "{{ saved_links.get('tutor_link','') }}";
+var LAST_STUDENT_LINK = "{{ saved_links.get('student_link','') }}";
+document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('use-last-links');
+    if (!btn) return;
+    btn.addEventListener('click', function(){
+        if (LAST_TUTOR_LINK || LAST_STUDENT_LINK) {
+            document.getElementById('tutor_form_link').value = LAST_TUTOR_LINK;
+            document.getElementById('student_form_link').value = LAST_STUDENT_LINK;
+        } else {
+            alert('No saved links found');
+        }
+    });
+});
 </script>
 {% endblock %}
 

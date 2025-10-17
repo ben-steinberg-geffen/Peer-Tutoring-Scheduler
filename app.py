@@ -4,7 +4,9 @@ import os
 from auto_email import auto_email
 from models import Student, Tutor
 from persistent_data import save_data, load_data
+import re
 from save_schedule_assignment import save_schedule_assignment
+from data_loader import load_tutor_data, load_student_data
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -27,18 +29,64 @@ def load_assignments(schedule_path):
     if not os.path.exists(schedule_path):
         return []
     df = pd.read_csv(schedule_path)
+    # Load live tutor and student form data to offer choices
+    try:
+        tutors_df = load_tutor_data()
+    except Exception:
+        tutors_df = pd.DataFrame(columns=['name', 'email', 'grade', 'courses', 'availability'])
+    try:
+        students_df = load_student_data()
+    except Exception:
+        students_df = pd.DataFrame(columns=['name', 'email', 'grade', 'courses', 'availability', 'additional_info'])
     assignments = []
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
         if row.get('Status') == 'Not Matched':
             continue
         subjects_tutor = row.get('Tutor Courses', '').split(", ")
         subjects_student = row.get('Student Courses', '').split(", ")
         subjects_both = [s for s in subjects_tutor if s in subjects_student]
+        # Determine a subject to match tutors against
+        subject_for_match = subjects_both[0] if subjects_both else (row.get('Student Courses', '').split(', ')[0] if row.get('Student Courses') else '')
+
+        # Build tutor options: tutors who teach the subject
+        tutor_options = []
+        time_options = []
+        if subject_for_match:
+            for _, trow in tutors_df.iterrows():
+                t_courses = trow.get('courses', []) if isinstance(trow.get('courses', []), list) else []
+                if subject_for_match in t_courses:
+                    tutor_options.append({'name': trow.get('name', ''), 'email': trow.get('email', ''), 'availability': trow.get('availability', [])})
+
+        # Get student availability from the form data if available
+        student_availability = []
+        sname = row.get('Student Name', '')
+        if not students_df.empty and sname:
+            matches = students_df[students_df['name'] == sname]
+            if not matches.empty:
+                # If multiple, try to match by course too
+                if len(matches) > 1 and row.get('Student Courses'):
+                    course = row.get('Student Courses').split(', ')[0]
+                    matches = matches[matches['courses'].apply(lambda cs: course in cs if isinstance(cs, list) else False)]
+                if not matches.empty:
+                    student_availability = matches.iloc[0].get('availability', []) if isinstance(matches.iloc[0].get('availability', []), list) else []
+
+        # Determine intersecting times across tutors and student availability
+        if tutor_options and student_availability:
+            times_set = set()
+            for t in tutor_options:
+                t_avail = t.get('availability', []) if isinstance(t.get('availability', []), list) else []
+                inter = set(t_avail).intersection(set(student_availability))
+                times_set.update(inter)
+            time_options = sorted(times_set)
+
         assignments.append({
             'student': row.get('Student Name', ''),
             'tutor': row.get('Tutor Name', ''),
             'subject': ", ".join(subjects_both),
-            'time_slot': row.get('Time', '')
+            'time_slot': row.get('Time', ''),
+            'row_index': int(idx),
+            'tutor_options': tutor_options,
+            'time_options': time_options
         })
     assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
     return assignments
@@ -66,14 +114,35 @@ def home():
 @app.route('/setup', methods=['GET', 'POST'])
 def setup():
     """Setup page for entering form links."""
-    message = load_data("links")
-    message = message["student_link"] if message else None
+    saved_links = load_data("links") or {}
     if request.method == 'POST':
-        student_link = request.form.get('student_form_link')
-        tutor_link = request.form.get('tutor_form_link')
+        student_link = request.form.get('student_form_link', '').strip()
+        tutor_link = request.form.get('tutor_form_link', '').strip()
+
+        def valid_sheet_link(link):
+            if not link or 'docs.google.com/spreadsheets' not in link:
+                return False
+            # accept edit links, export links, or links containing usp= or format=csv
+            if '/edit' in link or '/export' in link or 'usp=' in link or 'format=csv' in link:
+                return True
+            return False
+
+        if not valid_sheet_link(student_link) or not valid_sheet_link(tutor_link):
+            flash('Please provide valid Google Sheets links (must be a sheet edit or export link).', 'danger')
+            return render_template('setup.html', saved_links=saved_links)
+
         save_data({"student_link": student_link, "tutor_link": tutor_link}, "links")
-        save_schedule_assignment()
-    return render_template('setup.html', message=message)
+        # attempt to refresh the saved schedule from the forms
+        try:
+            save_schedule_assignment()
+            flash('Links saved and schedule refreshed.', 'success')
+        except Exception as e:
+            flash(f'Links saved but refresh failed: {e}', 'warning')
+        # reload saved_links for template
+        saved_links = load_data('links') or {}
+        return render_template('setup.html', saved_links=saved_links)
+
+    return render_template('setup.html', saved_links=saved_links)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -109,6 +178,58 @@ def download_schedule():
     except Exception as e:
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('search'))
+
+@app.route('/modify_assignment', methods=['POST'])
+def modify_assignment():
+    """Modify or delete an assignment manually."""
+    try:
+        row_index = int(request.form.get('row_index'))
+    except Exception:
+        flash('Invalid row index.', 'danger')
+        return redirect(url_for('search'))
+
+    action = request.form.get('action')
+    if action not in ('delete', 'update'):
+        flash('Unknown action.', 'warning')
+        return redirect(url_for('search'))
+
+    if not os.path.exists(SCHEDULE_PATH):
+        flash('Schedule file not found.', 'danger')
+        return redirect(url_for('search'))
+
+    df = pd.read_csv(SCHEDULE_PATH)
+    if row_index < 0 or row_index >= len(df):
+        flash('Row index out of range.', 'danger')
+        return redirect(url_for('search'))
+
+    if action == 'delete':
+        # mark as Not Matched
+        df.at[row_index, 'Status'] = 'Not Matched'
+        df.at[row_index, 'Tutor Name'] = ''
+        df.at[row_index, 'Tutor Email'] = ''
+        df.at[row_index, 'Time'] = ''
+        flash('Assignment deleted (marked Not Matched).', 'success')
+
+    elif action == 'update':
+        new_tutor = request.form.get('new_tutor', '').strip()
+        new_time = request.form.get('new_time', '').strip()
+        # search for the new tutor's email
+        if new_tutor:
+            df.at[row_index, 'Tutor Name'] = new_tutor
+            try:
+                tutors_df = load_tutor_data()
+                match = tutors_df[tutors_df['name'] == new_tutor]
+                if not match.empty:
+                    df.at[row_index, 'Tutor Email'] = match.iloc[0].get('email', '')
+            except Exception: # leaves old email
+                flash('Tutor email search failed.', 'warning')
+                pass
+        if new_time:
+            df.at[row_index, 'Time'] = new_time
+        flash('Assignment updated.', 'success')
+
+    df.to_csv(SCHEDULE_PATH, index=False)
+    return redirect(url_for('search'))
 
 def generate_email_previews(df):
     previews = []
@@ -286,6 +407,58 @@ def generate_email_previews(df):
 
     return previews
 
+
+def generate_sent_previews(df):
+    """Return previews for emails already sent (Student Email Status or Tutor Email Status == True)."""
+    sent = []
+    for idx, row in df.iterrows():
+        student_name = str(row.get('Student Name', 'N/A'))
+        tutor_name = str(row.get('Tutor Name', 'N/A'))
+        subject = str(row.get('Student Courses', 'N/A'))
+        time_slot = str(row.get('Time', 'N/A'))
+        info = str(row.get('Additional Info', ''))
+        student_status = str(row.get('Status', ''))
+        # only include sent items for matched pairs
+        if student_status != 'Matched':
+            continue
+
+        # build a similar body as generate_email_previews for matched case
+        time_period = time_slot.split(':')[1] if ':' in time_slot else ''
+        time_day = time_slot.split(':')[0] if ':' in time_slot else ''
+
+        # Prefer saved sent subject/body if present
+        # Student
+        if bool(row.get('Student Email Status', False)):
+            subj = row.get('Student Last Sent Subject') if 'Student Last Sent Subject' in row.index else None
+            body_text = row.get('Student Last Sent Body') if 'Student Last Sent Body' in row.index else None
+            if not subj or not body_text:
+                subj = f'Peer Tutoring Schedule'
+                body_text = (f'Dear {student_name} and {tutor_name},\n\nYou two will be working together for one-on-one tutoring for {subject}. Your first meeting will be on {time_slot}.')
+            sent.append({
+                'recipient_type': 'Student',
+                'recipient_name': student_name,
+                'subject': subj,
+                'body': body_text,
+                'row_index': idx
+            })
+
+        # Tutor
+        if bool(row.get('Tutor Email Status', False)):
+            subj = row.get('Tutor Last Sent Subject') if 'Tutor Last Sent Subject' in row.index else None
+            body_text = row.get('Tutor Last Sent Body') if 'Tutor Last Sent Body' in row.index else None
+            if not subj or not body_text:
+                subj = f'Peer Tutoring Schedule'
+                body_text = (f'Dear {student_name} and {tutor_name},\n\nYou two will be working together for one-on-one tutoring for {subject}. Your first meeting will be on {time_slot}.')
+            sent.append({
+                'recipient_type': 'Tutor',
+                'recipient_name': tutor_name,
+                'subject': subj,
+                'body': body_text,
+                'row_index': idx
+            })
+
+    return sent
+
 @app.route('/email', methods=['GET', 'POST'])
 def email():
     """Preview and send emails to students and tutors."""
@@ -304,12 +477,25 @@ def email():
         return render_template('email.html', email_count=0, previews=[])
 
     email_previews = generate_email_previews(df)
-    email_count = sum(~df['Student Email Status']) + sum(~df['Tutor Email Status'])
+    sent_previews = generate_sent_previews(df)
+    email_count = int((~df['Student Email Status']).sum() + (~df['Tutor Email Status']).sum())
+
+    def persist_sent(df_local, row_index, recipient, subject, body):
+        """Save exact sent subject/body into dataframe columns for recipient ('Student' or 'Tutor')."""
+        subj_col = f"{recipient} Last Sent Subject"
+        body_col = f"{recipient} Last Sent Body"
+        if subj_col not in df_local.columns:
+            df_local[subj_col] = ''
+        if body_col not in df_local.columns:
+            df_local[body_col] = ''
+        df_local.at[row_index, subj_col] = subject
+        df_local.at[row_index, body_col] = body
+        return df_local
 
     if request.method == 'POST':
         send_count = 0
         try:
-            # Single-item send (per-preview send button)
+            # one at a time send
             if request.form.get('single_send'):
                 try:
                     idx = int(request.form.get('row_index'))
@@ -323,7 +509,7 @@ def email():
                     return redirect(url_for('email'))
 
                 row = df.iloc[idx]
-                # Prepare Student and Tutor objects
+
                 student = Student(
                     row.get('Student Name', ''), row.get('Student Email', ''), row.get('Student Grade', ''),
                     None, row.get('Student Courses', ''), row.get('Additional Info', ''), None, True, None
@@ -335,23 +521,31 @@ def email():
                 tutor.matched_students = [student]
                 student.matched_tutors = [tutor]
 
-                if recipient_type == 'Student':
-                    if not row.get('Student Email Status', False):
-                        auto_email(student, request.form.get('subject', 'Peer Tutoring Schedule'), request.form.get('body', ''))
-                        df.at[idx, 'Student Email Status'] = True
-                        send_count = 1
-                else:
-                    if not row.get('Tutor Email Status', False):
-                        auto_email(tutor, request.form.get('subject', 'Peer Tutoring Schedule'), request.form.get('body', ''))
-                        df.at[idx, 'Tutor Email Status'] = True
-                        send_count = 1
+                subj = request.form.get('subject', 'Peer Tutoring Schedule')
+                body = request.form.get('body', '')
+                try:
+                    if recipient_type == 'Student':
+                        if not row.get('Student Email Status', False):
+                            auto_email(student, subj, body)
+                            df.at[idx, 'Student Email Status'] = True
+                            df = persist_sent(df, idx, 'Student', subj, body)
+                            send_count = 1
+                    else:
+                        if not row.get('Tutor Email Status', False):
+                            auto_email(tutor, subj, body)
+                            df.at[idx, 'Tutor Email Status'] = True
+                            df = persist_sent(df, idx, 'Tutor', subj, body)
+                            send_count = 1
+                except Exception as e:
+                    flash(f'Error sending email: {e}', 'danger')
+                    return redirect(url_for('email'))
 
-            # Send-all (original behavior)
+            # Send all
             elif request.form.get('send_all'):
                 for preview in email_previews:
                     idx = preview['row_index']
                     row = df.iloc[idx]
-                    # Prepare Student and Tutor objects
+
                     student = Student(
                         row.get('Student Name', ''), row.get('Student Email', ''), row.get('Student Grade', ''),
                         None, row.get('Student Courses', ''), row.get('Additional Info', ''), None, True, None
@@ -363,16 +557,24 @@ def email():
                     tutor.matched_students = [student]
                     student.matched_tutors = [tutor]
 
-                    if preview['recipient_type'] == 'Student':
-                        if not row.get('Student Email Status', False):
-                            auto_email(student, preview['subject'], preview['body'])
-                            df.at[idx, 'Student Email Status'] = True
-                            send_count += 1
-                    elif preview['recipient_type'] == 'Tutor':
-                        if not row.get('Tutor Email Status', False):
-                            auto_email(tutor, preview['subject'], preview['body'])
-                            df.at[idx, 'Tutor Email Status'] = True
-                            send_count += 1
+                    subj = preview.get('subject', 'Peer Tutoring Schedule')
+                    body = preview.get('body', '')
+                    try:
+                        if preview['recipient_type'] == 'Student':
+                            if not row.get('Student Email Status', False):
+                                auto_email(student, subj, body)
+                                df.at[idx, 'Student Email Status'] = True
+                                df = persist_sent(df, idx, 'Student', subj, body)
+                                send_count += 1
+                        elif preview['recipient_type'] == 'Tutor':
+                            if not row.get('Tutor Email Status', False):
+                                auto_email(tutor, subj, body)
+                                df.at[idx, 'Tutor Email Status'] = True
+                                df = persist_sent(df, idx, 'Tutor', subj, body)
+                                send_count += 1
+                    except Exception as e:
+                        # continue on errors but report
+                        flash(f'Error sending to row {idx}: {e}', 'warning')
 
             else:
                 flash('Unknown action.', 'warning')
@@ -385,7 +587,7 @@ def email():
             flash(f'An error occurred during email sending: {e}', 'danger')
             return render_template('email.html', email_count=email_count, previews=email_previews)
 
-    return render_template('email.html', email_count=email_count, previews=email_previews)
+    return render_template('email.html', email_count=email_count, previews=email_previews, sent_previews=sent_previews)
 
 if __name__ == '__main__':
     import webbrowser
