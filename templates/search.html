@@ -208,37 +208,6 @@
 </script>
 </div>
 
-<!--
-<div class="search-categories">
-    {% if user_role == 'teacher' %}
-    <div class="category-container">
-        <button class="category-btn">Teacher</button>
-        <button class="category-btn">Room</button>
-        <button class="category-btn">Availability</button>
-    </div>
-    {% else %}
-    <div class="category-container">
-        <button class="category-btn">Tutor</button>
-        <button class="category-btn">Courses</button>
-        <button class="category-btn">Time</button>
-    </div>
-    {% endif %}
-</div>
-
-
-<button class="request-change-btn" onclick="openPopup()">Request Change</button>
-
-<div id="requestChangeModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closePopup()">&times;</span>
-        <h3>Request Change</h3>
-        <p>What would you like to change?</p>
-        <button class="modal-btn" onclick="handleRequest('peer_tutor')">Change Peer Tutor</button>
-        <button class="modal-btn" onclick="handleRequest('student')">Change Student</button>
-    </div>
-</div>
--->
-
 <script>
     function openPopup() {
         document.getElementById("requestChangeModal").style.display = "block";
