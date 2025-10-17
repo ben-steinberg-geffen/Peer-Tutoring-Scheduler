@@ -1,21 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+# to run: pyinstaller PeerTutorApp.spec
 
 a = Analysis(
     ['app.py'],
-    pathex=['.'],  # Assumes all your files are in the current directory
+    pathex=['.'],  
     binaries=[],
     datas=[
-        ('templates', 'templates'),  # Include 'templates' folder
-        ('static', 'static'),        # Include 'static' folder
-        ('models.py', '.'),          # Include individual Python files
+        ('templates', 'templates'),  
+        ('static', 'static'),        
+        ('models.py', '.'),          
         ('auto_email.py', '.'),
         ('persistent_data.py', '.'),
         ('save_schedule_assignment.py', '.'),
-        ('data', 'data'),            # Include the 'data' folder
-        # Add any other folders/files your app needs
+        ('data', 'data'),           
     ],
-    # ... rest of the Analysis block ...
 )
 pyz = PYZ(a.pure)
 
