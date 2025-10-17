@@ -5,6 +5,7 @@ from auto_email import auto_email
 from models import Student, Tutor
 from persistent_data import save_data, load_data
 from save_schedule_assignment import save_schedule_assignment
+from data_loader import load_tutor_data, load_student_data
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = '0599db35270c938d478af4964d9c00aa'
@@ -27,18 +28,64 @@ def load_assignments(schedule_path):
     if not os.path.exists(schedule_path):
         return []
     df = pd.read_csv(schedule_path)
+    # Load live tutor and student form data to offer choices
+    try:
+        tutors_df = load_tutor_data()
+    except Exception:
+        tutors_df = pd.DataFrame(columns=['name', 'email', 'grade', 'courses', 'availability'])
+    try:
+        students_df = load_student_data()
+    except Exception:
+        students_df = pd.DataFrame(columns=['name', 'email', 'grade', 'courses', 'availability', 'additional_info'])
     assignments = []
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
         if row.get('Status') == 'Not Matched':
             continue
         subjects_tutor = row.get('Tutor Courses', '').split(", ")
         subjects_student = row.get('Student Courses', '').split(", ")
         subjects_both = [s for s in subjects_tutor if s in subjects_student]
+        # Determine a subject to match tutors against
+        subject_for_match = subjects_both[0] if subjects_both else (row.get('Student Courses', '').split(', ')[0] if row.get('Student Courses') else '')
+
+        # Build tutor options: tutors who teach the subject
+        tutor_options = []
+        time_options = []
+        if subject_for_match:
+            for _, trow in tutors_df.iterrows():
+                t_courses = trow.get('courses', []) if isinstance(trow.get('courses', []), list) else []
+                if subject_for_match in t_courses:
+                    tutor_options.append({'name': trow.get('name', ''), 'email': trow.get('email', ''), 'availability': trow.get('availability', [])})
+
+        # Get student availability from the form data if available
+        student_availability = []
+        sname = row.get('Student Name', '')
+        if not students_df.empty and sname:
+            matches = students_df[students_df['name'] == sname]
+            if not matches.empty:
+                # If multiple, try to match by course too
+                if len(matches) > 1 and row.get('Student Courses'):
+                    course = row.get('Student Courses').split(', ')[0]
+                    matches = matches[matches['courses'].apply(lambda cs: course in cs if isinstance(cs, list) else False)]
+                if not matches.empty:
+                    student_availability = matches.iloc[0].get('availability', []) if isinstance(matches.iloc[0].get('availability', []), list) else []
+
+        # Determine intersecting times across tutors and student availability
+        if tutor_options and student_availability:
+            times_set = set()
+            for t in tutor_options:
+                t_avail = t.get('availability', []) if isinstance(t.get('availability', []), list) else []
+                inter = set(t_avail).intersection(set(student_availability))
+                times_set.update(inter)
+            time_options = sorted(times_set)
+
         assignments.append({
             'student': row.get('Student Name', ''),
             'tutor': row.get('Tutor Name', ''),
             'subject': ", ".join(subjects_both),
-            'time_slot': row.get('Time', '')
+            'time_slot': row.get('Time', ''),
+            'row_index': int(idx),
+            'tutor_options': tutor_options,
+            'time_options': time_options
         })
     assignments.sort(key=lambda x: (x['tutor'].lower(), x['student'].lower()))
     return assignments
@@ -109,6 +156,59 @@ def download_schedule():
     except Exception as e:
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('search'))
+
+@app.route('/modify_assignment', methods=['POST'])
+def modify_assignment():
+    """Modify or delete an assignment manually."""
+    try:
+        row_index = int(request.form.get('row_index'))
+    except Exception:
+        flash('Invalid row index.', 'danger')
+        return redirect(url_for('search'))
+
+    action = request.form.get('action')
+    if action not in ('delete', 'update'):
+        flash('Unknown action.', 'warning')
+        return redirect(url_for('search'))
+
+    if not os.path.exists(SCHEDULE_PATH):
+        flash('Schedule file not found.', 'danger')
+        return redirect(url_for('search'))
+
+    df = pd.read_csv(SCHEDULE_PATH)
+    if row_index < 0 or row_index >= len(df):
+        flash('Row index out of range.', 'danger')
+        return redirect(url_for('search'))
+
+    if action == 'delete':
+        # Mark as Not Matched or remove the row — choose to mark 'Not Matched'
+        df.at[row_index, 'Status'] = 'Not Matched'
+        # Optionally clear Tutor and Time
+        df.at[row_index, 'Tutor Name'] = ''
+        df.at[row_index, 'Tutor Email'] = ''
+        df.at[row_index, 'Time'] = ''
+        flash('Assignment deleted (marked Not Matched).', 'success')
+
+    elif action == 'update':
+        new_tutor = request.form.get('new_tutor', '').strip()
+        new_time = request.form.get('new_time', '').strip()
+        # If tutor changed, also update Tutor Email (lookup from form data)
+        if new_tutor:
+            df.at[row_index, 'Tutor Name'] = new_tutor
+            try:
+                tutors_df = load_tutor_data()
+                match = tutors_df[tutors_df['name'] == new_tutor]
+                if not match.empty:
+                    df.at[row_index, 'Tutor Email'] = match.iloc[0].get('email', '')
+            except Exception:
+                # if lookup fails, leave existing email
+                pass
+        if new_time:
+            df.at[row_index, 'Time'] = new_time
+        flash('Assignment updated.', 'success')
+
+    df.to_csv(SCHEDULE_PATH, index=False)
+    return redirect(url_for('search'))
 
 def generate_email_previews(df):
     previews = []
