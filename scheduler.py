@@ -105,7 +105,7 @@ def backtrack(student_assignment, time_assignment, students, tutors):
     
     tutor, student = result
     times = get_time_intersection(student, tutor)
-    print(student.name)
+    # print(student.name)
 
     for time in times:  
         student_assignment[student] = tutor

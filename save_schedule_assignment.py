@@ -57,7 +57,7 @@ def save_schedule_assignment():
     result = None
     n = 0
 
-    while not result and n < 1000:  # Limit the number of iterations to prevent infinite loop
+    while not result and n < 10000:  # Limit the number of iterations to prevent infinite loop
         n += 1
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
