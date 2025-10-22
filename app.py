@@ -590,4 +590,7 @@ def email():
     return render_template('email.html', email_count=email_count, previews=email_previews, sent_previews=sent_previews)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import webbrowser
+    webbrowser.open_new('http://127.0.0.1:5000/') 
+    
+    app.run(debug=False)
