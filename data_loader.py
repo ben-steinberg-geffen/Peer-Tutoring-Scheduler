@@ -71,7 +71,7 @@ def load_tutor_data():
         pd.DataFrame: A pandas DataFrame containing the combined tutor requests data.
     """
     message = load_data("links")
-    if  message is not None:
+    if message is not None:
         tutor_link = message["tutor_link"].replace("/edit?usp=sharing", "/export?format=csv")
         response = requests.get(tutor_link)
     else:

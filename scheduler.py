@@ -9,7 +9,6 @@ def get_time_intersection(student, tutor):
 
 def match_students_tutors(students, tutors):
     for student in students:
-
         course_length = 1
         for student_2 in students: 
             if student == student_2: 

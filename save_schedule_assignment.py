@@ -43,8 +43,8 @@ def save_schedule_assignment():
 
     # Load existing schedule if any
     
-    if os.path.exists('tutoring_schedule.csv'):
-        student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
+    if os.path.exists('saved_schedule.csv'):
+        student_assignment, time_assignment = load_existing_schedule('saved_schedule.csv', students, tutors)
     else:
         student_assignment, time_assignment = {}, {}
     
