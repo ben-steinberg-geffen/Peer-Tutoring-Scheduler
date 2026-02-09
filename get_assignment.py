@@ -4,17 +4,26 @@ from models import Student, Tutor
 from data_loader import load_student_data, load_tutor_data, load_existing_schedule, update_students_tutors
 from scheduler import match_students_tutors, get_not_matched, backtrack
 
-def save_schedule(student_assignment, path):
+def save_schedule(student_assignment, not_matched_students, path):
     with open(path, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Student Name', 'Student Email', 'Student Grade', 'Student Availability', 'Student Courses', 'Additional Info', 'Not Tutors', 'Tutor Name', 'Tutor Email', 'Tutor Grade', 'Tutor Availability', 'Tutor Courses', 'Time'])
+        
+        # Write matched students
         for student, tutor in student_assignment.items():
             writer.writerow([
                 student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
                 student.not_tutors, tutor.name, tutor.email, tutor.grade, ', '.join(tutor.availability), ', '.join(tutor.courses),
                 student.final_time
             ])
-    print("Results saved to tutoring_schedule.csv")
+        
+        # Write unmatched students
+        for student, (reason, potential_times) in not_matched_students.items():
+            writer.writerow([
+                student.name, student.email, student.grade, ', '.join(student.availability), ', '.join(student.courses), student.info,
+                student.not_tutors, f'UNMATCHED: {reason}', '', '', '', '', ''
+            ])
+    print("Results saved to saved_schedule.csv")
 
 def get_schedule(student_path, tutor_path, save_path):
     # Load data
@@ -32,8 +41,8 @@ def get_schedule(student_path, tutor_path, save_path):
         tutors.append(Tutor(row['name'], row['email'], row['grade'], row['availability'], row['courses'], []))
 
     # Load existing schedule if any
-    if os.path.exists('tutoring_schedule.csv'):
-        student_assignment, time_assignment = load_existing_schedule('tutoring_schedule.csv', students, tutors)
+    if os.path.exists('saved_schedule.csv'):
+        student_assignment, time_assignment = load_existing_schedule('saved_schedule.csv', students, tutors)
     else:
         student_assignment, time_assignment = {}, {}
 
@@ -48,15 +57,14 @@ def get_schedule(student_path, tutor_path, save_path):
 
     while not result:
         n += 1
-        if n >= 10000:
+        if n >= 10000000:
             print("No solution found.")
             break
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
     # Save the result
-    
     if result:
         student_assignment, time_assignment = result
 
-    save_schedule(student_assignment, save_path)
+    save_schedule(student_assignment, not_matched_students, save_path)
     return student_assignment, time_assignment, not_matched_students

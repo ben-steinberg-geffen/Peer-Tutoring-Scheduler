@@ -44,12 +44,12 @@ def save_schedule_assignment():
     # Load existing schedule if any
     
     if os.path.exists('saved_schedule.csv'):
-        student_assignment, time_assignment = load_existing_schedule('saved_schedule.csv', students, tutors)
+        student_assignment, time_assignment, processed_students = load_existing_schedule('saved_schedule.csv', students, tutors)
     else:
-        student_assignment, time_assignment = {}, {}
+        student_assignment, time_assignment, processed_students = {}, {}, set()
     
     # Update students and tutors with new data
-    students, tutors = update_students_tutors(student_df, tutor_df, student_assignment)
+    students, tutors = update_students_tutors(student_df, tutor_df, student_assignment, processed_students)
     students, tutors = match_students_tutors(students, tutors)
     not_matched = get_not_matched(students, tutors)
 

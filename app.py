@@ -48,15 +48,6 @@ def load_assignments(schedule_path):
         # Determine a subject to match tutors against
         subject_for_match = subjects_both[0] if subjects_both else (row.get('Student Courses', '').split(', ')[0] if row.get('Student Courses') else '')
 
-        # Build tutor options: tutors who teach the subject
-        tutor_options = []
-        time_options = []
-        if subject_for_match:
-            for _, trow in tutors_df.iterrows():
-                t_courses = trow.get('courses', []) if isinstance(trow.get('courses', []), list) else []
-                if subject_for_match in t_courses:
-                    tutor_options.append({'name': trow.get('name', ''), 'email': trow.get('email', ''), 'availability': trow.get('availability', [])})
-
         # Get student availability from the form data if available
         student_availability = []
         sname = row.get('Student Name', '')
@@ -69,6 +60,23 @@ def load_assignments(schedule_path):
                     matches = matches[matches['courses'].apply(lambda cs: course in cs if isinstance(cs, list) else False)]
                 if not matches.empty:
                     student_availability = matches.iloc[0].get('availability', []) if isinstance(matches.iloc[0].get('availability', []), list) else []
+
+        # Build tutor options: tutors who teach the subject
+        tutor_options = []
+        time_options = []
+        if subject_for_match:
+            for _, trow in tutors_df.iterrows():
+                t_courses = trow.get('courses', []) if isinstance(trow.get('courses', []), list) else []
+                t_avail = trow.get('availability', []) if isinstance(trow.get('availability', []), list) else []
+                
+                # Only include tutors who teach the subject AND overlap with student's availability
+                if subject_for_match in t_courses:
+                    if not student_availability or set(t_avail).intersection(set(student_availability)):
+                        tutor_options.append({
+                            'name': trow.get('name', ''),
+                            'email': trow.get('email', ''),
+                            'availability': t_avail
+                        })
 
         # Determine intersecting times across tutors and student availability
         if tutor_options and student_availability:

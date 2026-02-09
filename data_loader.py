@@ -108,10 +108,14 @@ def load_tutor_data():
 def load_existing_schedule(schedule_file, students, tutors):
     student_assignment = {}
     time_assignment = {}
+    processed_students = set()  # Track ALL students we've already processed (both Matched and Not Matched)
     
     with open(schedule_file, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
+            student_name = row['Student Name']
+            processed_students.add(student_name)  # Track all students, regardless of status
+            
             if row['Status'] == 'Matched':
                 student = next((s for s in students if s.name == row['Student Name'] and s.courses[0] == row['Student Courses']), None)
                 tutor = next((t for t in tutors if t.name == row['Tutor Name']), None)
@@ -126,17 +130,22 @@ def load_existing_schedule(schedule_file, students, tutors):
                     student.email_status = row['Student Email Status']
                     tutor.email_status = row['Tutor Email Status']
 
-    return student_assignment, time_assignment
+    return student_assignment, time_assignment, processed_students
 
-def update_students_tutors(student_df, tutor_df, student_assignment):
+def update_students_tutors(student_df, tutor_df, student_assignment, processed_students=None):
     existing_students = [student.name for student in student_assignment.keys()]
     existing_tutors = [tutor.name for tutor in student_assignment.values()]
+    
+    # Combine existing students with previously processed students to avoid re-processing
+    if processed_students is None:
+        processed_students = set()
+    all_processed = set(existing_students) | processed_students
     
     students = []
     tutors = []
     
     for _, row in student_df.iterrows():
-        if row['name'] not in existing_students:
+        if row['name'] not in all_processed:
             students.append(Student(row['name'], row['email'], row['grade'], row['availability'], row['courses'], row['additional_info'], []))
     
     for _, row in tutor_df.iterrows():
