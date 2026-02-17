@@ -67,5 +67,10 @@ def save_schedule_assignment():
         save_schedule(student_assignment, not_matched)
     else:
         print("No solution found.")
+        # Add new incoming students to not_matched
+        for student in students:
+            if student not in not_matched:
+                not_matched[student] = ("No solution found", [])
+        save_schedule(student_assignment, not_matched)
 
     return result

@@ -56,10 +56,6 @@ def get_schedule(student_path, tutor_path, save_path):
     n = 0
 
     while not result:
-        n += 1
-        if n >= 10000000:
-            print("No solution found.")
-            break
         result = backtrack(student_assignment, time_assignment, students, tutors)
 
     # Save the result
